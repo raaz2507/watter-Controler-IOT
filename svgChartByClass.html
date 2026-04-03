@@ -15,7 +15,7 @@
 			height: 100%;
 		}
 		/* Area chart fade-in */
-		#areaChart {
+		.dataLineAnimate {
 			opacity: 0;
 			animation: fadeIn 2s ease-in-out forwards;
 			animation-delay: 0.5s;
@@ -26,16 +26,16 @@
 		}
 
 		/* Dots ke liye base aur hover animation */
-		circle {
-			opacity: 0;
+		.animatedCircle {
+			/* opacity: 0; */
 			transform-origin: center;
-			animation: popIn 0.3s ease-out forwards;
+			/* animation: popIn 0.3s ease-out forwards; */
 			transition: all 0.2s ease; /* Hover par smooth transition */
 			cursor: pointer;
 		}
 
 		/* Hover karne par dot bada hoga */
-		circle:hover {
+		.animtedCircle:hover {
 			r: 4px;
 			fill: #87DBEB;
 			stroke: #f0fbff;
@@ -48,20 +48,6 @@
 			100% { opacity: 1; transform: scale(1); }
 		}
 
-		/* Tooltip style */
-		.tooltip-text {
-			font-family: Arial, sans-serif;
-			font-size: 12px;
-			fill: white;
-			font-weight: bold;
-			pointer-events: none; /* Mouse block na kare */
-			
-		}
-		.tooltip-bg {
-			fill: rgba(0, 0, 0, 0.8);
-			rx: 4; /* Rounded corners */
-			pointer-events: none;
-		}
 	</style>
 </head>
 <body>
@@ -97,11 +83,11 @@
 					}
 				],
 			},
-			
+			animationType: "fade", // scale | fade | slide
 			
 			
 			options: {
-			}
+			},
 		 });
 	}
 	document.addEventListener("DOMContentLoaded", ()=>{
@@ -167,7 +153,7 @@ class SVGChart{
 	
 	
 	#draw(){
-;		this.#chartSVG = this.#createSVG({
+;		this.#chartSVG = this.#createSVGElement({
 			viewBox:{minX :0, minY:0, width :this.#svgDimention.svgWidth, height: this.#svgDimention.svgHeight},
 			widht : '100%', height: '100%', preserveAspectRatio : 'none',
 		});
@@ -214,147 +200,339 @@ class SVGChart{
 
 	#drawChartDataLine(){
 		//console.log( this.#ChartStruct.labels );
+		this.#addAnimations();
 		this.#ChartStruct.data.datasets.forEach(( dataset, index)=>{
-
-
+			
+			const datasetGroup = this.#createGroupElement({id: 'dataset' + index});
+			
 			// 2. Convert Data to X,Y Points object (Label के साथ)
 			const points = dataset.data.map((value, index) => {
 				return {
-					x: this.#padding.left + (index / (dataset.data.length - 1)) * this.#svgDimention.drawWidth,
+					x: this.#padding.left + (index / (dataset.data.length - 1 || 1 )) * this.#svgDimention.drawWidth,
 					y: this.#svgDimention.svgHeight - this.#padding.bottom - (value / this.#max) * this.#svgDimention.drawHeight,
 					val: value,
 					label: this.#ChartStruct.data.labels[index] // टूलटिप के लिए टाइम सेव किया (time )
 				};
 			});
-			//console.log(points);
-			// 3. Smooth Curve Generator Function
-			function createSmoothPath({points = [], tension = 0.2}={}) {
-				let d = `M ${points[0].x},${points[0].y} `;
-				for (let i = 0; i < points.length - 1; i++) {
-					const p0 = points[i === 0 ? 0 : i - 1];
-					const p1 = points[i];
-					const p2 = points[i + 1];
-					const p3 = points[i + 2 === points.length ? i + 1 : i + 2]; 
-					const cp1x = p1.x + (p2.x - p0.x) * tension;
-					const cp1y = p1.y + (p2.y - p0.y) * tension;
-					const cp2x = p2.x - (p3.x - p1.x) * tension;
-					const cp2y = p2.y - (p3.y - p1.y) * tension;
-					d += `C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y} `;
-				}
-				return d;
+			
+			const {areaChart, linePath} = this.#createChartDataLine(points, index);
+			const datapointCircleGroup = this.#createChartDataToolTips(
+				points, 
+				index, 
+				this.#ChartStruct.animationType // 👈 यहाँ
+			);
+
+			datasetGroup.append(areaChart, linePath, datapointCircleGroup);
+			this.#chartSVG.appendChild(datasetGroup);
+		});
+	}
+	#createSmoothPath({points = [], tension = 0.15}={}) {
+		let d = `M ${points[0].x},${points[0].y} `;
+		for (let i = 0; i < points.length - 1; i++) {
+			const p0 = points[i === 0 ? 0 : i - 1];
+			const p1 = points[i];
+			const p2 = points[i + 1];
+			const p3 = points[i + 2 === points.length ? i + 1 : i + 2]; 
+
+			const clampY = (y) => {
+				const minY = this.#padding.top;
+				const maxY = this.#svgDimention.svgHeight - this.#padding.bottom;
+				return Math.max(minY, Math.min(maxY, y));
+			};
+			const cp1x = p1.x + (p2.x - p0.x) * tension;
+			const cp1y = clampY(p1.y + (p2.y - p0.y) * tension);
+			const cp2x = p2.x - (p3.x - p1.x) * tension;
+			const cp2y = clampY(p2.y - (p3.y - p1.y) * tension);
+			d += `C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y} `;
+		}
+		return d;
+	}
+	#createChartDataLine(points, index){
+		// 3. Smooth Curve Generator Function 
+		
+		const smoothPathString = this.#createSmoothPath({points: points});
+		const color = this.#chartDataLineColors[index % this.#chartDataLineColors.length];
+
+		// Line set karna
+		const linePath = this.#createPathElement({id: 'lineChart' + index, fill: 'none', stroke: color, stroke_width: 2, d :smoothPathString});
+
+		// Line Drawing Animation setup
+		const pathLength = linePath.getTotalLength();
+		linePath.style.strokeDasharray = pathLength;
+		linePath.style.strokeDashoffset = pathLength;
+		linePath.getBoundingClientRect(); 
+		// linePath.style.transition = 'stroke-dashoffset 2s ease-in-out';
+		linePath.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)';
+		linePath.style.strokeDashoffset = '0';
+
+		
+		// Area set karna
+		const areaPathString = `${smoothPathString} L ${this.#padding.left + this.#svgDimention.drawWidth},${this.#svgDimention.svgHeight - this.#padding.bottom} L ${this.#padding.left},${this.#svgDimention.svgHeight - this.#padding.bottom} Z`;
+		
+		const areaChart = this.#createPathElement({ id: 'areaChart' + index, fill: color, stroke: 'none', d : areaPathString});
+		
+		const areaGradientID = 'areaGradient' + index;
+		this.#chartElemes.defs.append(this.#gradientChartFillEffect({id: areaGradientID , color: color}));
+
+		areaChart.setAttribute("fill", `url('#${areaGradientID}')`); //<=fix form here
+		
+		return {linePath, areaChart}
+	}
+
+	// ==================================
+	#createChartDataToolTips(points, index, animationType = "scale") {
+
+		// 🔹 main group
+		const group = this.#createGroupElement({
+			id: 'chartDataPointGroup' + index
+		});
+
+		// 🔹 tooltip (single per dataset)
+		const tooltipGroup = this.#createGroupElement({
+			id: 'tooltipGroup' + index
+		});
+		tooltipGroup.style.display = "none";
+
+		const tooltipBg = this.#createRectElement({
+			width: 60, height: 30, rx: 4,
+			fill_color: 'rgba(0,0,0,0.8)'
+		});
+
+		const tooltipText = this.#createTextElement({
+			text_anchor: 'middle',
+			font_size: '11px',
+			fill: '#fff'
+		});
+
+		tooltipGroup.append(tooltipBg, tooltipText);
+
+		// 🔹 circles create
+		points.forEach((point, i) => {
+
+			const circle = this.#createCircleElement({
+				cx: point.x,
+				cy: point.y,
+				radius: 2,
+				fill: '#41ffff8e',
+				stroke_color: '#fff',
+				stroke_width: '1'
+			});
+
+			// 🔥 animation select
+			this.#applyAnimation(circle, i, points.length, animationType);
+
+			// 🔥 data store (important)
+			circle.dataset.x = point.x;
+			circle.dataset.y = point.y;
+			circle.dataset.val = point.val;
+			circle.dataset.label = point.label;
+			circle.classList.add('circleAnimation');
+
+			group.append(circle);
+		});
+		
+		let lastActive = null;
+		// 🔥 EVENT → only on group
+		group.addEventListener("mousemove", (e) => {
+
+			const target = e.target;
+
+			// only circle trigger
+			if (target.tagName !== 'circle') return;
+
+			if (lastActive) {
+				lastActive.setAttribute("r", "2");
 			}
-			
-			const smoothPathString = createSmoothPath({points: points});
-			const color = this.#chartDataLineColors[index % this.#chartDataLineColors.length];
 
-			// Line set karna
-			const linePath = this.#createPath({id: 'lineChart' + index, fill: 'none', stroke: color, stroke_width: 2, d :smoothPathString});
+			// reset all circles
+			group.querySelectorAll("circle").forEach(c => {
+				c.setAttribute("r", "2");
+			});
 
-			// Line Drawing Animation setup
-			const pathLength = linePath.getTotalLength();
-			linePath.style.strokeDasharray = pathLength;
-			linePath.style.strokeDashoffset = pathLength;
-			linePath.getBoundingClientRect(); 
-			// linePath.style.transition = 'stroke-dashoffset 2s ease-in-out';
-			linePath.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)';
-			linePath.style.strokeDashoffset = '0';
+			// active circle
+			target.setAttribute("r", "4");
+			lastActive = target;
+			// tooltip show
+			tooltipGroup.style.display = "block";
 
-			this.#chartSVG.append(linePath);
-			
-			// Area set karna
-			const areaPathString = `${smoothPathString} L ${this.#padding.left + this.#svgDimention.drawWidth},${this.#svgDimention.svgHeight - this.#padding.bottom} L ${this.#padding.left},${this.#svgDimention.svgHeight - this.#padding.bottom} Z`;
-			
-			const areaChart = this.#createPath({ id: 'areaChart' + index, fill: color, stroke: 'none', d : areaPathString});
-			
-			const areaGradientID = 'areaGradient' + index;
-			this.#chartElemes.defs.append(this.#gradientChartFillEffect({id: areaGradientID , color: color}));
+			const x = +target.dataset.x;
+			const y = +target.dataset.y;
 
-			areaChart.setAttribute("fill", `url(' #${areaGradientID}')`); //<=fix form here
-			
-			this.#chartSVG.append(areaChart);
+			tooltipText.innerHTML = `
+				<tspan x="30" dy="1.2em">${target.dataset.val}%</tspan>
+				<tspan x="30" dy="1.2em" font-size="8">${target.dataset.label}</tspan>
+			`;
 
-			// Tooltip elements
-			const tooltipGroup = document.createElementNS(SVGChart.svgNS, 'g');
-			tooltipGroup.setAttribute('id', 'tooltipGroup');
-			tooltipGroup.style.display = 'none';
+			let tipX = x - 30;
+			let tipY = y - 40;
 
-			const tooltipBg = document.createElementNS(SVGChart.svgNS, 'rect');
-			tooltipBg.setAttribute('id', 'tooltipBg' + index);
-			tooltipBg.setAttribute('width', 40);
-			tooltipBg.setAttribute('height', 25);
-			tooltipBg.setAttribute('fill', 'rgba(0, 0, 0, 0.8)');
-			tooltipBg.setAttribute('rx', '4');
-			tooltipBg.setAttribute("fill-opacity", "0.8"); // Transparency (0.1 से 1 तक)
-			tooltipBg.style.pointerEvents = 'none';
+			if (tipX < 0) tipX = 0;
+			if (tipY < 0) tipY = y + 10;
+
+			tooltipGroup.setAttribute("transform", `translate(${tipX}, ${tipY})`);
+		});
+
+		group.addEventListener("mouseleave", () => {
+			tooltipGroup.style.display = "none";
+		});
+
+		// 🔥 append tooltip inside group
+		group.append(tooltipGroup);
+
+		return group;
+	}
+
+	#applyAnimation(circle, index, total, type) {
+
+		const delay = (index / total) * 0.6;
+
+		switch(type) {
+
+			case "scale":
+				circle.style.transformOrigin = "center";
+				circle.style.animation = `scaleIn 0.4s ease forwards`;
+				circle.style.animationDelay = `${delay}s`;
+				break;
+
+			case "fade":
+				circle.style.opacity = "0";
+				circle.style.animation = `fadeIn 0.6s ease forwards`;
+				circle.style.animationDelay = `${delay}s`;
+				break;
+
+			case "slide":
+				circle.style.transform = "translateY(10px)";
+				circle.style.animation = `slideUp 0.5s ease forwards`;
+				circle.style.animationDelay = `${delay}s`;
+				break;
+
+			default:
+				// default animation
+				circle.style.animation = `scaleIn 0.4s ease forwards`;
+		}
+	}
+	#addAnimations(){
+		if(document.getElementById('animation')){
+			return ;
+		}
+
+		const styleSheet = document.createElement('style');
+		styleSheet.id = 'animation';
+		styleSheet.textContent =
+
+		` 
+		.circleAnimation{
+			transition: all 0.2s ease;
+		}
+		@keyframes scaleIn {
+			0% { transform: scale(0); opacity: 0; }
+			100% { transform: scale(1); opacity: 1; }
+		}
+
+		@keyframes fadeIn {
+			0% { opacity: 0; }
+			100% { opacity: 1; }
+		}
+
+		@keyframes slideUp {
+			0% { transform: translateY(10px); opacity: 0; }
+			100% { transform: translateY(0); opacity: 1; }
+		}`;
+	}
+	// ==================================
+	
+	#createChartDataToolTips__(points, index){
+		// Tooltip elements
+		const tooltipGroup = document.createElementNS(SVGChart.svgNS, 'g');
+		tooltipGroup.setAttribute('id', 'tooltipGroup' + index);
+		tooltipGroup.style.display = 'none';
+
+		const tooltipBg = this.#createRectElement({
+			id : 'tooltipBg' + index, 
+			width: 40, height: 25, rx: 4,
+			fill_color : 'rgba(0, 0, 0, 0.8)', fill_opacity : 0.8,
+		});
+		tooltipBg.style.pointerEvents = 'none';
 
 
-			const tooltipText = document.createElementNS(SVGChart.svgNS, 'text');
-			tooltipText.setAttribute("id", 'tooltipText' + index);
-			tooltipText.setAttribute("text-anchor", 'middle');
-			tooltipText.setAttribute('font-family', 'Arial, sans-serif');
-			tooltipText.setAttribute('font-size', '12px');
-			tooltipText.setAttribute('fill', '#fff');
-			tooltipText.setAttribute('font-weight', 'bold');
-			tooltipText.style.pointerEvents = 'none';
-			
-			tooltipGroup.append(tooltipBg, tooltipText);
-			
-			// 4. data graph line par Circles draw karna aur Tooltip Event lagana
-			points.forEach((point, index) => {
-				const circle = this.#createCircle({cx: point.x, cy: point.y, radius : 1.5, fill: '#41ffff8e', stroke_color: 'rgb(255, 255, 255)', stroke_width: '1'});
-				circle.style.animationDelay = `${(index / points.length) * 2}s`;
+		const tooltipText = this.#createTextElement({
+			id: 'tooltipText' + index,
+			text_anchor : 'middle',
+			font_family : 'Arial, sans-serif', font_size : '12px', font_weight: 'bold', fill : '#fff',
+		});
+		tooltipText.style.pointerEvents = 'none';
+		
+		tooltipGroup.append(tooltipBg, tooltipText);
+		
+		// 4. data graph line par Circles draw karna aur Tooltip Event lagana
+		const boxWidth = 50;
+		const boxHeight = 25;
+		console.log(points);
+		const datapointCircleGroup = this.#createGroupElement({id : 'chartDataPointCircles' + index});
+		
+		points.forEach((point, index) => {
+			const circle = this.#createCircleElement({
+				cx: point.x, cy: point.y, radius : 1.5, 
+				fill: '#41ffff8e', stroke_color: 'rgb(255, 255, 255)', stroke_width: '1'
+			});
+			circle.style.animationDelay = `${(index / points.length) * 2}s`;
+
+			datapointCircleGroup.append(circle);
+		});	
+		
+		return datapointCircleGroup;
+		/*
+			// Tooltip Hover Logic
+			circle.addEventListener("mouseenter", () => {
+				// add Animation Effect on cicle by css
+				circle.classList.add('animatedCircle');
+
+				// add Animation Effect on tooltips by css
+				//tooltipGroup.classList.add('dataLineAnimate');
+
+				// style on cicle
+				circle.style.transitionOrigin = 'center';
+				circle.style.transition = 'all 0.2s ease';
+				//circle.style.animation = 'popIn 0.3s ease-out forwards';
+				circle.style.cursor = 'pointer';
+
+				// बड़ा करो
+				circle.setAttribute("r", "4");
+
+				// color change
+				circle.setAttribute("fill", "#87DBEB");
+				circle.setAttribute("stroke", "#f0fbff");
+				circle.setAttribute("stroke-width", "2");
+
+
+				tooltipGroup.style.display = "block";
 				
-				// Tooltip Hover Logic
-				circle.addEventListener("mouseenter", () => {
-					// style on cicle
-					circle.style.transitionOrigin = 'center';
-					circle.style.transition = 'all 0.2s ease';
-					circle.style.animation = 'popIn 0.3s ease-out forwards';
-					circle.style.cursor = 'pointer';
+				// टूलटिप में वैल्यू और टाइम दोनों दिखाएं
+				tooltipText.innerHTML = `<tspan x="${point.x}" dy="1.2em" font-weight="bold">${point.val}%</tspan>
+										<tspan x="${point.x}" dy="1.2em" font-size="8">${point.label}</tspan>`;
+				
+				let tipX = point.x - boxHeight; 
+				let tipY = point.y - boxWidth/2;
+				if (tipX < 0) tipX = 0;
+				//if (tipX > this.#svgDimention.svgWidth - 50) tipX = this.#svgDimention.svgWidth - boxWidth;
+				if (tipY < 0) tipY = 10;
+				//if (tipY > this.#svgDimention.svgHeight - 50) tipY = this.#svgDimention.svgHeight - boxHeight;
 
-					// बड़ा करो
-					circle.setAttribute("r", "4");
+				// tooltip Box (Background) Settings 🔥
+				tooltipBg.setAttribute("x", tipX+2);
+				tooltipBg.setAttribute("y", tipY);
 
-					// color change
-					circle.setAttribute("fill", "#87DBEB");
-					circle.setAttribute("stroke", "#f0fbff");
-					circle.setAttribute("stroke-width", "2");
+				// tooltip Box font Settings 🔥
+				// tooltipText.setAttribute("x", tipX -70);
+				tooltipText.setAttribute("y", tipY-2);
+			
 
-
-					tooltipGroup.style.display = "block";
-					
-					// टूलटिप में वैल्यू और टाइम दोनों दिखाएं
-					tooltipText.innerHTML = `<tspan x="${point.x}" dy="1.2em" font-weight="bold">${point.val}%</tspan>
-											<tspan x="${point.x}" dy="1.2em" font-size="8">${point.label}</tspan>`;
-					
-					const tipX = point.x - 25; 
-					const tipY = point.y - 45;
-					console.log('pY',point.y);
-					console.log('tY',tipY);
-					if (tipX < 0) tipX = 0;
-					if (tipX > this.#svgDimention.svgWidth - 50) tipX = this.#svgDimention.svgWidth - 50;
-					if (tipY < 0) tipY = 10;
-					
-
-					// tooltip Box (Background) Settings 🔥
-					tooltipBg.setAttribute("x", tipX+4);
-					tooltipBg.setAttribute("y", tipY+7);
-
-					// tooltip Box font Settings 🔥
-					tooltipText.setAttribute("x", point.x);
-					tooltipText.setAttribute("y", tipY + 5);
-
-
-					this.#chartSVG.appendChild(tooltipGroup);
-				});
-
+				this.#chartSVG.appendChild(tooltipGroup);
+			});
 				circle.addEventListener("mouseleave", () => {
-					//style on circle 
-					// वापस normal
-					setTimeout(() => {
-						circle.setAttribute("opacity", "1");
-						circle.style.transform = "scale(1)";
-					}, 50);
+					// remove Animation Effect on cicle by css
+					circle.classList.remove('animatedCircle');
+
 					circle.setAttribute("r", "1.5");
 
 					circle.setAttribute("fill", "#41ffff8e");
@@ -364,13 +542,44 @@ class SVGChart{
 
 					tooltipGroup.style.display = "none";
 				});
-				this.#chartSVG.appendChild(circle);
-			});
-
-			// Append tooltip group properly at the end so it's always on top
+			*/
+			
+		// Append tooltip group properly at the end so it's always on top
 			//this.#chartSVG.appendChild(tooltipGroup);
-		});
-		
+		this.#animateOnDataPoint__();
+	}
+	#animateOnDataPoint__(elemnt=null){
+		if (document.getElementById('chart-animations')) {
+			return 
+		}
+		const style = document.createElement('style');
+		style.id = 'chart-animations';
+		style.textContent = 
+		`/* Dots ke liye base aur hover animation */
+		.animatedCircle {
+			/* opacity: 0;
+			transform-origin: center;
+			/* animation: popIn 0.3s ease-out forwards; */
+			transition: all 0.2s ease; /* Hover par smooth transition */
+			cursor: pointer;
+		}
+
+		/* Hover karne par dot bada hoga */
+		.animatedCircle:hover {
+			fill: #87DBEB;
+			stroke: #f0fbff;
+			stroke-width: 2px;
+
+		}
+
+		@keyframes popIn {
+			0% { opacity: 0; transform: scale(0); }
+			100% { opacity: 1; transform: scale(1); }
+		}`;
+
+		document.head.appendChild(style);
+		//elemnt.addEventListener('mouseenter', ()=>{});
+		//elemnt.addEventListener('mouseleave', ()=>{});
 
 	}
 
@@ -392,7 +601,7 @@ class SVGChart{
 		// 			x1="${this.#padding.left}" y1="${this.#padding.top + this.#svgDimention.drawHeight}" 
 		// 			x2="${this.#padding.left + this.#svgDimention.drawWidth}" y2="${this.#padding.top + this.#svgDimention.drawHeight}" 
 		// 			stroke="#ccc" stroke-width="2" />
-		const yAxisLine =  this.#createLine({
+		const yAxisLine =  this.#createLineElement({
 			id:'xAxisLine',
 			x1: this.#padding.left, y1: this.#padding.top + this.#svgDimention.drawHeight, 
 			x2: this.#padding.left + this.#svgDimention.drawWidth, y2: this.#padding.top + this.#svgDimention.drawHeight,
@@ -409,7 +618,7 @@ class SVGChart{
 		font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">Time</text>
 		*/
 
-		const xTitle = this.#createTextElemet({
+		const xTitle = this.#createTextElement({
 			id: 'xTitle',
 			x: this.#padding.left + this.#svgDimention.drawWidth / 2,
 			y: this.#svgDimention.svgHeight - 5,
@@ -443,7 +652,7 @@ class SVGChart{
 		labels.forEach( (label, i)=> {
 			const xPos = this.#padding.left + (i / (labels.length-1)) * (this.#svgDimention.drawWidth - this.#padding.right);
 			// --- 1. creating Text Label---
-			const textEl = this.#createTextElemet({
+			const textEl = this.#createTextElement({
 				x: xPos,
 				y: this.#svgDimention.svgHeight - 17,
 				text_anchor: 'start',
@@ -454,7 +663,7 @@ class SVGChart{
 			xAxisLabelGroup.appendChild(textEl);
 
 			// --- 2. Create Dot (Circle) on X-axis🔥 ---
-			const dotEl = this.#createCircle({
+			const dotEl = this.#createCircleElement({
 				cx: xPos, // X position (same as text)
 				cy: 160,	// Y position (this on X-axis on line 160 )
 				radius: 2.5, // size of dot (Radius)
@@ -472,7 +681,7 @@ class SVGChart{
 		// <line x1="${this.#padding.left}" y1="${this.#padding.top}" 
 		// 		x2="${this.#padding.left}" y2="${this.#padding.top + this.#svgDimention.drawHeight}" 
 		// 		stroke="#ccc" stroke-width="2" />
-		const XAxisLine =  this.#createLine({
+		const XAxisLine =  this.#createLineElement({
 			id : 'yAxisLine',
 			x1:this.#padding.left, y1: this.#padding.top, x2:this.#padding.left, y2: this.#padding.top + this.#svgDimention.drawHeight,
 			stroke : '#ccc', stroke_width: 2});
@@ -480,7 +689,7 @@ class SVGChart{
 	}
 
 	#drawYAxisTitle(){
-		const yTitle = this.#createTextElemet({
+		const yTitle = this.#createTextElement({
 			x: - (this.#svgDimention.svgHeight / 2), y: 18,
 			textContent: this.#ChartStruct.yAxis.title,
 			rotate: {angle: -90},
@@ -506,13 +715,13 @@ class SVGChart{
 
 			// 🟡 GRID LINE ADD करो यहाँ
 			if (val !==	0 ){
-				const gridLine = this.#createLine({ x1 : this.#padding.left, x2 : this.#svgDimention.svgWidth - this.#padding.right, y1 : yPos, y2 : yPos, stroke : '#eee', stroke_width :1, });
+				const gridLine = this.#createLineElement({ x1 : this.#padding.left, x2 : this.#svgDimention.svgWidth - this.#padding.right, y1 : yPos, y2 : yPos, stroke : '#eee', stroke_width :1, });
 				yAxisGroup.appendChild(gridLine);
 			}
 			
 			
 			// 📝 TEXT LABEL
-			const textEl = this.#createTextElemet({
+			const textEl = this.#createTextElement({
 				x: this.#padding.left - 5, // Line se thoda pehle
 				y: yPos + 3, // Center align karne ke liye +3
 				textContent: val, font_size: 10
@@ -521,7 +730,7 @@ class SVGChart{
 			yAxisGroup.appendChild(textEl);
 
 			// 2. Create 🟡 Dot Mark on y-axis ---
-			const dotEls = this.#createCircle({
+			const dotEls = this.#createCircleElement({
 				cx: 40, 
 				cy: yPos,		// Y position (defult X-axis line on 160 )
 				radius : 2.5,	// dot's size (Radius)
@@ -540,7 +749,7 @@ class SVGChart{
 		<text x="175" y="15" transform="rotate(0)" text-anchor="middle" fill="#333" 
 		font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">${this.#ChartStruct.chart.label}</text> 
 		*/
-		const chatTitle = this.#createTextElemet({
+		const chatTitle = this.#createTextElement({
 			id : 'chartTitle',
 			x: this.#svgDimention.svgWidth / 2, 
 			y: Math.round(this.#svgDimention.svgHeight * 7/100),
@@ -557,7 +766,7 @@ class SVGChart{
 
 	// Helping methods
 	
-	#createSVG({viewBox={minX : 0, minY:0,  width:350,  height: 200}, width= '100%', height = '100%', preserveAspectRatio = 'none'}={}){
+	#createSVGElement({viewBox={minX : 0, minY:0,  width:350,  height: 200}, width= '100%', height = '100%', preserveAspectRatio = 'none'}={}){
 		const svgElemnt  =  document.createElementNS(SVGChart.svgNS, "svg");
 		if (viewBox){
 			const {minX, minY, width, height} = viewBox;
@@ -571,7 +780,7 @@ class SVGChart{
 		return svgElemnt;
 	}
 
-	#createTextElemet( {x = 0, y = 0, textContent = "", 
+	#createTextElement( {x = 0, y = 0, textContent = "", 
 						font_size = 12, fill = "#555", font_weight = 400, letter_spacing = 0.5 , font_family="Arial, sans-serif", 
 						text_anchor = "left", rotate = null , id=''}){
 		const textElemt = document.createElementNS(SVGChart.svgNS, 'text');
@@ -599,7 +808,7 @@ class SVGChart{
 		return textElemt;
 	}
 
-	#createLine({x1= 0, x2 =0, y1=10, y2=10, stroke = "#eee", stroke_width = 1}){
+	#createLineElement({x1= 0, x2 =0, y1=10, y2=10, stroke = "#eee", stroke_width = 1}){
 		const lineElemt =  document.createElementNS(SVGChart.svgNS, 'line');
 		
 		lineElemt.setAttribute("x1", x1);
@@ -612,7 +821,18 @@ class SVGChart{
 		return lineElemt;
 	}
 
-	#createCircle({ cx= 0, cy=0, radius=1, fill= "#333", stroke_color = '#ccc', stroke_width= '0'}){
+	#createRectElement({id= '', width=0, height=0, fill_color='', rx=0, fill_opacity=1, }){
+		const rectElement = document.createElementNS(SVGChart.svgNS, 'rect');
+		rectElement.setAttribute('id', id);
+		rectElement.setAttribute('width', width);
+		rectElement.setAttribute('height', height);
+		rectElement.setAttribute('fill', fill_color);
+		rectElement.setAttribute('rx', rx);
+		rectElement.setAttribute("fill-opacity", fill_opacity); // Transparency (0.1 to 1 )
+		return rectElement;
+	}
+
+	#createCircleElement({ cx= 0, cy=0, radius=1, fill= "#333", stroke_color = '#ccc', stroke_width= '0'}){
 		const dotElemnt = document.createElementNS(SVGChart.svgNS, 'circle');
 		dotElemnt.setAttribute('cx', cx);
 		dotElemnt.setAttribute('cy', cy);
@@ -629,7 +849,7 @@ class SVGChart{
 		return dotElemnt;
 	}
 
-	#createGroupElement({font_family = 'Arial', font_size = 12, fill = '#666', text_anchor = 'left', id = ''}){
+	#createGroupElement({font_family = '', font_size = 12, fill = '#666', text_anchor = 'left', id = ''}={}){
 		const groupElemet = document.createElementNS(SVGChart.svgNS, 'g');
 		
 		groupElemet.setAttribute('font-family', font_family);
@@ -640,7 +860,7 @@ class SVGChart{
 		
 		return groupElemet;
 	}
-	#createPath({id = '', fill = '#333', stroke= '#666', stroke_width = 1, d = ''}={}){
+	#createPathElement({id = '', fill = '#333', stroke= '#666', stroke_width = 1, d = ''}={}){
 		const pathElement =  document.createElementNS(SVGChart.svgNS, 'path');
 
 		pathElement.setAttribute('fill', fill);
