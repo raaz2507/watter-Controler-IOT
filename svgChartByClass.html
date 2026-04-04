@@ -224,7 +224,7 @@ class SVGChart{
 			viewBox:{minX :0, minY:0, width :this.#svgDimention.svgWidth, height: this.#svgDimention.svgHeight},
 			widht : '100%', height: '100%', preserveAspectRatio : 'none',
 		});
-
+		
 		this.#chartElemes.defs =  document.createElementNS(SVGChart.svgNS, 'defs');
 		this.#chartSVG.append(this.#chartElemes.defs);
 
@@ -243,6 +243,33 @@ class SVGChart{
 		this.#drawChartDataLine();   // lines + area
 		
 		this.#Chartcontainer.append(this.#chartSVG);
+
+
+
+		//svg me backgrund
+		const bgRect = document.createElementNS(SVGChart.svgNS, 'rect');
+
+		bgRect.setAttribute('x', 0);
+		bgRect.setAttribute('y', 0);
+		bgRect.setAttribute('width', '100%');
+		bgRect.setAttribute('height', '100%');
+		bgRect.setAttribute('fill', '#ffe7d9'); // light
+		bgRect.setAttribute('fill', 'url(#bgGradient)');
+		
+		this.#chartSVG.prepend(bgRect); // 👈 सबसे पहले add करो
+
+		this.#chartElemes.defs.append(bgGradiunt());
+
+		function bgGradiunt(){
+			const lineGradientElemt = document.createElementNS(SVGChart.svgNS, 'linearGradient');
+			lineGradientElemt.id = "bgGradient";
+			lineGradientElemt.innerHTML = 
+			`<stop offset="0%" stop-color="#ffe7d9"/>
+			<stop offset="50%" stop-color="#fffdfb"/>
+			<stop offset="100%" stop-color="#ffe7d9"/>`;
+
+			return lineGradientElemt;
+		}
 	}
 
 
@@ -338,9 +365,9 @@ class SVGChart{
 
 		const rect = document.createElementNS(SVGChart.svgNS, "rect");
 		rect.setAttribute("x", this.#padding.left);
-		rect.setAttribute("y", this.#svgDimention.svgHeight);
-		rect.setAttribute("width", this.#svgDimention.drawWidth);
-		rect.setAttribute("height", "0");
+		rect.setAttribute("y", this.#padding.top);
+		rect.setAttribute("width", 0);
+		rect.setAttribute("height", this.#svgDimention.drawHeight);
 
 		clipPath.appendChild(rect);
 		this.#chartElemes.defs.appendChild(clipPath);
@@ -349,17 +376,17 @@ class SVGChart{
 		areaChart.setAttribute("clip-path", `url(#${clipId})`);
 
 		//Step 3: animate करो (bottom → top)
-		rect.style.transition = "all 3.5s ease";
+		rect.style.transition = "all 2.5s ease";
 
 		setTimeout(() => {
-			rect.setAttribute("y", this.#padding.top);
-			rect.setAttribute("height", this.#svgDimention.drawHeight);
+			// rect.setAttribute("x", this.#padding.left);
+			rect.setAttribute("width", this.#svgDimention.drawWidth);
 		}, 100);
 		
 		const areaGradientID = 'areaGradient' + index;
 		this.#chartElemes.defs.append(this.#gradientChartFillEffect({id: areaGradientID , color: color}));
 
-		areaChart.setAttribute("fill", `url('#${areaGradientID}')`); //<=fix form here
+		areaChart.setAttribute("fill", `url('#${areaGradientID}')`); 
 		
 		this.#chartElemes.chartDataLine = {linePath, areaChart};
 		return {linePath, areaChart}
@@ -384,14 +411,14 @@ class SVGChart{
 		const toolTopsHeight = 30;
 		const tooltipBg = this.#createRectElement({
 			width: toolTipsWidth, height: toolTopsHeight, rx: 4,
-			fill_color: 'rgba(0,0,0,0.8)'
+			fill_color: 'rgba(74, 34, 6, 0.33)'
 		});
 		tooltipBg.classList.add('tooltip-bg');
 
 		const tooltipText = this.#createTextElement({
 			text_anchor: 'middle',
-			font_size: '11px',
-			fill: '#fff'
+			font_size: '10px',
+			fill: 'rgb(74, 34, 6)'
 		});
 		tooltipText.classList.add('tooltip-text');
 
@@ -473,7 +500,7 @@ class SVGChart{
 
 	#selectDataPointCircleAnimation(circle, index, total, type) {
 
-		const delay = ( (index / total) * 1.2).toFixed(2);
+		const delay = ( (index / total) * 2.5).toFixed(2);
 		
 		// console.log('delay:\t', delay);
 
@@ -518,7 +545,7 @@ class SVGChart{
 			transform-origin: center;
 			transition: all 0.2s ease;
 			cursor: pointer;
-			animation: popIn 3s ease-out forwards;
+			animation: popIn 2.5s ease-out forwards;
 		}
 		.circleAnimation:hover {
 			r: 4px;
@@ -590,9 +617,9 @@ class SVGChart{
 			x: this.#padding.left + this.#svgDimention.drawWidth / 2,
 			y: this.#svgDimention.svgHeight - 5,
 			text_anchor: 'middle',
-			fill: '#333',
+			fill: 'rgba(74, 34, 6, 1)',
 			font_family : 'Arial',
-			font_size : 10,
+			font_size : 9,
 			font_weight : 'bold',
 			letter_spacing : 1,
 			textContent : this.#ChartStruct.xAxis.title,
@@ -608,7 +635,7 @@ class SVGChart{
 		const xAxisLabelGroup = this.#createGroupElement({
 			id: 'xAxisLables',
 			font_family : 'Arial',
-			font_size: 10,
+			font_size: 6,
 			fill: '#666',
 			text_anchor: 'end'
 		});
@@ -623,7 +650,7 @@ class SVGChart{
 				x: xPos,
 				y: this.#svgDimention.svgHeight - 17,
 				text_anchor: 'start',
-				font_size: 8, 
+				font_size: 6, 
 				rotate : {angle: -45, cx: xPos- this.#padding.right, cy: this.#svgDimention.svgHeight}, // 🔥 45° tilt
 				textContent: label,
 			}); 
@@ -661,7 +688,7 @@ class SVGChart{
 			textContent: this.#ChartStruct.yAxis.title,
 			rotate: {angle: -90},
 			text_anchor: 'middle', fill : '#333',
-			font_family : 'Arial', font_size: 10, font_weight : 'bold', letter_spacing: 1,
+			font_family : 'Arial', font_size: 8, font_weight : 'bold', letter_spacing: 1,
 			id : "yTitle",
 		});
 
@@ -674,7 +701,7 @@ class SVGChart{
 
 		// 1. Draw Y-Axis Values (0, 25, 50, 75, 100)
 		//document.getElementById("yAxisValues");
-		const yAxisGroup = this.#createGroupElement({ font_family : 'Arial', font_size : 10, fill : '#666', text_anchor :'end', id : "YAxisLabels"});
+		const yAxisGroup = this.#createGroupElement({ font_family : 'Arial', font_size : 6, fill : 'rgba(74, 34, 6, 1)', text_anchor :'end', id : "YAxisLabels"});
 
 		
 		for (let val = 0; val <= this.#max; val += stepValue) {
@@ -691,7 +718,7 @@ class SVGChart{
 			const textEl = this.#createTextElement({
 				x: this.#padding.left - 5, // Line se thoda pehle
 				y: yPos + 3, // Center align karne ke liye +3
-				textContent: val, font_size: 10
+				textContent: val, font_size: 6
 			});
 
 			yAxisGroup.appendChild(textEl);
@@ -721,8 +748,8 @@ class SVGChart{
 			x: this.#svgDimention.svgWidth / 2, 
 			y: Math.round(this.#svgDimention.svgHeight * 7/100),
 			textContent : this.#ChartStruct.chart.title,
-			text_anchor: "middle", fill : '#333', font_weight: "bold",
-			letter_spacing : 1, font_family : 'Arial', font_size: 10
+			text_anchor: "middle", fill : 'rgba(74, 34, 6, 1)', font_weight: "bold",
+			letter_spacing : 0, font_family : "'Inter', 'Roboto', 'sans-serif'", font_size: 10
 		});
 
 		this.#chartSVG.append(chatTitle);
