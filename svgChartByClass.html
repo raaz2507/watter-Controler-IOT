@@ -15,7 +15,7 @@
 			height: 100%;
 		}
 		/* Area chart fade-in */
-		.dataLineAnimate {
+		.chartDataline {
 			opacity: 0;
 			animation: fadeIn 2s ease-in-out forwards;
 			animation-delay: 0.5s;
@@ -25,38 +25,62 @@
 			to { opacity: 0.5; }
 		}
 
-		/* Dots ke liye base aur hover animation */
-		.animatedCircle {
-			/* opacity: 0; */
-			transform-origin: center;
-			/* animation: popIn 0.3s ease-out forwards; */
-			transition: all 0.2s ease; /* Hover par smooth transition */
-			cursor: pointer;
+		/* Tooltip style */
+		.tooltip-text {
+			font-family: Arial, sans-serif;
+			font-size: 12px;
+			fill: white;
+			font-weight: bold;
+			pointer-events: none; /* Mouse block na kare */
+		}
+		.tooltip-bg {
+			fill: rgba(0, 0, 0, 0.8);
+			rx: 4; /* Rounded corners */
+			pointer-events: none;
+			animation: fadeIn 400ms ease-in-out forwards;
+		}
+		.hide{
+			display: none;
 		}
 
-		/* Hover karne par dot bada hoga */
-		.animtedCircle:hover {
-			r: 4px;
-			fill: #87DBEB;
-			stroke: #f0fbff;
-			stroke-width: 2px;
-
+		.areaChart {
+			transform: translateY(20px);
+			opacity: 0;
+			animation: areaSlide 1s ease forwards;
 		}
 
-		@keyframes popIn {
-			0% { opacity: 0; transform: scale(0); }
-			100% { opacity: 1; transform: scale(1); }
+		@keyframes areaSlide {
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+		#xAxisLables text {
+			opacity: 0;
+			animation: fadeIn 1s ease forwards;
 		}
 
+		line {
+			stroke-dasharray: 5;
+			animation: dash 1s linear forwards;
+		}
+
+		@keyframes dash {
+			from { stroke-dashoffset: 10; }
+			to { stroke-dashoffset: 0; }
+		}
+		@keyframes gradientMove {
+			0% { stop-opacity: 0.3; }
+			100% { stop-opacity: 0.9; }
+		}
 	</style>
 </head>
 <body>
     <div class="chartContailner" id="myChart"></div>
 
 <script>
-	
-	function createChart(){
-		 new SVGChart("#myChart", {
+	function todayChart() {
+		new SVGChart("#myChart", {
 			chart:{
 				type: 'line',
 				title : "Last 24hr Chart",
@@ -67,9 +91,11 @@
 			yAxis:{
 				title: "Water Lavel (in %)",
 			},
-			//Lablesfor24Hours(),
+
+			// ['12am', '01am', '02am', '03am', '04am', '05am', '06am', '07am', '08am', '09am', '10am', '11am', '12pm', '01pm', '02pm', '03pm', '04pm', '05pm', '06pm', '07pm', '08pm', '09pm', '10pm', '11pm']
+		
 			data: {
-				labels: ['12am', '01am', '02am', '03am', '04am', '05am', '06am', '07am', '08am', '09am', '10am', '11am', '12pm', '01pm', '02pm', '03pm', '04pm', '05pm', '06pm', '07pm', '08pm', '09pm', '10pm', '11pm'],
+				labels: Lablesfor24Hours(),
 				datasets: [
 					{	
 						label: "tank1", 
@@ -83,15 +109,49 @@
 					}
 				],
 			},
-			animationType: "fade", // scale | fade | slide
+			animationType: "scale", // scale | fade | slide
 			
 			
 			options: {
 			},
 		 });
+
+		 function Lablesfor24Hours(){
+			const lables= [];
+			const now = new Date();
+			for (let i = 0; i < 24; i++) {
+				// 🕒 Current time based shift
+				
+				let hour = (now.getHours() - (24 - i) + 24) % 24;
+				let label = "";
+
+				if (hour === 0) label = "12 am";
+				else if (hour < 12) label = hour.toString().padStart(2, '0') + " am";
+				else if (hour === 12) label = "12 pm";
+				else label = (hour - 12).toString().padStart(2, '0') + " pm";
+				
+				lables.push(label);
+			}
+			
+			return lables;
+		}
 	}
+
+	function weekly(data) {
+		this.draw(data, "week");
+	}
+
+	function monthly(data) {
+		this.draw(data, "month");
+	}
+
+	function currentHour(data) {
+		this.draw(data, "hour");
+	}
+
+	
 	document.addEventListener("DOMContentLoaded", ()=>{
-		createChart();
+		todayChart();
     });
 //by class
 class CoreSVGChart{}
@@ -107,7 +167,14 @@ class SVGChart{
 
 	#ChartStruct =null;
 	#chartSVG = null;
-	#chartElemes ={chartSVG: null, ChartContainer: null, defs: null};
+	#chartElemes =
+	{
+		ChartContainer: null, chartSVG: null, defs: null,
+		chartTitle:null,
+		xAxisLine: null, xAxisLables: null, xAxisTitle: null, 
+		yAxisLine: null, yAxisLables: null, yAxisTitle: null,
+		chartDataLine:null, chartDataPointCircles: null,  tooltipsGroup:null, 
+	};
 	#min=null;
 	#max=null;
 
@@ -157,27 +224,7 @@ class SVGChart{
 			viewBox:{minX :0, minY:0, width :this.#svgDimention.svgWidth, height: this.#svgDimention.svgHeight},
 			widht : '100%', height: '100%', preserveAspectRatio : 'none',
 		});
-		
-		// this.#chartSVG.innerHTML = `
-		// 	<!-- Chart Title -->
-		// 	<!--<text x="175" y="15" transform="rotate(0)" text-anchor="middle" fill="#333" font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">${this.#ChartStruct.chart.label}</text>--> 
-			
-		// 	<!-- vertical line (y-axis)-->
-		// 	<!--<text id="yTitle" x="-100" y="18" transform="rotate(-90)" text-anchor="middle" fill="#333" font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">Water Lavel</text>-->
-			
-		// 	<!--<line id="yAxisLine" x1="${this.#padding.left}" y1="${this.#padding.top}" 
-		// 		x2="${this.#padding.left}" y2="${this.#padding.top + this.#svgDimention.drawHeight}" 
-		// 		stroke="#ccc" stroke-width="2" /> -->
-		// 	<!--<g id="yAxisLabels" font-family="Arial" font-size="10" fill="#666" text-anchor="end"></g>-->
 
-		// 	<!-- horizontal Line (x-axis) -->
-		// 		<!--<text id="xTitle" x="175" y="195" transform="rotate(0)" text-anchor="middle" fill="#333" font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">Time</text>-->
-		// 		<!--<line id="xAxisLine"
-		// 			x1="${this.#padding.left}" y1="${this.#padding.top + this.#svgDimention.drawHeight}" 
-		// 			x2="${this.#padding.left + this.#svgDimention.drawWidth}" y2="${this.#padding.top + this.#svgDimention.drawHeight}" 
-		// 			stroke="#ccc" stroke-width="2" /> -->
-		// 		<!--<g id="xAxisLabels"  font-family="Arial" font-size="10" fill="#666" text-anchor="end"></g>-->
-		// 	`;
 		this.#chartElemes.defs =  document.createElementNS(SVGChart.svgNS, 'defs');
 		this.#chartSVG.append(this.#chartElemes.defs);
 
@@ -192,6 +239,7 @@ class SVGChart{
 		this.#drawYAxisLabels(); // y numbers
 		this.#drawYAxisTitle();
 		
+		this.#addAnimationsInCSS(); //this will add animation code in CSS
 		this.#drawChartDataLine();   // lines + area
 		
 		this.#Chartcontainer.append(this.#chartSVG);
@@ -200,7 +248,6 @@ class SVGChart{
 
 	#drawChartDataLine(){
 		//console.log( this.#ChartStruct.labels );
-		this.#addAnimations();
 		this.#ChartStruct.data.datasets.forEach(( dataset, index)=>{
 			
 			const datasetGroup = this.#createGroupElement({id: 'dataset' + index});
@@ -257,13 +304,24 @@ class SVGChart{
 		const linePath = this.#createPathElement({id: 'lineChart' + index, fill: 'none', stroke: color, stroke_width: 2, d :smoothPathString});
 
 		// Line Drawing Animation setup
+		// linePath.classList.add('chartDataline');
+		
+		
 		const pathLength = linePath.getTotalLength();
+
+		// Step 1: line hidden करो
 		linePath.style.strokeDasharray = pathLength;
 		linePath.style.strokeDashoffset = pathLength;
-		linePath.getBoundingClientRect(); 
-		// linePath.style.transition = 'stroke-dashoffset 2s ease-in-out';
-		linePath.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)';
-		linePath.style.strokeDashoffset = '0';
+
+		// Step 2: transition add करो (IMPORTANT)
+		// linePath.style.transition = 'stroke-dashoffset 900ms cubic-bezier(0.4, 0, 0.2, 1)';
+		linePath.style.transition = "stroke-dashoffset 2.5s ease";
+		// ❗ Step 3: delay (IMPORTANT 🔥)
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				linePath.style.strokeDashoffset = "0";
+			});
+		});
 
 		
 		// Area set karna
@@ -271,11 +329,39 @@ class SVGChart{
 		
 		const areaChart = this.#createPathElement({ id: 'areaChart' + index, fill: color, stroke: 'none', d : areaPathString});
 		
+		//areaChart par animation
+		//Step 1: clipPath बनाओ
+		const clipId = "clip" + index;
+
+		const clipPath = document.createElementNS(SVGChart.svgNS, "clipPath");
+		clipPath.setAttribute("id", clipId);
+
+		const rect = document.createElementNS(SVGChart.svgNS, "rect");
+		rect.setAttribute("x", this.#padding.left);
+		rect.setAttribute("y", this.#svgDimention.svgHeight);
+		rect.setAttribute("width", this.#svgDimention.drawWidth);
+		rect.setAttribute("height", "0");
+
+		clipPath.appendChild(rect);
+		this.#chartElemes.defs.appendChild(clipPath);
+		
+		//Step 2: areaChart पर apply करो
+		areaChart.setAttribute("clip-path", `url(#${clipId})`);
+
+		//Step 3: animate करो (bottom → top)
+		rect.style.transition = "all 3.5s ease";
+
+		setTimeout(() => {
+			rect.setAttribute("y", this.#padding.top);
+			rect.setAttribute("height", this.#svgDimention.drawHeight);
+		}, 100);
+		
 		const areaGradientID = 'areaGradient' + index;
 		this.#chartElemes.defs.append(this.#gradientChartFillEffect({id: areaGradientID , color: color}));
 
 		areaChart.setAttribute("fill", `url('#${areaGradientID}')`); //<=fix form here
 		
+		this.#chartElemes.chartDataLine = {linePath, areaChart};
 		return {linePath, areaChart}
 	}
 
@@ -292,17 +378,22 @@ class SVGChart{
 			id: 'tooltipGroup' + index
 		});
 		tooltipGroup.style.display = "none";
+		tooltipGroup.dataset.label = 'tooltipGroup' + index;
 
+		const toolTipsWidth = 60;
+		const toolTopsHeight = 30;
 		const tooltipBg = this.#createRectElement({
-			width: 60, height: 30, rx: 4,
+			width: toolTipsWidth, height: toolTopsHeight, rx: 4,
 			fill_color: 'rgba(0,0,0,0.8)'
 		});
+		tooltipBg.classList.add('tooltip-bg');
 
 		const tooltipText = this.#createTextElement({
 			text_anchor: 'middle',
 			font_size: '11px',
 			fill: '#fff'
 		});
+		tooltipText.classList.add('tooltip-text');
 
 		tooltipGroup.append(tooltipBg, tooltipText);
 
@@ -317,9 +408,11 @@ class SVGChart{
 				stroke_color: '#fff',
 				stroke_width: '1'
 			});
+			// 🔥 IMPORTANT (add this)
+			circle.style.opacity = "0";
 
 			// 🔥 animation select
-			this.#applyAnimation(circle, i, points.length, animationType);
+			this.#selectDataPointCircleAnimation(circle, i, points.length, animationType);
 
 			// 🔥 data store (important)
 			circle.dataset.x = point.x;
@@ -331,49 +424,45 @@ class SVGChart{
 			group.append(circle);
 		});
 		
-		let lastActive = null;
-		// 🔥 EVENT → only on group
-		group.addEventListener("mousemove", (e) => {
+		//let pointedCircle=null;
+		//🔥 EVENT → only on group
+		group.addEventListener("mouseover", (e) => {
 
-			const target = e.target;
-
+			const circleP = e.target.closest('circle');
+			// console.log(circleP);
+			
 			// only circle trigger
-			if (target.tagName !== 'circle') return;
-
-			if (lastActive) {
-				lastActive.setAttribute("r", "2");
-			}
-
-			// reset all circles
-			group.querySelectorAll("circle").forEach(c => {
-				c.setAttribute("r", "2");
-			});
-
+			if (!circleP) return;
+			//pointedCircle = circleP;
 			// active circle
-			target.setAttribute("r", "4");
-			lastActive = target;
+			//circleP.setAttribute("r", "4");
 			// tooltip show
 			tooltipGroup.style.display = "block";
-
-			const x = +target.dataset.x;
-			const y = +target.dataset.y;
+			// tooltipGroup.classList.remove('hide');
+			const x = +circleP.dataset.x;
+			const y = +circleP.dataset.y;
 
 			tooltipText.innerHTML = `
-				<tspan x="30" dy="1.2em">${target.dataset.val}%</tspan>
-				<tspan x="30" dy="1.2em" font-size="8">${target.dataset.label}</tspan>
+				<tspan x="30" dy="1.2em">${circleP.dataset.val}%</tspan>
+				<tspan x="30" dy="1.2em" font-size="8">${circleP.dataset.label}</tspan>
 			`;
 
 			let tipX = x - 30;
 			let tipY = y - 40;
 
 			if (tipX < 0) tipX = 0;
-			if (tipY < 0) tipY = y + 10;
-
+			if (tipX > this.#svgDimention.svgWidth-toolTipsWidth) {
+				tipX = this.#svgDimention.svgWidth-toolTipsWidth -10 ;
+			}
+			if (tipY < 0) tipY = y + 7;
+			console.log(tipX, this.#svgDimention.svgWidth);
 			tooltipGroup.setAttribute("transform", `translate(${tipX}, ${tipY})`);
 		});
 
-		group.addEventListener("mouseleave", () => {
+		group.addEventListener("mouseout", () => {
+			//if(pointedCircle) pointedCircle.setAttribute("r", "2");
 			tooltipGroup.style.display = "none";
+			tooltipGroup.classList.add('hide');
 		});
 
 		// 🔥 append tooltip inside group
@@ -382,9 +471,11 @@ class SVGChart{
 		return group;
 	}
 
-	#applyAnimation(circle, index, total, type) {
+	#selectDataPointCircleAnimation(circle, index, total, type) {
 
-		const delay = (index / total) * 0.6;
+		const delay = ( (index / total) * 1.2).toFixed(2);
+		
+		// console.log('delay:\t', delay);
 
 		switch(type) {
 
@@ -405,13 +496,15 @@ class SVGChart{
 				circle.style.animation = `slideUp 0.5s ease forwards`;
 				circle.style.animationDelay = `${delay}s`;
 				break;
-
+			case 'popIn':
+				circle.style.animation = `popIn 3s ease-out forwards`;
 			default:
 				// default animation
 				circle.style.animation = `scaleIn 0.4s ease forwards`;
 		}
 	}
-	#addAnimations(){
+	
+	#addAnimationsInCSS(){
 		if(document.getElementById('animation')){
 			return ;
 		}
@@ -422,7 +515,17 @@ class SVGChart{
 
 		` 
 		.circleAnimation{
+			transform-origin: center;
 			transition: all 0.2s ease;
+			cursor: pointer;
+			animation: popIn 3s ease-out forwards;
+		}
+		.circleAnimation:hover {
+			r: 4px;
+			fill: #87DBEB;
+			stroke: #f0fbff;
+			stroke-width: 2px;
+
 		}
 		@keyframes scaleIn {
 			0% { transform: scale(0); opacity: 0; }
@@ -437,151 +540,15 @@ class SVGChart{
 		@keyframes slideUp {
 			0% { transform: translateY(10px); opacity: 0; }
 			100% { transform: translateY(0); opacity: 1; }
-		}`;
-	}
-	// ==================================
-	
-	#createChartDataToolTips__(points, index){
-		// Tooltip elements
-		const tooltipGroup = document.createElementNS(SVGChart.svgNS, 'g');
-		tooltipGroup.setAttribute('id', 'tooltipGroup' + index);
-		tooltipGroup.style.display = 'none';
-
-		const tooltipBg = this.#createRectElement({
-			id : 'tooltipBg' + index, 
-			width: 40, height: 25, rx: 4,
-			fill_color : 'rgba(0, 0, 0, 0.8)', fill_opacity : 0.8,
-		});
-		tooltipBg.style.pointerEvents = 'none';
-
-
-		const tooltipText = this.#createTextElement({
-			id: 'tooltipText' + index,
-			text_anchor : 'middle',
-			font_family : 'Arial, sans-serif', font_size : '12px', font_weight: 'bold', fill : '#fff',
-		});
-		tooltipText.style.pointerEvents = 'none';
-		
-		tooltipGroup.append(tooltipBg, tooltipText);
-		
-		// 4. data graph line par Circles draw karna aur Tooltip Event lagana
-		const boxWidth = 50;
-		const boxHeight = 25;
-		console.log(points);
-		const datapointCircleGroup = this.#createGroupElement({id : 'chartDataPointCircles' + index});
-		
-		points.forEach((point, index) => {
-			const circle = this.#createCircleElement({
-				cx: point.x, cy: point.y, radius : 1.5, 
-				fill: '#41ffff8e', stroke_color: 'rgb(255, 255, 255)', stroke_width: '1'
-			});
-			circle.style.animationDelay = `${(index / points.length) * 2}s`;
-
-			datapointCircleGroup.append(circle);
-		});	
-		
-		return datapointCircleGroup;
-		/*
-			// Tooltip Hover Logic
-			circle.addEventListener("mouseenter", () => {
-				// add Animation Effect on cicle by css
-				circle.classList.add('animatedCircle');
-
-				// add Animation Effect on tooltips by css
-				//tooltipGroup.classList.add('dataLineAnimate');
-
-				// style on cicle
-				circle.style.transitionOrigin = 'center';
-				circle.style.transition = 'all 0.2s ease';
-				//circle.style.animation = 'popIn 0.3s ease-out forwards';
-				circle.style.cursor = 'pointer';
-
-				// बड़ा करो
-				circle.setAttribute("r", "4");
-
-				// color change
-				circle.setAttribute("fill", "#87DBEB");
-				circle.setAttribute("stroke", "#f0fbff");
-				circle.setAttribute("stroke-width", "2");
-
-
-				tooltipGroup.style.display = "block";
-				
-				// टूलटिप में वैल्यू और टाइम दोनों दिखाएं
-				tooltipText.innerHTML = `<tspan x="${point.x}" dy="1.2em" font-weight="bold">${point.val}%</tspan>
-										<tspan x="${point.x}" dy="1.2em" font-size="8">${point.label}</tspan>`;
-				
-				let tipX = point.x - boxHeight; 
-				let tipY = point.y - boxWidth/2;
-				if (tipX < 0) tipX = 0;
-				//if (tipX > this.#svgDimention.svgWidth - 50) tipX = this.#svgDimention.svgWidth - boxWidth;
-				if (tipY < 0) tipY = 10;
-				//if (tipY > this.#svgDimention.svgHeight - 50) tipY = this.#svgDimention.svgHeight - boxHeight;
-
-				// tooltip Box (Background) Settings 🔥
-				tooltipBg.setAttribute("x", tipX+2);
-				tooltipBg.setAttribute("y", tipY);
-
-				// tooltip Box font Settings 🔥
-				// tooltipText.setAttribute("x", tipX -70);
-				tooltipText.setAttribute("y", tipY-2);
-			
-
-				this.#chartSVG.appendChild(tooltipGroup);
-			});
-				circle.addEventListener("mouseleave", () => {
-					// remove Animation Effect on cicle by css
-					circle.classList.remove('animatedCircle');
-
-					circle.setAttribute("r", "1.5");
-
-					circle.setAttribute("fill", "#41ffff8e");
-					circle.setAttribute("stroke", "white");
-					circle.setAttribute("stroke-width", "1");
-
-
-					tooltipGroup.style.display = "none";
-				});
-			*/
-			
-		// Append tooltip group properly at the end so it's always on top
-			//this.#chartSVG.appendChild(tooltipGroup);
-		this.#animateOnDataPoint__();
-	}
-	#animateOnDataPoint__(elemnt=null){
-		if (document.getElementById('chart-animations')) {
-			return 
 		}
-		const style = document.createElement('style');
-		style.id = 'chart-animations';
-		style.textContent = 
-		`/* Dots ke liye base aur hover animation */
-		.animatedCircle {
-			/* opacity: 0;
-			transform-origin: center;
-			/* animation: popIn 0.3s ease-out forwards; */
-			transition: all 0.2s ease; /* Hover par smooth transition */
-			cursor: pointer;
-		}
-
-		/* Hover karne par dot bada hoga */
-		.animatedCircle:hover {
-			fill: #87DBEB;
-			stroke: #f0fbff;
-			stroke-width: 2px;
-
-		}
-
 		@keyframes popIn {
 			0% { opacity: 0; transform: scale(0); }
 			100% { opacity: 1; transform: scale(1); }
-		}`;
-
-		document.head.appendChild(style);
-		//elemnt.addEventListener('mouseenter', ()=>{});
-		//elemnt.addEventListener('mouseleave', ()=>{});
-
+		}	
+		`;
+		document.head.append(styleSheet);
 	}
+	
 
 	#gradientChartFillEffect({id='', x1=0, y1=0, x2=0, y2=1,color= '#af556a'}){
 		const linearGradientElemnt = document.createElementNS(SVGChart.svgNS, 'linearGradient');
@@ -590,8 +557,8 @@ class SVGChart{
 		linearGradientElemnt.setAttribute('y1', y1);
 		linearGradientElemnt.setAttribute('x2', x2);
 		linearGradientElemnt.setAttribute('y2', y2);
-		linearGradientElemnt.innerHTML = `<stop offset="0%" stop-color="${color}" stop-opacity="0.9"/>
-											<stop offset="100%" stop-color="${color}" stop-opacity=".3"/>`;
+		linearGradientElemnt.innerHTML = `<stop offset="0%" stop-color="${color}" stop-opacity="0.6"/>
+											<stop offset="100%" stop-color="${color}" stop-opacity=".1"/>`;
 		
 		return linearGradientElemnt;
 	}
@@ -612,11 +579,11 @@ class SVGChart{
 	
 	#drawXAxisTitle(){
 
-		/*
-		<!-- xAxis Title --> 
-		<text id="xTitle" x="175" y="195" transform="rotate(0)" text-anchor="middle" fill="#333" 
-		font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">Time</text>
-		*/
+		
+		// <!-- xAxis Title --> 
+		// <text id="xTitle" x="175" y="195" transform="rotate(0)" text-anchor="middle" fill="#333" 
+		// font-family="Arial" font-size="10" font-weight="bold" letter-spacing="1">Time</text>
+		
 
 		const xTitle = this.#createTextElement({
 			id: 'xTitle',
@@ -874,42 +841,7 @@ class SVGChart{
 
 }
 
-// today(data) {
-// 		this.draw(data, "24h");
-// 	}
 
-// 	weekly(data) {
-// 		this.draw(data, "week");
-// 	}
-
-// 	monthly(data) {
-// 		this.draw(data, "month");
-// 	}
-
-// 	currentHour(data) {
-// 		this.draw(data, "hour");
-// 	}
-
-function Lablesfor24Hours(){
-		const lables= [];
-		const now = new Date();
-		for (let i = 0; i < 24; i++) {
-			// 🕒 Current time based shift
-			
-			let hour = (now.getHours() - (24 - i) + 24) % 24;
-			let label = "";
-
-			if (hour === 0) label = "12 am";
-			else if (hour < 12) label = hour.toString().padStart(2, '0') + " am";
-			else if (hour === 12) label = "12 pm";
-			else label = (hour - 12).toString().padStart(2, '0') + " pm";
-			
-			lables.push(label);
-		}
-		
-		return lables;
-	}
-	//console.log(Lablesfor24Hours());
 </script>
 </body>
 </html>
