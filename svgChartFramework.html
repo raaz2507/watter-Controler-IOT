@@ -249,7 +249,7 @@ class LineChart extends CoreSVGChart{
 		xAxisLine: null, xAxisLables: null, xAxisTitle: null, 
 		yAxisLine: null, yAxisLables: null, yAxisTitle: null,
 		chartDataSetsElemnts : [ {
-			chartDataLine: null, chartAreaFill: null, clipRect: null, chartDataPointCirclesGroup: null,  tooltips:{group : null, text : null , arrow : null}, dataPointGroup : null
+			chartDataLine: null, chartAreaFill: null, clipRect: null, chartDataPointCirclesGroup: null,  tooltips:{group : null, text : null ,background :null, arrow : null}, dataPointGroup : null
 		}, ],
 		dataCircleMasterGroup : null,
 	};
@@ -445,6 +445,8 @@ class LineChart extends CoreSVGChart{
 
 		this.#addBackGroundInSVG();
 		this.#chartElements.chartContainer.append(this.#chartElements.chartSVG);
+
+		this.#addEventOnDataPoint();
 	}
 
 	#addBackGroundInSVG(){
@@ -746,8 +748,6 @@ class LineChart extends CoreSVGChart{
 			
 			dataCircleMainGroup.append(datapointCircleGroup, dataTooltipsGroup);
 
-			this.#addEventOnDataPoint();
-
 			datasetGroup.append( chartAreaFill, linePath);
 			this.#chartElements.chartSVG.appendChild(datasetGroup);
 		});
@@ -845,7 +845,7 @@ class LineChart extends CoreSVGChart{
 		// 🔹 tooltip (single per dataset)
 		const tooltipGroup = this.createGroupElement({id: 'tooltipGroup' + index});
 
-		tooltipGroup.style.display = "none";
+		// tooltipGroup.style.display = "none";
 		tooltipGroup.dataset.label = 'tooltipGroup' + index;
 		tooltipGroup.classList.add('tooltip');
 
@@ -879,6 +879,7 @@ class LineChart extends CoreSVGChart{
 
 		this.#chartElements.chartDataSetsElemnts[index].tooltips = {
 			group: tooltipGroup,
+			background : tooltipBg,
 			text: tooltipText,
 			arrow: dilogArrow
 		};
@@ -918,26 +919,35 @@ class LineChart extends CoreSVGChart{
 	}
 
 	#addEventOnDataPoint(){
+		const tooltip = new SmartTooltip(this.#chartElements.chartSVG, {
+			arrowSize: 5,
+			offset: 10
+			});
+
+			
 		this.#addCSS('circleHoverAnimaiton', 
 		`.dataPointCircle {
-			transition: transform 0.25s ease;
-			transform-box: fill-box;
-			transform-origin: center;
+			transition: r 150ms ease-out, fill 0.3s ease;
+			transform-box: fill-box; 
+    		transform-origin: center;
 		}
-		.dataPointCircle.active {
-  			transform: scale(2);
-			
-		}
+
+		.dataPointCircle.active {}
 			
 		/* tooltip class*/
 		.tooltip {
 			opacity: 0;
-			transition: opacity 0.2s ease;
-			pointer-events: none;
+    		visibility: hidden;
+
+	transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	transform-box: fill-box; 
+    transform-origin: center;
+    pointer-events: none; /* Mouse iske paar ja sake */
 			}
 
 			.tooltip.show {
 			opacity: 1;
+    visibility: visible;
 			} 
 		`);
 
@@ -950,16 +960,22 @@ class LineChart extends CoreSVGChart{
 			const circleP = e.target.closest('circle'); // only circle trigger
 			if (!circleP) return;
 			// console.log("hover fired", circleP);
-			console.log(circleP.classList.toString());
+			// console.log(circleP.classList.toString());
+			
 			// tooltip show
 			const datasetIndex = circleP.dataset.datasetIndex;
-			const {group: tooltipGroup , text : tooltipText, arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
+			const {group: tooltipGroup , text : tooltipText, background: tooltipBg , arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
 
 			circleP.classList.add('active');
-			tooltipGroup.classList.add("show");
-			// circleP.setAttribute("r", "3");
-			// circleP.style.transition=  `transform 2000ms ease`;
-			// tooltipGroup.classList.remove('hide');
+			circleP.setAttribute("r", "3");
+			// circleP.setAttribute('transition', `r 150ms ease-out, fill 0.3s ease`);
+			// circleP.setAttribute('transform-box', `fill-box`); 
+    		// circleP.setAttribute(`transform-origin`, `center`);
+
+			// circleP.style.transition = `r 200ms ease-out, fill 0.3s ease`;
+			
+
+			// tooltipGroup.style.display = 'block';
 			const x = +circleP.dataset.x;
 			const y = +circleP.dataset.y;
 
@@ -968,39 +984,92 @@ class LineChart extends CoreSVGChart{
 				<tspan x="30" dy="1.2em" font-size="8">${circleP.dataset.label}</tspan>
 			`;
 
-			const bbox = tooltipGroup.getBBox();
+			tooltipGroup.setAttribute("transform", "translate(0,0)"); // reset
+			const bbox =  tooltipBg.getBBox();;
 			const toolTipsWidth = bbox.width;
 			const toolTipsHeight = bbox.height;
 
-
-			let tipX = x - 30;
-			let tipY = y - 40;
-
-			if (tipX < 0) tipX = 0;
-			if (tipX > this.#svgDimention.svgWidth-toolTipsWidth) {
-				tipX = this.#svgDimention.svgWidth-toolTipsWidth -25 ;
-				tipY = tipY + toolTipsHeight -5;
-				// console.log(tipY, this.#svgDimention.svgWidth, toolTipsHeight);
-			}
-			if (tipY < 0) tipY = y + 7;
-			// console.log(tipX, this.#svgDimention.svgWidth);
-			tooltipGroup.setAttribute("transform", `translate(${tipX}, ${tipY})`);
-
 			const dilogArowSize =5;
+			
+			let tipX = x - (toolTipsWidth / 2);
+			let tipY = y - toolTipsHeight - 10; // default ऊपर दिखे
 
-			if (y < 40) {
-				// tooltip नीचे दिखे → arrow ऊपर
-				dilogArrow.setAttribute("d", `M ${dilogArowSize} 0 L ${dilogArowSize * 2} ${dilogArowSize} L 0 ${dilogArowSize} Z`);
-				dilogArrow.setAttribute("transform", `translate(${(toolTipsWidth /2) - dilogArowSize}, -5)`);
-			} else {
-				// tooltip ऊपर → arrow नीचे
-				dilogArrow.setAttribute("d", `M 0 0 L ${dilogArowSize * 2 } 0 L ${dilogArowSize} ${dilogArowSize} Z`);
-				dilogArrow.setAttribute("transform", "translate(25, 30)");
+
+
+
+			// hover example
+			
+			tooltip.show(x, y, "Hello jaan 😄");
+
+			
+
+
+
+			let position = "top"; // default
+
+			if (tipY < this.#padding.top) {
+				position = "bottom";
+			} 
+			else if (tipX <= this.#padding.left) {
+				position = "right";
+			} 
+			else if (tipX + toolTipsWidth>= this.#svgDimention.svgWidth + this.#padding.right){
+				position = "left";
 			}
+			console.log(position);
+			console.log(`${tipX + toolTipsWidth}, ${this.#svgDimention.svgWidth + this.#padding.right}`);
+			let correctionX = 0, correctionY = 0;
+			switch(position) {
+				case "top":
+					//⬆ TOP (tooltip ऊपर → arrow नीचे)
+					dilogArrow.setAttribute("d",
+					`M 0 0 L ${dilogArowSize*2} 0 L ${dilogArowSize} ${dilogArowSize} Z`
+					);
+					dilogArrow.setAttribute("transform",
+					`translate(${toolTipsWidth/2 - dilogArowSize}, ${toolTipsHeight})`
+					);
+					break;
+				case "bottom":
+					//⬇ BOTTOM (tooltip नीचे → arrow ऊपर)
+					dilogArrow.setAttribute("d",
+					`M ${dilogArowSize} 0 L ${dilogArowSize*2} ${dilogArowSize} L 0 ${dilogArowSize} Z`
+					);
+					dilogArrow.setAttribute("transform",
+					`translate(${toolTipsWidth/2 - dilogArowSize}, -${dilogArowSize})`
+					);
+					correctionX = 0; 
+					correctionY= toolTipsHeight + dilogArowSize + 15;
+					break;
+				case "left":
+					// ⬅ LEFT (tooltip left → arrow right side)
+					dilogArrow.setAttribute("d",
+					`M 0 0 L ${dilogArowSize} ${dilogArowSize} L 0 ${dilogArowSize*2} Z`
+					);
+					dilogArrow.setAttribute("transform",
+					`translate(${toolTipsWidth }, ${toolTipsHeight/2 - dilogArowSize})`
+					);
+					correctionX = (-toolTipsWidth/2) - 10; 
+					correctionY= toolTipsHeight - dilogArowSize;
+					break;
+				case "right":
+					// ➡ RIGHT (tooltip right → arrow left side)
+					dilogArrow.setAttribute("d",
+					`M ${dilogArowSize} 0 L ${dilogArowSize} ${dilogArowSize*2} L 0 ${dilogArowSize} Z`
+					);
+					dilogArrow.setAttribute("transform",
+					`translate(-${dilogArowSize}, ${toolTipsHeight/2 - dilogArowSize})`
+					);
+
+					correctionX = toolTipsWidth/2 + dilogArowSize + 5; 
+					correctionY= toolTipsHeight-dilogArowSize;
+					break;
+			}
+
+			tooltipGroup.setAttribute("transform", `translate(${tipX + correctionX}, ${tipY + correctionY})`);
+			tooltipGroup.classList.add("show");
 		}, true);
 
 		mainCircelGroup.addEventListener("mouseout", (e) => {
-			console.log('mo');
 			const circleP = e.target.closest('circle'); // only circle trigger
 			if (!circleP) return;
 			
@@ -1009,8 +1078,14 @@ class LineChart extends CoreSVGChart{
 			const datasetIndex = circleP.dataset.datasetIndex;
 			const {group: tooltipGroup , text : tooltipText, arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
 
+
+			/* Animaiton on circle */
+			circleP.setAttribute("r", "1.5"); 
 			circleP.classList.remove('active');
 			tooltipGroup.classList.remove("show");
+			
+			tooltip.hide();
+
 		}, true);
 	}
 
@@ -1187,6 +1262,143 @@ class SVGChart{
 		// console.log(container , Chartstruct);
 		// return chart;
 	}
+}
+
+
+class SmartTooltip {
+  constructor(svg, options = {}) {
+    this.svg = svg;
+
+    this.padding = options.padding || { top: 10, left: 10, right: 10, bottom: 10 };
+    this.arrowSize = options.arrowSize || 6;
+    this.offset = options.offset || 8;
+
+    this._createTooltip();
+  }
+
+  _createTooltip() {
+	const bgColor = "rgba(34, 34, 34, 0.73)";
+    // Group
+    this.group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    this.group.setAttribute("opacity", "0");
+    this.group.style.pointerEvents = "none";
+
+    // Background
+    this.bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    this.bg.setAttribute("rx", "5");
+    this.bg.setAttribute("fill", bgColor);
+
+    // Text
+    this.text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    this.text.setAttribute("fill", "rgb(255, 243, 225)");
+    this.text.setAttribute("font-size", "10");
+    this.text.setAttribute("text-anchor", "middle");
+    this.text.setAttribute("dominant-baseline", "middle");
+
+    // Arrow
+    this.arrow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    this.arrow.setAttribute("fill", bgColor);
+
+    this.group.appendChild(this.bg);
+    this.group.appendChild(this.arrow);
+    this.group.appendChild(this.text);
+
+    this.svg.appendChild(this.group);
+  }
+
+  show(x, y, content) {
+    this.text.textContent = content;
+
+    // reset transform for bbox
+    this.group.setAttribute("transform", "translate(0,0)");
+
+    const bbox = this.text.getBBox();
+    const padding = 6;
+
+    const width = bbox.width + padding * 2;
+    const height = bbox.height + padding * 2;
+
+    // update bg
+    this.bg.setAttribute("width", width);
+    this.bg.setAttribute("height", height);
+    this.bg.setAttribute("x", 0);
+    this.bg.setAttribute("y", 0);
+
+    // center text
+    this.text.setAttribute("x", width / 2);
+    this.text.setAttribute("y", height / 2);
+
+    // 👉 smart position detect
+    let position = "top";
+
+    if (y - height < this.padding.top +30) {
+      position = "bottom";
+    } else if (x + width > this.svg.viewBox.baseVal.width) {
+      position = "left";
+    } else if (x - width < this.padding.left) {
+      position = "right";
+    }
+
+    let tipX, tipY;
+
+    const s = this.arrowSize;
+    const o = this.offset;
+
+    // 👉 positioning (NO correction needed)
+    switch (position) {
+      case "top":
+        tipX = x - width / 2;
+        tipY = y - height - o;
+
+        this.arrow.setAttribute("d", `M0 0 L${s*2} 0 L${s} ${s} Z`);
+        this.arrow.setAttribute("transform", `translate(${width/2 - s}, ${height})`);
+        break;
+
+      case "bottom":
+        tipX = x - width / 2;
+        tipY = y + o;
+
+        this.arrow.setAttribute("d", `M${s} 0 L${s*2} ${s} L0 ${s} Z`);
+        this.arrow.setAttribute("transform", `translate(${width/2 - s}, -${s})`);
+        break;
+
+      case "left":
+        tipX = x - width - o;
+        tipY = y - height / 2;
+
+        this.arrow.setAttribute("d", `M0 0 L${s} ${s} L0 ${s*2} Z`);
+        this.arrow.setAttribute("transform", `translate(${width}, ${height/2 - s})`);
+        break;
+
+      case "right":
+        tipX = x + o;
+        tipY = y - height / 2;
+
+        this.arrow.setAttribute("d", `M${s} 0 L${s} ${s*2} L0 ${s} Z`);
+        this.arrow.setAttribute("transform", `translate(-${s}, ${height/2 - s})`);
+        break;
+    }
+
+    // 👉 clamp (never go outside)
+    const svgW = this.svg.viewBox.baseVal.width;
+    const svgH = this.svg.viewBox.baseVal.height;
+
+    tipX = Math.max(this.padding.left, Math.min(tipX, svgW - width));
+    tipY = Math.max(this.padding.top, Math.min(tipY, svgH - height));
+
+    this.group.setAttribute("transform", `translate(${tipX}, ${tipY})`);
+
+    // 👉 animation
+    this.group.style.transition = "opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+    this.group.setAttribute('transform-box', 'fill-box');
+    this.group.setAttribute('transform-origin', 'center');
+
+	this.group.setAttribute("opacity", "1");
+  }
+
+  hide() {
+    this.group.setAttribute("opacity", "0");
+  }
 }
 </script>
 </body>
