@@ -740,13 +740,11 @@ class LineChart extends CoreSVGChart{
 			if (!this.#chartElements.chartDataSetsElemnts[index])
 				this.#chartElements.chartDataSetsElemnts[index]={};
 
-			const dataTooltipsGroup = this.#createChartDataToolTips( points, index);
-			this.#chartElements.chartDataSetsElemnts[index].tooltipsGroup = dataTooltipsGroup;
 
 			const datapointCircleGroup = this.#createChartDataCircle( points, index);
 			this.#chartElements.chartDataSetsElemnts[index].dataPointGroup = datapointCircleGroup;
 			
-			dataCircleMainGroup.append(datapointCircleGroup, dataTooltipsGroup);
+			dataCircleMainGroup.append(datapointCircleGroup); 
 
 			datasetGroup.append( chartAreaFill, linePath);
 			this.#chartElements.chartSVG.appendChild(datasetGroup);
@@ -837,8 +835,8 @@ class LineChart extends CoreSVGChart{
 	}
 
 	
-	#createChartDataToolTips(points, index) {
-
+	#createChartDataToolTips__(points, index) {
+		
 		// 🔹 main group
 		const group = this.createGroupElement({id: 'chartDataSetGroup' + index });
 
@@ -920,8 +918,9 @@ class LineChart extends CoreSVGChart{
 
 	#addEventOnDataPoint(){
 		const tooltip = new SmartTooltip(this.#chartElements.chartSVG, {
-			arrowSize: 5,
-			offset: 10
+			arrowSize: 6,
+			offset: 10,
+			fontSize : 6,
 			});
 
 			
@@ -935,7 +934,7 @@ class LineChart extends CoreSVGChart{
 		.dataPointCircle.active {}
 			
 		/* tooltip class*/
-		.tooltip {
+		.tooltip, {
 			opacity: 0;
     		visibility: hidden;
 
@@ -964,7 +963,7 @@ class LineChart extends CoreSVGChart{
 			
 			// tooltip show
 			const datasetIndex = circleP.dataset.datasetIndex;
-			const {group: tooltipGroup , text : tooltipText, background: tooltipBg , arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
+			//const {group: tooltipGroup , text : tooltipText, background: tooltipBg , arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
 
 			circleP.classList.add('active');
 			circleP.setAttribute("r", "3");
@@ -978,95 +977,96 @@ class LineChart extends CoreSVGChart{
 			// tooltipGroup.style.display = 'block';
 			const x = +circleP.dataset.x;
 			const y = +circleP.dataset.y;
+			const tooltipsText = `${circleP.dataset.val}% \u00A0\u00A0 at \u00A0\u00A0 ${circleP.dataset.label.replace(/\s/g, "")}`;
+			tooltip.show(x, y, tooltipsText);//"Hello jaan 😄");
+			// tooltipText.innerHTML = `
+			// 	<tspan x="30" dy="1.2em">${circleP.dataset.val}%</tspan>
+			// 	<tspan x="30" dy="1.2em" font-size="8">${circleP.dataset.label}</tspan>
+			// `;
 
-			tooltipText.innerHTML = `
-				<tspan x="30" dy="1.2em">${circleP.dataset.val}%</tspan>
-				<tspan x="30" dy="1.2em" font-size="8">${circleP.dataset.label}</tspan>
-			`;
+			// tooltipGroup.setAttribute("transform", "translate(0,0)"); // reset
+			// const bbox =  tooltipBg.getBBox();;
+			// const toolTipsWidth = bbox.width;
+			// const toolTipsHeight = bbox.height;
 
-			tooltipGroup.setAttribute("transform", "translate(0,0)"); // reset
-			const bbox =  tooltipBg.getBBox();;
-			const toolTipsWidth = bbox.width;
-			const toolTipsHeight = bbox.height;
-
-			const dilogArowSize =5;
+			// const dilogArowSize =5;
 			
-			let tipX = x - (toolTipsWidth / 2);
-			let tipY = y - toolTipsHeight - 10; // default ऊपर दिखे
+			// let tipX = x - (toolTipsWidth / 2);
+			// let tipY = y - toolTipsHeight - 10; // default ऊपर दिखे
 
 
 
 
 			// hover example
 			
-			tooltip.show(x, y, "Hello jaan 😄");
+			
 
 			
 
 
 
-			let position = "top"; // default
+			// let position = "top"; // default
 
-			if (tipY < this.#padding.top) {
-				position = "bottom";
-			} 
-			else if (tipX <= this.#padding.left) {
-				position = "right";
-			} 
-			else if (tipX + toolTipsWidth>= this.#svgDimention.svgWidth + this.#padding.right){
-				position = "left";
-			}
-			console.log(position);
-			console.log(`${tipX + toolTipsWidth}, ${this.#svgDimention.svgWidth + this.#padding.right}`);
-			let correctionX = 0, correctionY = 0;
-			switch(position) {
-				case "top":
-					//⬆ TOP (tooltip ऊपर → arrow नीचे)
-					dilogArrow.setAttribute("d",
-					`M 0 0 L ${dilogArowSize*2} 0 L ${dilogArowSize} ${dilogArowSize} Z`
-					);
-					dilogArrow.setAttribute("transform",
-					`translate(${toolTipsWidth/2 - dilogArowSize}, ${toolTipsHeight})`
-					);
-					break;
-				case "bottom":
-					//⬇ BOTTOM (tooltip नीचे → arrow ऊपर)
-					dilogArrow.setAttribute("d",
-					`M ${dilogArowSize} 0 L ${dilogArowSize*2} ${dilogArowSize} L 0 ${dilogArowSize} Z`
-					);
-					dilogArrow.setAttribute("transform",
-					`translate(${toolTipsWidth/2 - dilogArowSize}, -${dilogArowSize})`
-					);
-					correctionX = 0; 
-					correctionY= toolTipsHeight + dilogArowSize + 15;
-					break;
-				case "left":
-					// ⬅ LEFT (tooltip left → arrow right side)
-					dilogArrow.setAttribute("d",
-					`M 0 0 L ${dilogArowSize} ${dilogArowSize} L 0 ${dilogArowSize*2} Z`
-					);
-					dilogArrow.setAttribute("transform",
-					`translate(${toolTipsWidth }, ${toolTipsHeight/2 - dilogArowSize})`
-					);
-					correctionX = (-toolTipsWidth/2) - 10; 
-					correctionY= toolTipsHeight - dilogArowSize;
-					break;
-				case "right":
-					// ➡ RIGHT (tooltip right → arrow left side)
-					dilogArrow.setAttribute("d",
-					`M ${dilogArowSize} 0 L ${dilogArowSize} ${dilogArowSize*2} L 0 ${dilogArowSize} Z`
-					);
-					dilogArrow.setAttribute("transform",
-					`translate(-${dilogArowSize}, ${toolTipsHeight/2 - dilogArowSize})`
-					);
+			// if (tipY < this.#padding.top) {
+			// 	position = "bottom";
+			// } 
+			// else if (tipX <= this.#padding.left) {
+			// 	position = "right";
+			// } 
+			// else if (tipX + toolTipsWidth>= this.#svgDimention.svgWidth + this.#padding.right){
+			// 	position = "left";
+			// }
+			// console.log(position);
+			// console.log(`${tipX + toolTipsWidth}, ${this.#svgDimention.svgWidth + this.#padding.right}`);
+			// let correctionX = 0, correctionY = 0;
+			// switch(position) {
+			// 	case "top":
+			// 		//⬆ TOP (tooltip ऊपर → arrow नीचे)
+			// 		dilogArrow.setAttribute("d",
+			// 		`M 0 0 L ${dilogArowSize*2} 0 L ${dilogArowSize} ${dilogArowSize} Z`
+			// 		);
+			// 		dilogArrow.setAttribute("transform",
+			// 		`translate(${toolTipsWidth/2 - dilogArowSize}, ${toolTipsHeight})`
+			// 		);
+			// 		break;
+			// 	case "bottom":
+			// 		//⬇ BOTTOM (tooltip नीचे → arrow ऊपर)
+			// 		dilogArrow.setAttribute("d",
+			// 		`M ${dilogArowSize} 0 L ${dilogArowSize*2} ${dilogArowSize} L 0 ${dilogArowSize} Z`
+			// 		);
+			// 		dilogArrow.setAttribute("transform",
+			// 		`translate(${toolTipsWidth/2 - dilogArowSize}, -${dilogArowSize})`
+			// 		);
+			// 		correctionX = 0; 
+			// 		correctionY= toolTipsHeight + dilogArowSize + 15;
+			// 		break;
+			// 	case "left":
+			// 		// ⬅ LEFT (tooltip left → arrow right side)
+			// 		dilogArrow.setAttribute("d",
+			// 		`M 0 0 L ${dilogArowSize} ${dilogArowSize} L 0 ${dilogArowSize*2} Z`
+			// 		);
+			// 		dilogArrow.setAttribute("transform",
+			// 		`translate(${toolTipsWidth }, ${toolTipsHeight/2 - dilogArowSize})`
+			// 		);
+			// 		correctionX = (-toolTipsWidth/2) - 10; 
+			// 		correctionY= toolTipsHeight - dilogArowSize;
+			// 		break;
+			// 	case "right":
+			// 		// ➡ RIGHT (tooltip right → arrow left side)
+			// 		dilogArrow.setAttribute("d",
+			// 		`M ${dilogArowSize} 0 L ${dilogArowSize} ${dilogArowSize*2} L 0 ${dilogArowSize} Z`
+			// 		);
+			// 		dilogArrow.setAttribute("transform",
+			// 		`translate(-${dilogArowSize}, ${toolTipsHeight/2 - dilogArowSize})`
+			// 		);
 
-					correctionX = toolTipsWidth/2 + dilogArowSize + 5; 
-					correctionY= toolTipsHeight-dilogArowSize;
-					break;
-			}
+			// 		correctionX = toolTipsWidth/2 + dilogArowSize + 5; 
+			// 		correctionY= toolTipsHeight-dilogArowSize;
+			// 		break;
+			// }
 
-			tooltipGroup.setAttribute("transform", `translate(${tipX + correctionX}, ${tipY + correctionY})`);
-			tooltipGroup.classList.add("show");
+			// tooltipGroup.setAttribute("transform", `translate(${tipX + correctionX}, ${tipY + correctionY})`);
+			// tooltipGroup.classList.add("show");
 		}, true);
 
 		mainCircelGroup.addEventListener("mouseout", (e) => {
@@ -1076,13 +1076,13 @@ class LineChart extends CoreSVGChart{
 			if (circleP.contains(e.relatedTarget)) return; // 🔥 avoid flicker
 			
 			const datasetIndex = circleP.dataset.datasetIndex;
-			const {group: tooltipGroup , text : tooltipText, arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
+			// const {group: tooltipGroup , text : tooltipText, arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
 
 
 			/* Animaiton on circle */
 			circleP.setAttribute("r", "1.5"); 
 			circleP.classList.remove('active');
-			tooltipGroup.classList.remove("show");
+			// tooltipGroup.classList.remove("show");
 			
 			tooltip.hide();
 
@@ -1272,7 +1272,7 @@ class SmartTooltip {
     this.padding = options.padding || { top: 10, left: 10, right: 10, bottom: 10 };
     this.arrowSize = options.arrowSize || 6;
     this.offset = options.offset || 8;
-
+	this.fontSize = options.fontSize || 10;
     this._createTooltip();
   }
 
@@ -1291,7 +1291,7 @@ class SmartTooltip {
     // Text
     this.text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     this.text.setAttribute("fill", "rgb(255, 243, 225)");
-    this.text.setAttribute("font-size", "10");
+    this.text.setAttribute("font-size", this.fontSize);
     this.text.setAttribute("text-anchor", "middle");
     this.text.setAttribute("dominant-baseline", "middle");
 
