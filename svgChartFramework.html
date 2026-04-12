@@ -834,57 +834,6 @@ class LineChart extends CoreSVGChart{
 		return  chartAreaFill;
 	}
 
-	
-	#createChartDataToolTips__(points, index) {
-		
-		// 🔹 main group
-		const group = this.createGroupElement({id: 'chartDataSetGroup' + index });
-
-		// 🔹 tooltip (single per dataset)
-		const tooltipGroup = this.createGroupElement({id: 'tooltipGroup' + index});
-
-		// tooltipGroup.style.display = "none";
-		tooltipGroup.dataset.label = 'tooltipGroup' + index;
-		tooltipGroup.classList.add('tooltip');
-
-		const toolTipsWidth = 60;
-		const toolTipsHeight = 30;
-		const tooltipBg = this.createRectElement({
-			width: toolTipsWidth, height: toolTipsHeight, rx: 4,
-			fill_color: 'rgba(255, 202, 164, 0.76)'
-		});
-		tooltipBg.style.filter = "drop-shadow(0 2px 6px rgba(0,0,0, 0.7))";
-		// tooltipBg.classList.add('tooltip-bg');
-
-		const tooltipText = this.createTextElement({
-			text_anchor: 'middle',
-			font_size: '10px',
-			fill: 'rgba(74, 34, 6, 1)'
-		});
-		//  here was tooltips animation 
-
-		const dilogArrow = document.createElementNS(CoreSVGChart.svgNS, "path");
-		dilogArrow.setAttribute("fill", "rgba(0,0,0,0.6)");
-
-		tooltipGroup.append(tooltipBg, tooltipText, dilogArrow);
-
-		// 🔥 append tooltip inside group
-		if (!this.#chartElements.chartDataSetsElemnts[index]){
-			this.#chartElements.chartDataSetsElemnts[index] = {};
-		}
-		
-		group.append(tooltipGroup);
-
-		this.#chartElements.chartDataSetsElemnts[index].tooltips = {
-			group: tooltipGroup,
-			background : tooltipBg,
-			text: tooltipText,
-			arrow: dilogArrow
-		};
-
-		return group;
-	}
-
 	#createChartDataCircle(points, index){
 		// 🔹 circles create
 		const chartDataPointGroup =  this.createGroupElement({id: 'chartDataPointGroup' + index});
@@ -931,39 +880,18 @@ class LineChart extends CoreSVGChart{
     		transform-origin: center;
 		}
 
-		.dataPointCircle.active {}
-			
-		/* tooltip class*/
-		.tooltip, {
-			opacity: 0;
-    		visibility: hidden;
-
-	transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	transform-box: fill-box; 
-    transform-origin: center;
-    pointer-events: none; /* Mouse iske paar ja sake */
-			}
-
-			.tooltip.show {
-			opacity: 1;
-    visibility: visible;
-			} 
-		`);
+		.dataPointCircle.active {}`);
 
 		const mainCircelGroup = this.#chartElements.dataCircleMasterGroup;
 
 		//🔥 EVENT → only on group
 		mainCircelGroup.addEventListener("mouseover", (e) => {
-			
 
 			const circleP = e.target.closest('circle'); // only circle trigger
 			if (!circleP) return;
-			// console.log("hover fired", circleP);
-			// console.log(circleP.classList.toString());
 			
 			// tooltip show
 			const datasetIndex = circleP.dataset.datasetIndex;
-			//const {group: tooltipGroup , text : tooltipText, background: tooltipBg , arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
 
 			circleP.classList.add('active');
 			circleP.setAttribute("r", "3");
@@ -971,102 +899,12 @@ class LineChart extends CoreSVGChart{
 			// circleP.setAttribute('transform-box', `fill-box`); 
     		// circleP.setAttribute(`transform-origin`, `center`);
 
-			// circleP.style.transition = `r 200ms ease-out, fill 0.3s ease`;
 			
-
-			// tooltipGroup.style.display = 'block';
 			const x = +circleP.dataset.x;
 			const y = +circleP.dataset.y;
 			const tooltipsText = `${circleP.dataset.val}% \u00A0\u00A0 at \u00A0\u00A0 ${circleP.dataset.label.replace(/\s/g, "")}`;
-			tooltip.show(x, y, tooltipsText);//"Hello jaan 😄");
-			// tooltipText.innerHTML = `
-			// 	<tspan x="30" dy="1.2em">${circleP.dataset.val}%</tspan>
-			// 	<tspan x="30" dy="1.2em" font-size="8">${circleP.dataset.label}</tspan>
-			// `;
-
-			// tooltipGroup.setAttribute("transform", "translate(0,0)"); // reset
-			// const bbox =  tooltipBg.getBBox();;
-			// const toolTipsWidth = bbox.width;
-			// const toolTipsHeight = bbox.height;
-
-			// const dilogArowSize =5;
+			tooltip.show(x, y, tooltipsText);
 			
-			// let tipX = x - (toolTipsWidth / 2);
-			// let tipY = y - toolTipsHeight - 10; // default ऊपर दिखे
-
-
-
-
-			// hover example
-			
-			
-
-			
-
-
-
-			// let position = "top"; // default
-
-			// if (tipY < this.#padding.top) {
-			// 	position = "bottom";
-			// } 
-			// else if (tipX <= this.#padding.left) {
-			// 	position = "right";
-			// } 
-			// else if (tipX + toolTipsWidth>= this.#svgDimention.svgWidth + this.#padding.right){
-			// 	position = "left";
-			// }
-			// console.log(position);
-			// console.log(`${tipX + toolTipsWidth}, ${this.#svgDimention.svgWidth + this.#padding.right}`);
-			// let correctionX = 0, correctionY = 0;
-			// switch(position) {
-			// 	case "top":
-			// 		//⬆ TOP (tooltip ऊपर → arrow नीचे)
-			// 		dilogArrow.setAttribute("d",
-			// 		`M 0 0 L ${dilogArowSize*2} 0 L ${dilogArowSize} ${dilogArowSize} Z`
-			// 		);
-			// 		dilogArrow.setAttribute("transform",
-			// 		`translate(${toolTipsWidth/2 - dilogArowSize}, ${toolTipsHeight})`
-			// 		);
-			// 		break;
-			// 	case "bottom":
-			// 		//⬇ BOTTOM (tooltip नीचे → arrow ऊपर)
-			// 		dilogArrow.setAttribute("d",
-			// 		`M ${dilogArowSize} 0 L ${dilogArowSize*2} ${dilogArowSize} L 0 ${dilogArowSize} Z`
-			// 		);
-			// 		dilogArrow.setAttribute("transform",
-			// 		`translate(${toolTipsWidth/2 - dilogArowSize}, -${dilogArowSize})`
-			// 		);
-			// 		correctionX = 0; 
-			// 		correctionY= toolTipsHeight + dilogArowSize + 15;
-			// 		break;
-			// 	case "left":
-			// 		// ⬅ LEFT (tooltip left → arrow right side)
-			// 		dilogArrow.setAttribute("d",
-			// 		`M 0 0 L ${dilogArowSize} ${dilogArowSize} L 0 ${dilogArowSize*2} Z`
-			// 		);
-			// 		dilogArrow.setAttribute("transform",
-			// 		`translate(${toolTipsWidth }, ${toolTipsHeight/2 - dilogArowSize})`
-			// 		);
-			// 		correctionX = (-toolTipsWidth/2) - 10; 
-			// 		correctionY= toolTipsHeight - dilogArowSize;
-			// 		break;
-			// 	case "right":
-			// 		// ➡ RIGHT (tooltip right → arrow left side)
-			// 		dilogArrow.setAttribute("d",
-			// 		`M ${dilogArowSize} 0 L ${dilogArowSize} ${dilogArowSize*2} L 0 ${dilogArowSize} Z`
-			// 		);
-			// 		dilogArrow.setAttribute("transform",
-			// 		`translate(-${dilogArowSize}, ${toolTipsHeight/2 - dilogArowSize})`
-			// 		);
-
-			// 		correctionX = toolTipsWidth/2 + dilogArowSize + 5; 
-			// 		correctionY= toolTipsHeight-dilogArowSize;
-			// 		break;
-			// }
-
-			// tooltipGroup.setAttribute("transform", `translate(${tipX + correctionX}, ${tipY + correctionY})`);
-			// tooltipGroup.classList.add("show");
 		}, true);
 
 		mainCircelGroup.addEventListener("mouseout", (e) => {
@@ -1076,13 +914,11 @@ class LineChart extends CoreSVGChart{
 			if (circleP.contains(e.relatedTarget)) return; // 🔥 avoid flicker
 			
 			const datasetIndex = circleP.dataset.datasetIndex;
-			// const {group: tooltipGroup , text : tooltipText, arrow: dilogArrow} = this.#chartElements.chartDataSetsElemnts[datasetIndex].tooltips;
-
 
 			/* Animaiton on circle */
 			circleP.setAttribute("r", "1.5"); 
 			circleP.classList.remove('active');
-			// tooltipGroup.classList.remove("show");
+			
 			
 			tooltip.hide();
 
