@@ -1,0 +1,184 @@
+/* Poore page ko dhakne wali layer */
+.overlay {
+	display: none; /* Shuruat mein chhupa rahega */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7); /* Thoda black transparent look */
+	z-index: 1000; /* Taaki har cheez ke upar rahe */
+	justify-content: center;
+	align-items: center;
+	backdrop-filter: blur(5px); /* Background ko dhundhla karne ke liye */
+}
+
+/* Safed rang ki pop-up window */
+.modal-card {
+	background: var(--accent);
+	width: 90%;
+	max-width: 400px;
+	padding: 20px;
+	border-radius: 15px;
+	box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+	color: #333;
+	animation: slideIn 0.3s ease-out; /* Pop-up ka animation */
+	position: relative;
+}
+
+@keyframes slideIn {
+	from { transform: translateY(-50px); opacity: 0; }
+	to { transform: translateY(0); opacity: 1; }
+}
+
+/* Close Button Style */
+.close-btn {
+	position: absolute;
+	top:0%;
+	right: 0;
+	transform: translate(40%, -40%);
+	font-size: 34px;
+	cursor: pointer;
+	color: #ffffff;
+
+	width:2rem;
+	height: 2rem;
+	background-color: rgba(255, 0, 0, 0.5);
+	text-align: center;
+	border-radius: 50%;
+	border: 2px solid red;
+	line-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	padding-bottom: 8px;
+}
+
+.close-btn:hover { color: #000; }
+
+/* --- Modal Body Typography --- */
+.modal-body h3 {
+	margin-top: 0;
+	margin-bottom: 5px;
+	font-size: 22px;
+	color: #1a1a1a;
+}
+
+.modal-body p {
+	color: var(--text-primary);
+	font-size: 14px;
+	margin-bottom: 20px;
+}
+
+/* --- Form Fieldset & Legend --- */
+form.card fieldset {
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	padding: 15px;
+	margin-bottom: 20px;
+	background-color: var(--bg-card);
+}
+
+form.card legend {
+	font-weight: bold;
+	color: var(--accent); /* Aapke theme ka blue color */
+	background: var(--bg-main);
+	padding: 0 10px;
+	border: 1px solid var(--border-color);
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+/* --- Input Labels & Structure --- */
+form.card label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 600;
+	font-size: 13px;
+	color: var(--text-primary); /*#333;*/
+}
+
+form.card div {
+	margin-bottom: 15px;
+}
+
+/* Value Area spacing */
+#valueArea > div {
+	margin-bottom: 12px;
+}
+
+/* --- Inputs & Select Styling --- */
+form.card input[type="number"],
+form.card input[type="text"],
+form.card input[type="password"],
+form.card select {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 14px;
+	box-sizing: border-box; /* Ensures padding doesn't stretch width */
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form.card input[type="number"]:focus,
+form.card input[type="text"]:focus,
+form.card input[type="password"]:focus,
+form.card select:focus {
+	border-color: #4facfe;
+	box-shadow: 0 0 5px rgba(79, 172, 254, 0.4);
+	outline: none;
+}
+
+/* --- Action Buttons (Submit & Reset) --- */
+form.card input[type="submit"],
+form.card input[type="reset"], .submitBtn {
+	width: 48%; /* Adhi-adhi jagah lenge */
+	padding: 12px;
+	border: none;
+	border-radius: 6px;
+	font-weight: bold;
+	font-size: 14px;
+	cursor: pointer;
+	transition: transform 0.1s, opacity 0.3s;
+}
+
+/* Submit Button Style */
+form.card input[type="submit"], .submitBtn {
+	background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+	color: white;
+	float: right; /* Right side shift */
+}
+
+/* Reset Button Style */
+form.card input[type="reset"] {
+	background: #e0e0e0;
+	color: #555;
+	float: left; /* Left side shift */
+}
+
+form.card input[type="submit"]:hover,
+form.card input[type="reset"]:hover {
+	opacity: 0.9;
+	transform: translateY(-1px);
+}
+
+form.card input[type="submit"]:active,
+form.card input[type="reset"]:active {
+	transform: translateY(1px);
+}
+
+/* --- Hide Utility Class --- */
+/* (Agar aap JS se fields hide/show kar rahe hain) */
+.hide {
+	display: none !important;
+}
+
+/* Clearfix for floating buttons */
+form.card::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+

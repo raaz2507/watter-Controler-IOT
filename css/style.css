@@ -1,4 +1,8 @@
 @import "./base.css";
+
+@import url('./popupAreaStyling.css');
+@import url('./controlAreaStyling.css');
+@import url('./toggleSwitchStyling.css');
 /* Default: Dark Theme */
 :root {
 	--bg-main: #f5f7fb;
@@ -37,6 +41,18 @@ body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.waterBg {
+	background: linear-gradient(270deg, #8ee6ff, #c0dcff, #87f9ff);
+	background-size: 400% 400%;
+	animation: waterFlow 24s ease infinite;
+}
+
+@keyframes waterFlow {
+	0% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
 body header{
 	background-color: var(--bg-card);
 	border-bottom: 1px solid var(--border-color);
@@ -63,6 +79,7 @@ body header .controls .userProfile{
 	border-radius: 5px;
 	color: var(--text-primary);
 	background-color: var(--bg-secondery);
+	box-shadow: 0px 0px 12px -5px rgba(0, 0, 0, 0.6);
 }
 
 body header .controls .userProfile .profileIcon{
@@ -71,6 +88,7 @@ body header .controls .userProfile .profileIcon{
 
 body header .controls .userProfile .profileTitle{
 	font-size: .9rem;
+	text-transform: capitalize;
 }
 
 body header .controls .roundBtn{
@@ -80,6 +98,8 @@ body header .controls .roundBtn{
 	text-align: center;
 	margin: auto 1rem;
 }
+
+/* navigation area styling  */
 body nav{
 	padding: 5px 10px;
 	background-color: var(--bg-secondery);
@@ -92,93 +112,52 @@ body nav ul{
 
 body nav ul li a{
 	text-decoration: none;
+	color: var(--text-primary);
 }
-body main section#dashboardContainer {
-	background-color: var(--bg-section);
+body main #tankScale{
+	padding: 2rem 1rem;
+}
+body main #tankScale{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+body main{
+	width: 98%;
+	margin: 0 auto 0 auto;
+	padding: 1rem;
 }
 
-body main #dashboardContainer #tankMonitor{
-	width: 100%;
+
+body main .upperPart{}
+
+body main #tankScale{
+	/* background-color: var(--bg-card); */
+	background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.1));
+	border-radius: 15px;
+	box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+}
+
+.dashboardCard {
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dashboardCard:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+body main #chartArea{
+	margin: 1rem auto;
+	box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+	position: relative;
+	overflow: hidden;
+}
+
+body main #chartArea .chartBox{
+	width: 50rem;
+	margin : 1rem auto;
 	background-color: var(--bg-card);
-}
-body #dashboardContainer #tankMonitor #tankImg{
-	padding:2rem;
-	border-radius: 10px;
-	margin: 5px;
-	box-shadow: 2px 2px 13px -3px black;
-}
-body #dashboardContainer #tankMonitor #tankImg svg{
-	width:100%;
-	height: auto;
 	
-}
-/* Smooth Color Transition */
-body #dashboardContainer #tankMonitor #water-level { 
-	transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
-}
-
-/* Smooth Level Transition */
-body #dashboardContainer #tankMonitor .stop-color-transition {
-	transition: stop-color 0.8s ease;
-}
-
-body #dashboardContainer #controlArea{
-	padding: 10px;
-	margin:5px;
-	border-radius: 5px;
-	box-shadow: 2px 2px 13px -3px rgba(0, 0, 0, 0.466);
-	background-color: var(--bg-section);
-}
-body #dashboardContainer #controlArea .dashboardCard{
-	width:12rem;
-	max-width: 20rem;
-	height: 7rem;
-	border-radius: 10px;
-	box-shadow: 2px 2px 13px -3px rgba(0, 0, 0, 0.341);
-	padding: 5px;
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-color);
-	color: var(--text-primary);
-}
-
-body #dashboardContainer #controlArea .dashboardCard .cardHeader{
-	padding: 2px 3px 3px 10px;
-	color: var(--text-secondary);
-	background-color: var(--bg-secondery);
-	border-radius: 5px;
-	font-weight: 700;
-}
-
-/* Icon size */
-body #dashboardContainer #controlArea .dashboardCard .cardHeader .icon img {
-	width: 24px;
-	object-fit: contain;
-}
-body #dashboardContainer #controlArea .dashboardCard .cardBody {
-	color: var(--text-primary);
-}
-
-
-body #dashboardContainer #controlArea .dashboardCard .cardBody .value {
-	font-size: 20px;
-	font-weight: bold;
-	color: var(--accent);
-}
-body #dashboardContainer #graphArea {
-	max-height: 30rem;
-	margin: 5px;
-	padding: 2rem 3rem;
-	border-radius: 5px;
-	box-shadow: 2px 2px 13px -3px rgba(0, 0, 0, 0.421);
-	background-color: var(--bg-card);
-}
-.chartBox{
-	width: 100%;
-	height: auto;
-}
-.chartBox canvas {
-	width: 100% !important;
-	height: 100% !important;
 }
 
 body footer{
@@ -198,7 +177,7 @@ body main{
 body header{
 	display: flex;
 	flex-direction: row;
-	align-items: center;
+	align-items: stretch;
 	justify-content: space-between;
 }
 body header .titleNicon{
@@ -211,6 +190,8 @@ body header .titleNicon{
 body header .controls{
 	display: flex;
 	flex-direction: row;
+	/* align-items: stretch; */
+	justify-content: space-evenly;
 	gap: 5px;
 }
 body header .controls .userProfile{
@@ -220,80 +201,111 @@ body header .controls .userProfile{
 	justify-content: center;
 	gap: 2px;
 }
+
 body nav ul{
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 5rem;
 }
-body main{
-	width: 95%;
-	margin: 2px auto 5px auto;
-	box-shadow: 3px 3px 13px 3px rgba(0, 0, 0, 0.3);
-	border-radius: 10px;
-	padding: 1rem;
-}
-#dashboardContainer{
+body main .upperPart{
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	/* flex-wrap: wrap; */
-}
-#dashboardContainer #tankMonitor{
-	display: flex;
-	flex-direction: row;
-}
-
-#dashboardContainer #graphArea{
-	flex: 1 ;
-	/* flex-grow: 0;
-	flex-shrink: 0;
-	flex-basis: 80%; */
-}
-#dashboardContainer #controlArea{
-	flex : 1;
-}
-#dashboardContainer #controlArea{
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+	/* align-items: */
 	justify-content: space-evenly;
-	flex-wrap: wrap;
-	gap:5px;
-}
-#dashboardContainer #controlArea .dashboardCard{
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+	gap: 10px;
 }
 
-/* Top Row */
-#dashboardContainer #controlArea .dashboardCard .cardHeader {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+body main #tankScale{
+	flex-basis: 30%;
 }
 
-#dashboardContainer #controlArea .dashboardCard .cardBody {
-	flex:1;
-}
-body #dashboardContainer #controlArea .dashboardCard .cardBody{
-	display: flex;
-	align-items: center;
-	justify-content: center;
+body main #controlArea{
+	flex-basis: 70%;
 }
 
 /* flex setting end */
 
-@media screen and (orientation: portrait) {
-	body header{
-		flex-direction: column;
+
+
+@media screen and (max-width: 768px), (orientation: portrait)  {
+	header{
+		flex-direction: column !important;
+		padding: 1rem !important;
 	}
-	#dashboardContainer #tankMonitor{
+	header .titleNicon{
+		gap: 5px !important;
+	}
+	header .titleNicon .appTitle{
+		font-size: 1.2rem !important;
+	}
+	body main .upperPart{
 		flex-direction: column;
 	}
 }
+@media screen and (max-width: 360px){
+	header{
+		padding: 1rem !important;
+		flex-direction: column !important;
+	}
+}
 
+/* effets */
+.inactive{
+	filter: grayscale(100%);
+}
+/* ✅ 1. 🔴 Danger (Critical / Alert) */
+.danger {
+	border: 2px solid #ff4d4f;
+	background-color: rgba(255, 77, 79, 0.1);
+	color: #ff4d4f;
+	box-shadow: 0 0 10px rgba(255, 77, 79, 0.4);
+	transition: 0.3s ease;
+}
 
+.danger:hover {
+	box-shadow: 0 0 20px rgba(255, 77, 79, 0.7);
+	background-color: rgba(255, 77, 79, 0.2);
+}
+
+/* ⚠️ 2. Warning (Medium Alert) */
+.warning {
+	border: 2px solid #faad14;
+	background-color: rgba(250, 173, 20, 0.1);
+	color: #faad14;
+	box-shadow: 0 0 10px rgba(250, 173, 20, 0.4);
+	transition: 0.3s ease;
+}
+
+.warning:hover {
+	box-shadow: 0 0 20px rgba(250, 173, 20, 0.7);
+	background-color: rgba(250, 173, 20, 0.2);
+}
+
+/* 🟢 3. Success (Safe / Full / Normal) */
+.success {
+	border: 2px solid #52c41a;
+	background-color: rgba(82, 196, 26, 0.1);
+	color: #52c41a;
+	box-shadow: 0 0 10px rgba(82, 196, 26, 0.4);
+	transition: 0.3s ease;
+}
+
+.success:hover {
+	box-shadow: 0 0 20px rgba(82, 196, 26, 0.7);
+	background-color: rgba(82, 196, 26, 0.2);
+}
+/* blink animaiton for denger  */
+@keyframes blinkDanger {
+	0% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
+	50% { box-shadow: 0 0 20px rgba(255,0,0,0.8); }
+	100% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
+}
+
+.danger.active {
+	animation: blinkDanger 1s infinite;
+}
 
 /* testing elimnets styling start */
 #testingArea .controls {
@@ -311,6 +323,8 @@ body #dashboardContainer #controlArea .dashboardCard .cardBody{
 }
 /* testing elimnets styling end */
 
+
+
 /*	  
 	body{}
 	body header{}
@@ -321,191 +335,6 @@ body #dashboardContainer #controlArea .dashboardCard .cardBody{
 	body main #controlArea div.dashboardCard{}
 	body main #controlArea div.dashboardCard div.cardHeader{}
 	body main #controlArea div.dashboardCard div.cardBody{}
-	body #graphArea{}
+	body #chartArea{}
 	body footer{} 
 */
-
-
-/* Poore page ko dhakne wali layer */
-.overlay {
-	display: none; /* Shuruat mein chhupa rahega */
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.7); /* Thoda black transparent look */
-	z-index: 1000; /* Taaki har cheez ke upar rahe */
-	justify-content: center;
-	align-items: center;
-	backdrop-filter: blur(5px); /* Background ko dhundhla karne ke liye */
-}
-
-/* Safed rang ki pop-up window */
-.modal-card {
-	background: var(--accent);
-	width: 90%;
-	max-width: 400px;
-	padding: 20px;
-	border-radius: 15px;
-	box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-	color: #333;
-	animation: slideIn 0.3s ease-out; /* Pop-up ka animation */
-	position: relative;
-}
-
-@keyframes slideIn {
-	from { transform: translateY(-50px); opacity: 0; }
-	to { transform: translateY(0); opacity: 1; }
-}
-
-/* Close Button Style */
-.close-btn {
-	position: absolute;
-	top:0%;
-	right: 0;
-	transform: translate(40%, -40%);
-	font-size: 34px;
-	cursor: pointer;
-	color: #ffffff;
-
-	width:2rem;
-	height: 2rem;
-	background-color: rgba(255, 0, 0, 0.5);
-	text-align: center;
-	border-radius: 50%;
-	border: 2px solid red;
-	line-height: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-	padding-bottom: 8px;
-}
-
-.close-btn:hover { color: #000; }
-
-/* --- Modal Body Typography --- */
-.modal-body h3 {
-	margin-top: 0;
-	margin-bottom: 5px;
-	font-size: 22px;
-	color: #1a1a1a;
-}
-
-.modal-body p {
-	color: var(--text-primary);
-	font-size: 14px;
-	margin-bottom: 20px;
-}
-
-/* --- Form Fieldset & Legend --- */
-form.card fieldset {
-	border: 1px solid var(--border-color);
-	border-radius: 8px;
-	padding: 15px;
-	margin-bottom: 20px;
-	background-color: var(--bg-card);
-}
-
-form.card legend {
-	font-weight: bold;
-	color: var(--accent); /* Aapke theme ka blue color */
-	background: var(--bg-main);
-	padding: 0 10px;
-	border: 1px solid var(--border-color);
-	border-radius: 5px;
-	font-size: 14px;
-}
-
-/* --- Input Labels & Structure --- */
-form.card label {
-	display: block;
-	margin-bottom: 5px;
-	font-weight: 600;
-	font-size: 13px;
-	color: var(--text-primary); /*#333;*/
-}
-
-form.card div {
-	margin-bottom: 15px;
-}
-
-/* Value Area spacing */
-#valueArea > div {
-	margin-bottom: 12px;
-}
-
-/* --- Inputs & Select Styling --- */
-form.card input[type="number"],
-form.card input[type="text"],
-form.card input[type="password"],
-form.card select {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid #ccc;
-	border-radius: 6px;
-	font-size: 14px;
-	box-sizing: border-box; /* Ensures padding doesn't stretch width */
-	transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-form.card input[type="number"]:focus,
-form.card input[type="text"]:focus,
-form.card input[type="password"]:focus,
-form.card select:focus {
-	border-color: #4facfe;
-	box-shadow: 0 0 5px rgba(79, 172, 254, 0.4);
-	outline: none;
-}
-
-/* --- Action Buttons (Submit & Reset) --- */
-form.card input[type="submit"],
-form.card input[type="reset"] {
-	width: 48%; /* Adhi-adhi jagah lenge */
-	padding: 12px;
-	border: none;
-	border-radius: 6px;
-	font-weight: bold;
-	font-size: 14px;
-	cursor: pointer;
-	transition: transform 0.1s, opacity 0.3s;
-}
-
-/* Submit Button Style */
-form.card input[type="submit"] {
-	background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-	color: white;
-	float: right; /* Right side shift */
-}
-
-/* Reset Button Style */
-form.card input[type="reset"] {
-	background: #e0e0e0;
-	color: #555;
-	float: left; /* Left side shift */
-}
-
-form.card input[type="submit"]:hover,
-form.card input[type="reset"]:hover {
-	opacity: 0.9;
-	transform: translateY(-1px);
-}
-
-form.card input[type="submit"]:active,
-form.card input[type="reset"]:active {
-	transform: translateY(1px);
-}
-
-/* --- Hide Utility Class --- */
-/* (Agar aap JS se fields hide/show kar rahe hain) */
-.hide {
-	display: none !important;
-}
-
-/* Clearfix for floating buttons */
-form.card::after {
-	content: "";
-	display: table;
-	clear: both;
-}

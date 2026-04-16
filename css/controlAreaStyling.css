@@ -1,0 +1,79 @@
+body main #controlArea{
+	padding: 10px;
+	margin:5px;
+	border-radius: 5px;
+	box-shadow: 2px 2px 13px -3px rgba(0, 0, 0, 0.466);
+	background-color: var(--bg-section);
+}
+body main #controlArea .dashboardCard{
+	width:12rem;
+	max-width: 20rem;
+	height: 7rem;
+	border-radius: 10px;
+	box-shadow: 2px 2px 13px -3px rgba(0, 0, 0, 0.341);
+	padding: 5px;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+	color: var(--text-primary);
+}
+
+body main #controlArea .dashboardCard .cardHeader{
+	padding: 2px 3px 3px 10px;
+	color: var(--text-secondary);
+	background-color: var(--bg-secondery);
+	border-radius: 5px;
+	font-weight: 700;
+}
+
+/* Icon size */
+body  #controlArea .dashboardCard .cardHeader .icon img {
+	width: 24px;
+	object-fit: contain;
+}
+body  #controlArea .dashboardCard .cardBody {
+	color: var(--text-primary);
+}
+
+
+body  #controlArea .dashboardCard .cardBody .value {
+	font-size: 20px;
+	font-weight: bold;
+	color: var(--accent);
+}
+
+/* flex setting start */
+#controlArea{
+	flex : 1;
+}
+#controlArea{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	gap:5px;
+}
+#controlArea .dashboardCard{
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+/* Top Row */
+#controlArea .dashboardCard .cardHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#controlArea .dashboardCard .cardBody {
+	flex:1;
+}
+#controlArea .dashboardCard .cardBody{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+
+/* flex setting end */

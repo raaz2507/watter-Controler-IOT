@@ -1,256 +1,240 @@
-//import Chart from "./chart.js"
+import {waterTank, WatterTankScale} from './watterTank.js';
+import { SVGChart } from "./svgChartFramework.js"
+
 
 document.addEventListener("DOMContentLoaded", ()=>{
-	const myDashbord = new Dashbord();
-	myDashbord.setupTank();
-	restoreThemePrefrence();
-	//createChart();
-   
+	const myDashbord = new Dashbord();   
 });
 
-// function createChart(){
-//	  //create chart
-//	 const ctx = document.getElementById('myChart');
-
-//	 new Chart(ctx, {
-//		 type: 'line',
-//		 data: {
-//			 labels: ['12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm', '10pm', '11pm'],
-//			 datasets: [{
-//				 label: 'Tenk Laval',
-//				 data: [10, 20, 30, 40 , 50, 40, 10, 20, 50, 70, 100, 5, 10, 20, 30, 40 , 50, 40, 10, 20, 50, 70, 100, 5]
-//			 }]
-//		 },
-//		 options: {
-//			 responsive: true,
-//			 maintainAspectRatio: false,
-//			 devicePixelRatio: 2,
-//		 }
-//	 });
-// }
-
-
 class Dashbord{
+	#controlElemts ={};
 	#elemts ={};
-	#myTank = null;
+	#popupElemts ={};
+	#tankObj = null;
 	constructor(){
-		this.#myTank = new WatterTank();
+		this.#tankObj = new waterTank();
+		new WatterTankScale("tankScale");
 		this.#getElemts();
 		this.#setEvents();
+		this.#setEventsOnControls();
+		this.#setEventsOnPopUp();
+		this.#themeSetup();
+		this.#showChart();
+
+		//setup constols
+		this.#motorSwitch();
+		this.#tester();
 	}
 
 	#getElemts(){
-		const elemtMap ={
-			TankCapacity: {id: "TankCapacity"},
-			remainingWater: {id :"remainingWater"},
-			Tanksetup: {id: "Tanksetup"},
+		const controlsElemtMap ={
+			batteryArea : {id: 'batteryArea'},
+			wifiStrength :{id: 'wifiStrength'},
+			deviceStatus :{id: 'deviceStatus'},
+			motorStatus :{id: 'motorStatus' },
+			tankCapacity :{id: 'tankCapacity' },			
+			remainingWater :{id: 'remainingWater' },
+			flowRate :{id: 'flowRate' },
+			tanksetupBtn: {id: "tanksetup"},
 		};
 
-		for (const [key, value] of  Object.entries(elemtMap)){
-			this.#elemts[key] = document.getElementById(value.id);
+		for (const [key, value] of  Object.entries(controlsElemtMap)){
+			this.#controlElemts[key] = document.getElementById(value.id);
 		}
+		// const popupElemtMap ={
+		// 	modalOverlay : {id : 'modalOverlay'},
+		// };
+		// for (const [key, value] of  Object.entries(popupElemtMap)){
+		// 	this.#popupElemts[key] = document.getElementById(value.id);
+		// }
+		
 	}
-	#setEvents(){
-		const {Tanksetup} =  this.#elemts;
 
-		const tenkSetupPopUp = document.getElementById("tenkSetupPopUp");
-		const userProfileSettingPopup = document.getElementById("userProfileSettingPopup");
-		console.log(tenkSetupPopUp);
-		Tanksetup.addEventListener('click', ()=>{
+	#setEvents(){}
+	#setEventsOnControls(){
+		const {tankCapacity, remainingWater, tanksetupBtn} = this.#controlElemts;
+		
+	}
+	#updateTankCapacity(){
+		const { tankCapacity } = this.#controlElemts;
+		tankCapacity.querySelector('.value').innerText = this.#tankObj.getTankState().capacity +" Liters";
+	}
+	#updateRemingWater(){
+		const { remainingWater} = this.#controlElemts;
+		remainingWater.querySelector('.value').innerText = this.#tankObj.getTankState().remaining.liters +" Liters" + this.#tankObj.getTankState().remaining.percentage + "percentage";
+		
+	}
+	#setEventsOnPopUp(){
+		// const {modalOverlay, } =this.#popupElemts;
+		const modalOverlay = document.getElementById('modalOverlay');
+		const {tanksetupBtn} = this.#controlElemts;
+		
+		
+		/* pop launch and close Events */ 
+		tanksetupBtn.addEventListener('click', ()=>{
 			userProfileSettingPopup.classList.add('hide');
 			tenkSetupPopUp.classList.remove("hide");
-
 			openModal();
 		});
 
+		function openModal() {
+			// Overlay ko display block (ya flex) karein
+			modalOverlay.style.display = 'flex';
+		}
+
+		const closePopUp = document.getElementById('closePopUp');
+		closePopUp.addEventListener('click', closeModal);
+		function closeModal() {
+			// Overlay ko wapas chhupa dein
+			modalOverlay.style.display = 'none';
+		}
+
+		// Agar user modal ke bahar (kali layer par) click kare toh bhi band ho jaye
+		
+		modalOverlay.addEventListener('click', (e)=>{
+			if (e.target.id === 'modalOverlay'){
+				closeModal();
+			}
+		});
+
+		const userProfileSettingPopup = document.getElementById("userProfileSettingPopup");
 		document.querySelector(".userProfile").addEventListener("click", ()=>{
 			userProfileSettingPopup.classList.remove('hide');
 			tenkSetupPopUp.classList.add("hide");
-
 			openModal();
 		});
+
+		
+		/* Tank Setup */
+		/* Water Tank setup*/ 
 		const tankSetupForm = document.forms["tankSetup"];
 		const tankType = tankSetupForm.querySelector("#tankType");
-		
+		const widthFild = tankSetupForm.querySelector("#widthFild");
+		const lengthFild = tankSetupForm.querySelector("#lengthFild");
+		const dimeaterFild = tankSetupForm.querySelector("#dimeaterFild");
+		const heightFild = tankSetupForm.querySelector("#heightFild");
+
 		tankType.addEventListener('change', (event)=>{
 			const value = event.target.value;
 			if (value === "Cylindrical"){
-				tankSetupForm.querySelector("#widthFild").classList.add('hide');
-				tankSetupForm.querySelector("#lengthFild").classList.add('hide');
-				tankSetupForm.querySelector("#dimeaterFild").classList.remove('hide');
+				widthFild.classList.add('hide');
+				lengthFild.classList.add('hide');
+				dimeaterFild.classList.remove('hide');
 			}else if(value === "Rectangular"){
-				tankSetupForm.querySelector("#widthFild").classList.remove('hide');
-				tankSetupForm.querySelector("#lengthFild").classList.remove('hide');
-				tankSetupForm.querySelector("#dimeaterFild").classList.add('hide');
+				widthFild.classList.remove('hide');
+				lengthFild.classList.remove('hide');
+				dimeaterFild.classList.add('hide');
+			}
+		});
+
+		tankSetupForm.querySelector('.submitBtn').addEventListener('click', (e)=>{
+			// const  e.target.value;
+			const value = tankType.value;
+			const measuringUnit = tankSetupForm['measuringUnit'].value;
+
+			if (value === "Cylindrical"){
+				const height = tankSetupForm['height'].value;
+				const dimeater = tankSetupForm['dimeater'].value
+				this.#tankObj.setCylindricalTankValue(measuringUnit,  height, dimeater );
+				console.log( dimeater );
+				console.log( height );
+			}else if(value === "Rectangular"){
+				const width = tankSetupForm['width'].value;
+				const height = tankSetupForm['height'].value;
+				const length = tankSetupForm['length'].value;
+				console.log( width );
+				console.log( length );
+				console.log( height );
+				this.#tankObj.setRectangularTankValue(measuringUnit, height, length, width);
+			}
+			this.#updateTankCapacity();
+		});
+
+		/* profile setup*/
+
+		const profileSetupForm = document.forms["profileSetup"];
+		profileSetupForm.querySelector('.submitBtn').addEventListener('click', (e)=>{
+			console.log(profileSetupForm['name'].value);
+			console.log(profileSetupForm['usrName'].value);
+			console.log(profileSetupForm['pwd'].value);
+			console.log(profileSetupForm['rpwd'].value);
+		});
+
+	}
+	
+
+	#motorSwitch(){
+		const motorSwitchBtn = document.getElementById("MotorSwitchBtn");
+
+	
+
+		motorSwitchBtn.addEventListener("change", (e) => {
+			if (e.target.checked) {
+				console.log("ON");
+			} else {
+				console.log("OFF");
 			}
 		});
 	}
-	setupTank(){
-		const {TankCapacity} =  this.#elemts;
 
-		const tankHight= 950; //mm
-		const thankdimeter = 880; //mm
-		
-		this.#myTank.setCylindricalTankValue(tankHight, thankdimeter);
-		TankCapacity.querySelector('.value').innerText = this.#myTank.getTankCapacity() +" Liters";
-		
+	
 
-		//test events
-		document.getElementById("levelSlider").addEventListener("input", (e)=>{
-			const percent = e.target.value;
-			this.#myTank.updateTank(percent);
-			this.#updateRemingWatter(percent);
+	#themeSetup(){
+		const themeBtn = document.getElementById("ThemeBtn");
+
+
+		(function restoreThemePrefrence(){
+			// Check if user previously saved a theme preference
+			if (localStorage.getItem('theme') === 'darkTheme') {
+				document.body.classList.add('darkTheme');
+				themeBtn.textContent = '🌙'; // Dark mode icon
+			} else {
+				document.body.classList.remove('darkTheme');
+				themeBtn.textContent = '🔆'; // Light mode icon
+			}
+		})();
+
+		themeBtn.addEventListener('click', () => {
+			// Toggle 'dark' class on <html>
+			document.body.classList.toggle('darkTheme');
+
+			// Update Icon and Save preference
+			if (document.body.classList.contains('darkTheme')) {
+				themeBtn.textContent = '🌙';
+				localStorage.setItem('theme', 'darkTheme');
+			} else {
+				themeBtn.textContent = '🔆';
+				localStorage.setItem('theme', 'lightTheme');
+			}
 		});
 	}
-	#updateRemingWatter(percent){
-		const { remainingWater} =  this.#elemts;
-		remainingWater.querySelector('.value').innerText = this.#myTank.getTankCapacityByPercentage(percent) +" Liters";
+	#showChart(){
+		new SVGChart("#todysGraph", {
+			chart:{
+				type: 'line',
+				title : "Last 24hr Chart",
+			},
+			xAxis: { 
+				title: "Time",
+			},
+			yAxis:{
+				title: "Water Lavel (in %)",
+			},
+			data: {
+				labels: ['12am', '01am', '02am', '03am', '04am', '05am', '06am', '07am', '08am', '09am', '10am', '11am', '12pm', '01pm', '02pm', '03pm', '04pm', '05pm', '06pm', '07pm', '08pm', '09pm', '10pm', '11pm'],
+				datasets: [{	
+						label: "Tank 1", 
+						data: [10, 20, 30, 40 , 50, 40, 0, 20, 50, 70, 100, 5, 10, 20, 30, 40 , 50, 40, 10, 20, 50, 70, 100, 5],
+						color: "#0BB5FF"
+					}],
+			},
+		});
 	}
-	
-}
-
-
-
-class WatterTank{
-	#typeOfTank = "Cylindrical";
-	#radius =null;
-	#height = null;
-	#length = null;
-	#width = null;
-	#TotalCapacity= null;
-
-	setCylindricalTankValue(height, dimeter){
-		this.#typeOfTank = "Cylindrical";
-		this.#radius = dimeter/2;
-		this.#height = height;
-		this.#TotalCapacity = this.getTankCapacity();
+	#tester(){
+		document.getElementById("levelSlider").addEventListener("input", (e)=>{
+			const percent = e.target.value;
+			// this.#tankObj.updateTank(percent);
+			// this.#updateRemingWatter(percent);
+		});
 	}
-	setRectangularTankValue(height, length, width){
-		this.#typeOfTank = "Rectangular";
-		this.#height = height;
-		this.#length = length;
-		this.#width = width;
-		this.#TotalCapacity = this.getTankCapacity();
-	}
-	getTankCapacity(){
-		let volume;
-		if (this.#typeOfTank === "Rectangular"){
-			volume = this.#length * this.#width * this.#height;
-		}else if (this.#typeOfTank === "Cylindrical"){
-			volume  = Math.PI * this.#radius * this.#radius * this.#height;
-		}
-		return Number((volume / 1000000).toFixed(0));;
-	}
-	getTankCapacityByPercentage(Percentage){
-		const Liters = (Percentage / 100) * this.#TotalCapacity;
-		return Liters.toFixed(0);
-	}
-
-	updateTank(percent) {
-		const waterGroup = document.getElementById('water-level');
-		const percText = document.getElementById('perc-text');
-		const stopTop = document.getElementById('grad-top');
-		const stopBottom = document.getElementById('grad-bottom');
-		const perc_text = document.getElementById('perc-text');
-		const TankCap = document.getElementById('TankCap');
-		const TankBody = document.getElementById('TankBody');
-		
-		
-
-		// 1. Level Update (Position)
-		const yMove = 260 - (percent * 2.5);
-		waterGroup.setAttribute('transform', `translate(0, ${yMove})`);
-		percText.textContent = percent + "%";
-
-		// 2. Color Logic
-		let colorTop, colorBottom, colorPerc_text, colorTankCap, colorTankBody;
-
-		if (percent <= 20) {
-			// Critical: Red
-			colorTop = "#ff4d4d"; 
-			colorBottom = "#cc0000";
-			colorPerc_text = "#cc0000";
-			colorTankCap = "#ff4d4d";
-			colorTankBody ="#ff4d4d";
-		} else if (percent <= 50) {
-			// Medium: Orange/Yellow
-			colorTop = "#fbc02d";
-			colorBottom = "#f57f17";
-			colorPerc_text = "#fbc02d";
-			colorTankCap = "#fbc02d";
-			colorTankBody ="#fbc02d";
-		} else {
-			// Good: Blue (Aapka original color)
-			colorTop = "#4facfe";
-			colorBottom = "#00f2fe";
-			colorPerc_text = "#00f2fe";
-			colorTankCap = "#00f2fe";
-			colorTankBody ="#00f2fe";
-		}
-
-		// Colors apply karna
-		stopTop.setAttribute('stop-color', colorTop);
-		stopBottom.setAttribute('stop-color', colorBottom);
-		perc_text.setAttribute('fill', colorPerc_text);
-		TankCap.setAttribute('stroke', colorTankCap);
-		TankBody.setAttribute('stroke', colorTankBody);
-	}
-}
-
-const themeBtn = document.getElementById("ThemeBtn");
-
-
-function restoreThemePrefrence(){
-	// Check if user previously saved a theme preference
-	if (localStorage.getItem('theme') === 'darkTheme') {
-		document.body.classList.add('darkTheme');
-		themeBtn.textContent = '🌙'; // Dark mode icon
-	} else {
-		document.body.classList.remove('darkTheme');
-		themeBtn.textContent = '🔆'; // Light mode icon
-	}
-}
-
-themeBtn.addEventListener('click', () => {
-	// Toggle 'dark' class on <html>
-	document.body.classList.toggle('darkTheme');
-
-	// Update Icon and Save preference
-	if (document.body.classList.contains('darkTheme')) {
-		themeBtn.textContent = '🌙';
-		localStorage.setItem('theme', 'darkTheme');
-	} else {
-		themeBtn.textContent = '🔆';
-		localStorage.setItem('theme', 'lightTheme');
-	}
-});
-
-
-// =====================================
-
-
-
-function openModal() {
-	// Overlay ko display block (ya flex) karein
-	document.getElementById('modalOverlay').style.display = 'flex';
-}
-
-function closeModal() {
-	// Overlay ko wapas chhupa dein
-	document.getElementById('modalOverlay').style.display = 'none';
-}
-
-// Agar user modal ke bahar (kali layer par) click kare toh bhi band ho jaye
-window.onclick = function(event) {
-	let overlay = document.getElementById('modalOverlay');
-	if (event.target == overlay) {
-		closeModal();
-	}
-}
-
-function saveData() {
-	let newValue = document.getElementById('newCapacity').value;
-	console.log("Saving value:", newValue);
-	// Yahan aap apna data update karne ka logic likh sakte hain
-	closeModal();
 }

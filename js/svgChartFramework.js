@@ -1,116 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVG Charts framework</title>
-	<style>
-		.chartContailner{
-			border: 2px solid red;
-			height: auto;
-			width: 100rem;
-		}
-		#chartContainer svg{
-			width: 100%;
-			height: 100%;
-		}
-
-
-		/*  */
-	</style>
-</head>
-<body>
-    <div class="chartContailner" id="dailyChart"></div>
-    <div class="chartContailner" id="weeklyChart"></div>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", ()=>{
-	todayChart();
-	weekly();
-});
-
-function weekly() {
-}
-
-
-// 	function monthly(data) {
-// 		this.draw(data, "month");
-// 	}
-
-// 	function currentHour(data) {
-// 		this.draw(data, "hour");
-// 	}
-
-function Lablesfor24Hours(){
-	const lables= [];
-	const now = new Date();
-	for (let i = 0; i < 24; i++) {
-		// 🕒 Current time based shift
-		
-		let hour = (now.getHours() - (24 - i) + 24) % 24;
-		let label = "";
-
-		if (hour === 0) label = "12 am";
-		else if (hour < 12) label = hour.toString().padStart(2, '0') + " am";
-		else if (hour === 12) label = "12 pm";
-		else label = (hour - 12).toString().padStart(2, '0') + " pm";
-		
-		lables.push(label);
-	}
-	
-	return lables;
-}
-function todayChart() {
-	new SVGChart("#dailyChart", {
-		chart:{
-			type: 'line',
-			title : "Last 24hr Chart",
-		},
-		xAxis: { 
-			title: "Time",
-		},
-		yAxis:{
-			title: "Water Lavel (in %)",
-		},
-
-		// ['12am', '01am', '02am', '03am', '04am', '05am', '06am', '07am', '08am', '09am', '10am', '11am', '12pm', '01pm', '02pm', '03pm', '04pm', '05pm', '06pm', '07pm', '08pm', '09pm', '10pm', '11pm']
-	
-		data: {
-			labels: Lablesfor24Hours(),
-			datasets: [
-				{	
-					label: "Tank 1", 
-					data: [10, 20, 30, 40 , 50, 40, 0, 20, 50, 70, 100, 5, 10, 20, 30, 40 , 50, 40, 10, 20, 50, 70, 100, 5],
-					color: "#0BB5FF"
-				},
-				{
-					label: "Tank 2",
-					data: [10, 20, 60, 10, 5, 0, 55, 75, 85, 95, 65, 54, 6, 40, 50, 20, 5, 7, 70, 80, 85, 65, 45, 35],
-				
-				}
-			],
-		},
-		animationType: "scale", // scale | fade | slide
-		
-		
-		options: {
-				animation :{
-					chartTitleAinmation: '', 
-					xTitleAnimation: '', xLineAnimation: '', xLineLabel: '', 
-					yTitleAnimation: '', yLineAnimation: '', yLineLabel: '', 
-					dataLineAnimation: { type: "draw", duration: 2000 }, 
-					dataLinePointAnimation: {
-												type: "pop",
-												delay: "sync-line", // 🔥 line के साथ चलेगा
-												duration: 500
-											}, 
-					toolTipsAnimation: ''}
-		},
-	});
-}
-
-
 //Core Class
 class CoreSVGChart{
 	static dateObj = new Date();
@@ -349,14 +236,22 @@ class LineChart extends CoreSVGChart{
 					animation: {
 						type: "object",
 						schema: {
-							chartTitleAinmation: { type: "object", default: {type: "fade"} },
+							chartTitleAnimation: { type: "object", default: {type: "fade"} },
 							xTitleAnimation: { type: "object", default: {type: "fade"} },
 							xLineAnimation: { type: "object", default: {type: "slide"} },
 							xLineLabel: { type: "object", default: {type: "fade"} },
 							yTitleAnimation: { type: "object", default: {type: "fade"} },
 							yLineAnimation: { type: "object", default: {type: "slide"} },
 							yLineLabel: { type: "object", default: {type: "fade"} },
-							dataLineAnimation: { type: "object", default: { type: "draw", duration: 2000 } },
+							dataLinePointAnimation: {
+													type: "object",
+													default: {},
+													schema: {
+														type: { type: "string", default: "pop" },
+														delay: { type: "string", default: "sync-line" },
+														duration: { type: "number", default: 500 }
+													}
+													},
 							dataLinePointAnimation: {
 														type: "object",
 														schema: {
@@ -376,17 +271,24 @@ class LineChart extends CoreSVGChart{
 			const output = {};
 
 			for (const key in schema) {
+				
 				const rule = schema[key];
 				const value = input[key];
 
+				const isEmpty = value === '' || value === undefined || value === null;
 				// अगर nested object है
 				if (rule.type === "object") {
-					output[key] = validate(rule.schema, value || {});
+					if (isEmpty || typeof value !== "object") {
+						// अगर invalid है तो default use करो
+						output[key] = validate(rule.schema, {});
+					} else {
+						output[key] = validate(rule.schema, value);
+					}
 				}
 
 				// string validation
 				else if (rule.type === "string") {
-					let valid = typeof value === "string" && value.trim() !== "";
+					let valid = !isEmpty && typeof value === "string" && value.trim() !== "";
 
 					// custom validation
 					if (rule.validate && !rule.validate(value)) {
@@ -398,7 +300,7 @@ class LineChart extends CoreSVGChart{
 
 				// array validation
 				else if (rule.type === "array") {
-					output[key] = Array.isArray(value)
+					output[key] = !isEmpty && Array.isArray(value)
 						? value
 						: rule.default;
 				}
@@ -436,15 +338,20 @@ class LineChart extends CoreSVGChart{
 		
 		this.#drawChartDataLine();   // lines + area
 		
-		/* Aniamiton on Elements */ 
-		//this.#addAnimationsInCSS(); //this will add animation code in CSS
-		this.#addDataLineAnimation(); // Line Drawing Animation setup
-		this.#addDataLineFillAnimation();
-		this.#addDataPointCircleAnimation();
-		// this.#addToolTipsAnimation(tooltipText, tooltipBg);
+		
 
 		this.#addBackGroundInSVG();
 		this.#chartElements.chartContainer.append(this.#chartElements.chartSVG);
+
+		/* Aniamiton on Elements */ 
+		requestAnimationFrame(() => {
+			//this.#addAnimationsInCSS(); //this will add animation code in CSS
+			this.#addDataLineAnimation(); // Line Drawing Animation setup
+			this.#addDataLineFillAnimation();
+			this.#addDataPointCircleAnimation();
+			// this.#addToolTipsAnimation(tooltipText, tooltipBg);
+		});
+		
 
 		this.#addEventOnDataPoint();
 	}
@@ -962,11 +869,17 @@ class LineChart extends CoreSVGChart{
 		
 			//console.log(lineEle.getTotalLength());
 			//console.log(lineEle.getAttribute('d'));
-			console.log(lineEle.isConnected); // true होना चाहिए
+			//console.log(lineEle.isConnected); // true होना चाहिए
+			if (!lineEle || !lineEle.isConnected) return; // safety
 
 			const length = lineEle.getTotalLength();
 
 			lineEle.style.strokeDasharray = length;
+
+			// 🧹 Step 1: reset everything
+			lineEle.style.transition = "none";  // ❗ important
+			lineEle.style.strokeDasharray = length;
+			lineEle.style.strokeDashoffset = length;
 			
 			// {
 			// 	//by animation
@@ -1082,7 +995,7 @@ class BarChart extends CoreSVGChart{
 }
 
 //Controller / Factory
-class SVGChart{	
+export class SVGChart{	
 	constructor(container , Chartstruct){
 		
 		const chartMap={
@@ -1236,6 +1149,3 @@ class SmartTooltip {
     this.group.setAttribute("opacity", "0");
   }
 }
-</script>
-</body>
-</html>

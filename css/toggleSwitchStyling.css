@@ -1,0 +1,64 @@
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 70px;
+	height: 34px;
+}
+
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.slider {
+	position: absolute;
+	cursor: pointer;
+	inset: 0;
+	background: #444;
+	border-radius: 50px;
+	transition: 0.4s;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+	font-size: 10px;
+	font-weight: bold;
+	color: white;
+}
+
+.slider::before {
+	content: "";
+	position: absolute;
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background: white;
+	border-radius: 50%;
+	transition: 0.4s;
+	z-index: 2;
+}
+
+/* Text */
+.text {
+	z-index: 1;
+	opacity: 0.6;
+}
+
+.text.on {
+	color: #00f2fe;
+}
+
+.text.off {
+	color: #aaa;
+}
+
+/* ON state */
+.switch input:checked + .slider {
+	background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.switch input:checked + .slider::before {
+	transform: translateX(36px);
+}
