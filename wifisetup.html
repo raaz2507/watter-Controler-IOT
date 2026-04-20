@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wifiSetup</title>
+    <link rel="stylesheet" href="./css/wifisetup.css">
+</head>
+<body>
+    <header></header>
+    <div class="container">
+        <form action="" method="post" name="rauter_ssid_pwd">
+            <fieldset>
+                <legend>Devide Connection Setting</legend>
+                <div>
+                    <h4 class="radioBtnTitle">You Want to devise use as :</h4>
+                    <br>
+                    <input type="radio" name="diviceMode" id="ap" value="hotsopt">
+                    <label for="ap">Access Point Mode [AP / Hotspot] (Default)</label>
+                    <br>
+                    <input type="radio" name="diviceMode" id="sta" value="clint" checked>
+                    <label for="sta" title="Recomded">Station Mode [STA] (Connect to WiFi Router) (Recommended)</label>
+
+                </div>
+            </fieldset>
+            <fieldset>
+                <div>
+                    <label for="ssid" class="textBoxLabel">SSID</label>
+                    <input type="text" name="ssid" id="ssid" placeholder="Enter SSID">
+                </div>
+                <div>
+                    <label for="pwd" class="textBoxLabel">password</label>
+                    <input type="text" name="pwd" id="pwd" placeholder="Enter Wifi Password">
+                </div>
+
+            </fieldset>
+                
+                <div class="button-container">
+                    <button type="button" class="submit-btn button" onclick="alert('Form submitted!')">Submit</button>
+                    <button type="reset" class="reset-btn button">Reset</button>
+                </div>
+            
+        </form>
+    </div>
+    <footer></footer>
+<script>
+    const deviceConfigForm = document.forms["rauter_ssid_pwd"];
+    const diviceMode = deviceConfigForm["diviceMode"];
+    
+</script>
+</body>
+</html>

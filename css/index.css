@@ -1,0 +1,165 @@
+@import url('base.css');
+/* *{
+	border: 1px solid red;
+} */
+
+/* ================= BODY CENTER ================= */
+body {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	font-family: 'Segoe UI', sans-serif;
+	background: url('../img/background.svg') no-repeat center/cover;
+}
+
+body footer{
+	margin-top: auto;
+	margin-bottom: 2rem;
+}
+/* ================= CONTAINER ================= */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	margin-top: auto;
+	padding: 20px;
+}
+
+/* ================= LOGO ================= */
+.siteLogo {
+	width: 180px;
+	margin-bottom: 10px;
+}
+
+.siteLogo img {
+	width: 100%;
+}
+
+/* ================= FORM ================= */
+form {
+	width: 300px;
+}
+
+/* glass look */
+form fieldset {
+	border: 1px solid rgba(255,255,255,0.2);
+	border-radius: 12px;
+
+	padding: 20px;
+
+	background: rgba(255,255,255,0.1);
+	backdrop-filter: blur(10px);
+}
+
+/* legend */
+form legend {
+	padding: 0 10px;
+	font-weight: 600;
+	font-size: 16px;
+	color: #fff;
+}
+
+/* ================= INPUT GROUP ================= */
+form div {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 15px;
+}
+
+/* label */
+form label {
+	font-size: 13px;
+	margin-bottom: 5px;
+	color: #ddd;
+}
+
+/* inputs */
+form input[type="text"],
+form input[type="password"] {
+	padding: 10px;
+	border-radius: 6px;
+	border: none;
+
+	font-size: 14px;
+
+	background: rgba(255,255,255,0.2);
+	color: #fff;
+	outline: none;
+}
+
+/* focus effect */
+form input:focus {
+	background: rgba(255,255,255,0.3);
+}
+
+/* ================= PASSWORD FIELD ================= */
+.passwordField {
+	position: relative;
+	width: 100%;
+}
+
+.passwordField input {
+	width: 100%;
+	padding-right: 40px; /* icon ke liye space */
+}
+/* eye icon */
+
+#toggleEye {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-30%);
+	width: 30px;
+	/* display: flex;
+	align-items: center; */
+	cursor: pointer;
+
+	color: #ccc;
+}
+
+#toggleEye:hover {
+	color: #fff;
+}
+
+#toggleEye svg {
+	width: 100%;
+	/* height: 16px; */
+}
+
+/* ================= BUTTONS ================= */
+.buttonSection {
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.buttonSection input {
+	flex: 1;
+	padding: 10px;
+
+	border: none;
+	border-radius: 8px;
+
+	font-size: 14px;
+	cursor: pointer;
+
+	background: rgba(255,255,255,0.2);
+	color: #fff;
+
+	transition: 0.2s;
+}
+
+/* hover */
+.buttonSection input:hover {
+	background: rgba(255,255,255,0.35);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 400px) {
+	form {
+		width: 100%;
+	}
+}

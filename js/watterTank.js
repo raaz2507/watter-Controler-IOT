@@ -43,62 +43,67 @@ export class waterTank{
 		
 		return Math.floor(volume / 1000000);
 	}
-	#getTankRemainingWaterInPercentage(Percentage){
-		const Liters = (Percentage / 100) * this.#tankState.capacity;
+	water_Percentage2Liters(Percent){
+		const Liters = (Percent / 100) * this.#tankState.capacity;
+		// console.log(Liters , Percentage);
 		return Liters.toFixed(0);
 	}
 	
 	
-	#calculateRemainingWater(){
-			const tankCapacity = 2000; // liter
-			const currentLevel = 45;   // %
-	
-			const stats = calculateWaterStats(currentLevel, tankCapacity);
-	
-			console.log("Flow %:", stats.flowPercentPerMin.toFixed(2), "%/min");
-			console.log("Flow Liter:", stats.flowLiterPerMin.toFixed(2), "L/min");
-			console.log("Remaining:", stats.remainingWater.toFixed(2), "L");
-			console.log("Time to Fill:", stats.timeToFill.toFixed(2), "min");
-			let prevLevel = 0;
-			let prevTime = Date.now();
-	
-			function calculateWaterStats(currentLevel, tankCapacity) {
-				const currentTime = Date.now();
-	
-				// ⏱ time difference (minutes)
-				const timeDiff = (currentTime - prevTime) / 60000;
-	
-				// 📊 level difference (%)
-				const levelDiff = currentLevel - prevLevel;
-	
-				// 💧 Flow Rate (% per min)
-				const flowPercentPerMin = levelDiff / timeDiff;
-	
-				// 💧 Flow Rate (Liter per min)
-				const flowLiterPerMin = (flowPercentPerMin / 100) * tankCapacity;
-	
-				// 💧 Remaining Water (Liter)
-				const remainingWater = (currentLevel / 100) * tankCapacity;
-	
-				// ⏳ Time to fill (minutes)
-				let timeToFill = Infinity;
-	
-				if (flowPercentPerMin > 0) {
-					timeToFill = (100 - currentLevel) / flowPercentPerMin;
-				}
-	
-				// update previous
-				prevLevel = currentLevel;
-				prevTime = currentTime;
-	
-				return {
-					flowPercentPerMin,
-					flowLiterPerMin,
-					remainingWater,
-					timeToFill
-				};
+	calculateRemainingWater(currentLevel){
+
+		let prevLevel = 0;
+		let prevTime = Date.now();
+
+		const stats = calculateWaterStats(currentLevel, this.#tankState.capacity);
+
+		// console.log("Flow %:", stats.flowPercentPerMin.toFixed(2), "%/min");
+		// console.log("Flow Liter:", stats.flowLiterPerMin.toFixed(2), "L/min");
+		// console.log("Remaining:", stats.remainingWater.toFixed(2), "L");
+		// console.log("Time to Fill:", stats.timeToFill.toFixed(2), "min");
+		
+		return stats;
+
+		
+
+		function calculateWaterStats(currentLevel, tankCapacity) {
+			console.log(currentLevel, tankCapacity );
+			const currentTime = Date.now();
+
+			// ⏱ time difference (minutes)
+			const timeDiff = (currentTime - prevTime) / 60000;
+
+			// 📊 level difference (%)
+			const levelDiff = currentLevel - prevLevel;
+
+			// 💧 Flow Rate (% per min)
+			const flowPercentPerMin = levelDiff / timeDiff;
+
+			// 💧 Flow Rate (Liter per min)
+			const flowLiterPerMin = (flowPercentPerMin / 100) * tankCapacity;
+
+			// 💧 Remaining Water (Liter)
+			const remainingWater = (currentLevel / 100) * tankCapacity;
+
+			// ⏳ Time to fill (minutes)
+			let timeToFill = Infinity;
+
+			if (flowPercentPerMin > 0) {
+				timeToFill = (100 - currentLevel) / flowPercentPerMin;
 			}
+
+			// update previous
+			prevLevel = currentLevel;
+			prevTime = currentTime;
+
+			return {
+				flowPercentPerMin,
+				flowLiterPerMin,
+				remainingWater,
+				timeToFill
+			};
 		}
+	}
 }
 
 export class WatterTankScale{

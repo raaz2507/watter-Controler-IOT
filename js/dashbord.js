@@ -11,9 +11,10 @@ class Dashbord{
 	#elemts ={};
 	#popupElemts ={};
 	#tankObj = null;
+	#watterTankScale = null;
 	constructor(){
 		this.#tankObj = new waterTank();
-		new WatterTankScale("tankScale");
+		this.#watterTankScale = new WatterTankScale("tankScale");
 		this.#getElemts();
 		this.#setEvents();
 		this.#setEventsOnControls();
@@ -232,9 +233,17 @@ class Dashbord{
 	}
 	#tester(){
 		document.getElementById("levelSlider").addEventListener("input", (e)=>{
+			const {remainingWater, flowRate} = this.#controlElemts;
 			const percent = e.target.value;
-			// this.#tankObj.updateTank(percent);
-			// this.#updateRemingWatter(percent);
+			this.#watterTankScale.updateTank(percent);
+			remainingWater.querySelector('.value').textContent = this.#tankObj.water_Percentage2Liters(percent) + " Liters";
+
+			const stats = this.#tankObj.calculateRemainingWater(Number(percent));
+			flowRate.querySelector('.value').innerHTML = 
+			`<span style=" font-size:8px;">Flow %: ${stats.flowPercentPerMin.toFixed(2)} %/min</br>,
+			Flow Liter: ${stats.flowLiterPerMin.toFixed(2)} L/min</br>,
+			Remaining: ${stats.remainingWater.toFixed(2)} L</br>,
+			Time to Fill: ${stats.timeToFill.toFixed(2)} min </span>`;
 		});
 	}
 }

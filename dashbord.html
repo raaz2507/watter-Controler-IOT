@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="shortcut icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐦‍🔥</text></svg>">
+	<title>Water Tank Controler</title>
+	
+	<link rel="stylesheet" href="./css/dashbord.css">
+</head>
+<body class="waterBg">
+	<header></header>
+	
+	<nav>
+		<ul>
+			<li><a href="./index.html">Dashbord</a></li>
+			<li><a href="./chars.html">Charts</a></li>
+		</ul>
+	</nav>
+	<section class="statusBar">
+		suggesiotns
+			App Name + Icon
+Live Status Dot 🟢 / 🔴
+User Profile
+Theme Toggle
+Last Updated Time
+			💧 Water Dashboard     🟢 Online     12:45 PM     👤 Raj
+	</section>
+	<main >
+		<div class="upperPart">
+			<section id="tankScale"></section>
+			<section id="controlArea">
+				<div id="batteryArea" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Battery</span>
+						<div class="icon">
+							<img src="./img/icons/battery-charged_14984649.gif" alt="🔋">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value" >100%</span>
+					</div>
+				</div>
+				<div id="wifiStrength" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Wifi Strength</span>
+						<div class="icon">
+							<img src="./img/icons/wifi-solid-full.svg" alt="🛜">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value" >100%</span>
+					</div>
+				</div>
+				<div id="deviceStatus" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Device Status </span>
+						<div class="icon">
+							<img src="./img/icons/chatbot_11260829.gif" alt="🤖">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value">Active/Inactive</span>
+					</div>
+				</div>
+				<div id="motorStatus" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Motor Status </span>
+						<div class="icon">
+							<img src="./img/icons/radiator_14779694.gif" alt="✇">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<label class="switch">
+							<input type="checkbox" id="MotorSwitchBtn">
+							<span class="slider">
+								<span class="text on">ON</span>
+								<span class="text off">OFF</span>
+							</span>
+							
+						</label>
+					</div>
+				</div>
+
+				<div id="autoMode" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">AutoMation Mode</span>
+						<div class="icon">
+							<img src="./img/icons/radiator_14779694.gif" alt="✇">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<label class="switch">
+							<input type="checkbox" id="autoModeBtn">
+							<span class="slider">
+								<span class="text on">ON</span>
+								<span class="text off">OFF</span>
+							</span>
+							
+						</label>
+					</div>
+				</div>
+				<div id="autoModeSetup" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">AutoMode Setup</span>
+						<div class="icon">
+							<img src="./img/icons/settings_14183485.gif" alt="🛠️">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value">AutoMode setup</span>
+					</div>
+				</div>
+
+				<div id="tankCapacity" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Tank Capacity </span>
+						<div class="icon">
+							<img src="./img/icons/pot_11779501.gif" alt="🛢️">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value">00 Liter</span>
+					</div>
+				</div>
+				<div id="remainingWater" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Remaining Watter</span>
+						<div class="icon">
+							<img src="./img/icons/water-drop_11926804.gif" alt="💧">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value">00 Liter</span>
+					</div>
+				</div>
+				<div id="flowRate" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Flow Rate</span>
+						<div class="icon">
+							<img src="./img/icons/water-drop_11926804.gif" alt="💧">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value">1 Liter/ Minute</span>
+					</div>
+				</div>
+				<div id="tanksetup" class="dashboardCard">
+					<div class="cardHeader">
+						<span class="title">Tank Setup</span>
+						<div class="icon">
+							<img src="./img/icons/settings_14183485.gif" alt="🛠️">
+						</div>
+					</div>
+
+					<div class="cardBody">
+						<span class="value">Tank Setup</span>
+					</div>
+				</div>
+				<span>
+
+	👉 organize करो:
+
+		✔ Grouping: 🔋 System ,Battery, Wifi ,Device Status,💧 Water, Tank Capacity, Remaining Water, Flow Rate, ⚙️ Control, Motor Status, Mode
+				</span>
+			</section>
+		</div>
+		<section class="downPart">
+			<section class="statusBar">
+				<div>Flow %: <span class="value">20</span>%</div>
+				<div>Flow Liter: <span class="value">2.5</span> L/min</div>
+				<div>Remaining: <span class="value">120</span> L</div>
+				<div>Time to Fill: <span class="value">15</span> min</div>
+			</section>
+			<div class="chartBox" id="todysGraph"></div>
+		</section>
+		
+	</main>
+	
+	<section id="">
+			<div class="controls">
+				<div style="margin-bottom: 10px; font-size: 1.2rem;">Control Level</div>
+				<input type="range" id="levelSlider" min="0" max="100" value="0" >
+				<div id="status" style="margin-top: 10px; color: #4facfe;">Status: Charging</div>
+			</div>
+		</section>
+		
+	
+	
+	<footer></footer>
+
+	<div id="modalOverlay" class="overlay">
+		<div class="modal-card">
+			<div class="modal-header">
+				<div class="close-btn" id="closePopUp">&times;</div>
+			</div>
+			<div class="modal-body">
+				<div id="tenkSetupPopUp" class="hide">
+					<h3>Update Tank Details</h3>
+					<p>for setup tank dimantion Details.</p>
+					<form action="" name="tankSetup" class="card">
+						<fieldset>
+							<legend>Update Tank Details</legend>
+							<div>
+								<label for="tankType">Tank Type</label>
+								<select name="tankType" id="tankType">
+									<option value="Cylindrical" selected>Cylindrical</option>
+									<option value="Rectangular">Rectangular</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="measuringUnit">Measuring Unit</label>
+								<select name="measuringUnit" id="measuringUnit">
+									<option value="m">Meter</option>
+									<option value="ft">Feet</option>
+									<option value="in">Inch</option>
+									<option value="cm" selected>Centimeter</option>
+								</select>
+							</div>
+							<div id="valueArea">
+								<div id="heightFild">
+									<label for="height">Height</label>
+									<input type="number" name="height" id="height" value="950">
+								</div>
+								<div id="widthFild" class="hide">
+									<label for="width">Width</label>
+									<input type="number" name="width" id="width">
+								</div>
+								<div id="lengthFild" class="hide">
+									<label for="length">Length</label>
+									<input type="number" name="length" id="length">
+								</div>
+								<div id="dimeaterFild">
+									<label for="dimeater">Dimeater</label>
+									<input type="number" name="dimeater" id="dimeater" value="880">
+								</div>
+							</div>
+						</fieldset>
+						<input type="reset" value="Reset">
+						<input type="button" value="Update Tank Value" class="submitBtn">
+					</form>
+				</div>
+				
+				<div id="userProfileSettingPopup" class="hide">
+					<h3>Update Profile Details</h3>
+					<p>Update User Profiles Details.</p>
+					<form action="" name="profileSetup" class="card">
+						<fieldset>
+							<legend>User Profine Setting</legend>
+							<div>
+								<label for="name">Your Name</label>
+								<input type="text" name="name" id="name">
+							</div>
+							<div>
+								<label for="userName">User Name</label>
+								<input type="text" name="usrName" id="userName">
+							</div>
+							<div>
+								<label for="pwd">Password</label>
+								<input type="password" name="pwd" id="pwd">
+							</div>
+							<div>
+								<label for="rpwd">ReEnter Password</label>
+								<input type="password" name="rpwd" id="rpwd">
+							</div>
+						</fieldset>
+						<input type="reset" value="Reset">
+						<input type="button" value="Update Profile" class="submitBtn">
+					</form>
+				</div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>
+	</div>
+<!-- <script src="./js/chart.umd.js"></script> -->
+<script src="./js/headerNfooter.js"></script>
+<script type="module" src="./js/dashbord.js" ></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+@import url('base.css');
+body {
+	background-image: url('../img/background.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.container{
+	background-color: rgba(255, 136, 0, 0.59);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	margin: 0;
+	backdrop-filter: blur(2px);
+}
+form[name="rauter_ssid_pwd"] {
+	background: rgba(255, 255, 255, 0.71);
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	width: 100%;
+	width: 450px;
+	padding: 2rem;
+}
+
+form[name="rauter_ssid_pwd"] fieldset {
+	padding: 10px 10px;
+	border-radius: 10px;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+legend {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+div {
+	margin-bottom: 1.5rem;
+}
+
+.textBoxLabel {
+	font-size: 1rem;
+	color: #333;
+	display: block;
+	margin-bottom: 0.5rem;
+}
+
+input[type="text"] {
+	width: 100%;
+	padding: 0.75rem;
+	font-size: 1rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+input[type="text"] {
+	transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+	border-color: #00fff7;
+	outline: none;
+}
+
+input::placeholder {
+	color: #aaa;
+}
+
+.button {
+	background-color: #ff8700;
+	color: #fff;
+	padding: 0.75rem;
+	border: none;
+	border-radius: 4px;
+	width: 100%;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.button:hover {
+	background-color: #e56700;
+}
+.button {
+	padding: 0.75rem;
+	border: none;
+	border-radius: 4px;
+	width: 100%;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	margin-top: 1rem;
+}
+.reset-btn, .submit-btn {
+	margin-top: 0.5rem;
+	border: none;               /* Remove border */
+	border-radius: 4px;         /* Rounded corners */
+	padding: 0.75rem;           /* Consistent padding */
+	font-size: 1rem;            /* Same font size as other buttons */
+	cursor: pointer;           /* Pointer cursor on hover */
+	transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+.reset-btn {
+	background-color: rgb(255, 217, 3);
+	color: #333;
+}
+.submit-btn {
+	background-color: rgb(0, 145, 99);  /* Same orange color as your body background */
+	color: #fff;                /* White text for contrast */
+}
+.reset-btn {
+	background-color: rgba(255, 217, 3, 0.7);  /* Slightly darker orange for hover effect */
+}
+.submit-btn:hover {
+	background-color: rgba(0, 145, 99, 0.7);  /* Slightly darker orange for hover effect */
+}
+.reset-btn:hover {
+	background-color: #aaa;
+}
+
+.button-container {
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+}
+
+.radioBtnTitle{
+	line-height: 1rem;
+}
+
+input[type="radio"] {
+	display: none;
+}
+
+input[type="radio"] + label {
+	font-size: 12px;
+	padding: 5px 7px;
+	border: 2px solid gray;
+	cursor: pointer;
+	border-radius: 5px;
+	line-height: 2rem;
+}
+
+input[type="radio"]:checked + label {
+	background: #4caf4ff0;
+	color: white;
+	border-color: #4CAF50;
+}

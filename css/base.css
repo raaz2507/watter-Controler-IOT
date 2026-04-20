@@ -8,3 +8,31 @@ html, body{
     box-sizing: border-box;
     /* border: 1px solid red; */
 }
+/* Default: Dark Theme */
+:root {
+	--bg-main: #f5f7fb;
+	--bg-card: #ffffff;
+	--bg-section: #eef1f7;
+	--bg-secondery: rgba(151, 206, 255, 0.1);
+
+	--text-primary: #1f2937;
+	--text-secondary: #6b7280;
+
+	--border-color: #e5e7eb;
+
+	--accent: #4facfe;
+}
+
+/* Dark Theme Class */
+body.darkTheme {
+	--bg-main: #0f172a;
+	--bg-card: #1e293b;
+	--bg-section: #111827;
+
+	--text-primary: #e5e7eb;
+	--text-secondary: #9ca3af;
+
+	--border-color: #374151;
+
+	--accent: #00f2fe;
+}
