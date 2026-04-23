@@ -1,4 +1,9 @@
 @import url('base.css');
+@import url("header.css");
+@import url("navBar.css");
+@import url("footer.css");
+
+@import url("formBase.css");
 /* *{
 	border: 1px solid red;
 } */
@@ -14,10 +19,7 @@ body {
 	background: url('../img/background.svg') no-repeat center/cover;
 }
 
-body footer{
-	margin-top: auto;
-	margin-bottom: 2rem;
-}
+
 /* ================= CONTAINER ================= */
 .container {
 	display: flex;
@@ -44,66 +46,35 @@ form {
 }
 
 /* glass look */
-form fieldset {
-	border: 1px solid rgba(255,255,255,0.2);
-	border-radius: 12px;
 
-	padding: 20px;
-
-	background: rgba(255,255,255,0.1);
-	backdrop-filter: blur(10px);
-}
 
 /* legend */
-form legend {
-	padding: 0 10px;
-	font-weight: 600;
-	font-size: 16px;
-	color: #fff;
-}
+
 
 /* ================= INPUT GROUP ================= */
-form div {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 15px;
-}
+
 
 /* label */
-form label {
-	font-size: 13px;
-	margin-bottom: 5px;
-	color: #ddd;
-}
+
 
 /* inputs */
-form input[type="text"],
-form input[type="password"] {
-	padding: 10px;
-	border-radius: 6px;
-	border: none;
 
-	font-size: 14px;
-
-	background: rgba(255,255,255,0.2);
-	color: #fff;
-	outline: none;
-}
 
 /* focus effect */
-form input:focus {
-	background: rgba(255,255,255,0.3);
-}
+
 
 /* ================= PASSWORD FIELD ================= */
 .passwordField {
 	position: relative;
-	width: 100%;
 }
+
 
 .passwordField input {
 	width: 100%;
 	padding-right: 40px; /* icon ke liye space */
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 /* eye icon */
 
@@ -111,17 +82,15 @@ form input:focus {
 	position: absolute;
 	right: 10px;
 	top: 50%;
-	transform: translateY(-30%);
-	width: 30px;
-	/* display: flex;
-	align-items: center; */
+	transform: translateY(-50%);
+	width: 25px;
+	
 	cursor: pointer;
-
-	color: #ccc;
+	color: var(--text-secondary);
 }
 
 #toggleEye:hover {
-	color: #fff;
+	color: var(--text-primary);
 }
 
 #toggleEye svg {
@@ -146,15 +115,15 @@ form input:focus {
 	font-size: 14px;
 	cursor: pointer;
 
-	background: rgba(255,255,255,0.2);
-	color: #fff;
+	background: var(--bg-card);
+	color: var(--text-primary);
 
 	transition: 0.2s;
 }
 
 /* hover */
 .buttonSection input:hover {
-	background: rgba(255,255,255,0.35);
+	background: var(--bg-main);
 }
 
 /* ================= RESPONSIVE ================= */

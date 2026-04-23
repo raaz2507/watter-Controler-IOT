@@ -1,6 +1,8 @@
 import {waterTank, WatterTankScale} from './watterTank.js';
-import { SVGChart } from "./svgChartFramework.js"
+import { SVGChart } from "./svgChartFramework.js";
 
+import { headerNfooter } from "./headerNfooter.js";
+import { navBar } from './navBar.js';
 
 document.addEventListener("DOMContentLoaded", ()=>{
 	const myDashbord = new Dashbord();   
@@ -14,12 +16,14 @@ class Dashbord{
 	#watterTankScale = null;
 	constructor(){
 		this.#tankObj = new waterTank();
+		new headerNfooter();
+		new navBar();
 		this.#watterTankScale = new WatterTankScale("tankScale");
 		this.#getElemts();
 		this.#setEvents();
 		this.#setEventsOnControls();
 		this.#setEventsOnPopUp();
-		this.#themeSetup();
+		// this.#themeSetup();
 		this.#showChart();
 
 		//setup constols
@@ -68,15 +72,15 @@ class Dashbord{
 	#setEventsOnPopUp(){
 		// const {modalOverlay, } =this.#popupElemts;
 		const modalOverlay = document.getElementById('modalOverlay');
-		const {tanksetupBtn} = this.#controlElemts;
+		// const {tanksetupBtn} = this.#controlElemts;
 		
 		
-		/* pop launch and close Events */ 
-		tanksetupBtn.addEventListener('click', ()=>{
-			userProfileSettingPopup.classList.add('hide');
-			tenkSetupPopUp.classList.remove("hide");
-			openModal();
-		});
+		// /* pop launch and close Events */ 
+		// tanksetupBtn.addEventListener('click', ()=>{
+		// 	userProfileSettingPopup.classList.add('hide');
+		// 	tenkSetupPopUp.classList.remove("hide");
+		// 	openModal();
+		// });
 
 		function openModal() {
 			// Overlay ko display block (ya flex) karein
@@ -98,68 +102,7 @@ class Dashbord{
 			}
 		});
 
-		const userProfileSettingPopup = document.getElementById("userProfileSettingPopup");
-		document.querySelector(".userProfile").addEventListener("click", ()=>{
-			userProfileSettingPopup.classList.remove('hide');
-			tenkSetupPopUp.classList.add("hide");
-			openModal();
-		});
 
-		
-		/* Tank Setup */
-		/* Water Tank setup*/ 
-		const tankSetupForm = document.forms["tankSetup"];
-		const tankType = tankSetupForm.querySelector("#tankType");
-		const widthFild = tankSetupForm.querySelector("#widthFild");
-		const lengthFild = tankSetupForm.querySelector("#lengthFild");
-		const dimeaterFild = tankSetupForm.querySelector("#dimeaterFild");
-		const heightFild = tankSetupForm.querySelector("#heightFild");
-
-		tankType.addEventListener('change', (event)=>{
-			const value = event.target.value;
-			if (value === "Cylindrical"){
-				widthFild.classList.add('hide');
-				lengthFild.classList.add('hide');
-				dimeaterFild.classList.remove('hide');
-			}else if(value === "Rectangular"){
-				widthFild.classList.remove('hide');
-				lengthFild.classList.remove('hide');
-				dimeaterFild.classList.add('hide');
-			}
-		});
-
-		tankSetupForm.querySelector('.submitBtn').addEventListener('click', (e)=>{
-			// const  e.target.value;
-			const value = tankType.value;
-			const measuringUnit = tankSetupForm['measuringUnit'].value;
-
-			if (value === "Cylindrical"){
-				const height = tankSetupForm['height'].value;
-				const dimeater = tankSetupForm['dimeater'].value
-				this.#tankObj.setCylindricalTankValue(measuringUnit,  height, dimeater );
-				console.log( dimeater );
-				console.log( height );
-			}else if(value === "Rectangular"){
-				const width = tankSetupForm['width'].value;
-				const height = tankSetupForm['height'].value;
-				const length = tankSetupForm['length'].value;
-				console.log( width );
-				console.log( length );
-				console.log( height );
-				this.#tankObj.setRectangularTankValue(measuringUnit, height, length, width);
-			}
-			this.#updateTankCapacity();
-		});
-
-		/* profile setup*/
-
-		const profileSetupForm = document.forms["profileSetup"];
-		profileSetupForm.querySelector('.submitBtn').addEventListener('click', (e)=>{
-			console.log(profileSetupForm['name'].value);
-			console.log(profileSetupForm['usrName'].value);
-			console.log(profileSetupForm['pwd'].value);
-			console.log(profileSetupForm['rpwd'].value);
-		});
 
 	}
 	
@@ -180,35 +123,7 @@ class Dashbord{
 
 	
 
-	#themeSetup(){
-		const themeBtn = document.getElementById("ThemeBtn");
-
-
-		(function restoreThemePrefrence(){
-			// Check if user previously saved a theme preference
-			if (localStorage.getItem('theme') === 'darkTheme') {
-				document.body.classList.add('darkTheme');
-				themeBtn.textContent = '🌙'; // Dark mode icon
-			} else {
-				document.body.classList.remove('darkTheme');
-				themeBtn.textContent = '🔆'; // Light mode icon
-			}
-		})();
-
-		themeBtn.addEventListener('click', () => {
-			// Toggle 'dark' class on <html>
-			document.body.classList.toggle('darkTheme');
-
-			// Update Icon and Save preference
-			if (document.body.classList.contains('darkTheme')) {
-				themeBtn.textContent = '🌙';
-				localStorage.setItem('theme', 'darkTheme');
-			} else {
-				themeBtn.textContent = '🔆';
-				localStorage.setItem('theme', 'lightTheme');
-			}
-		});
-	}
+	
 	#showChart(){
 		new SVGChart("#todysGraph", {
 			chart:{
@@ -246,4 +161,101 @@ class Dashbord{
 			Time to Fill: ${stats.timeToFill.toFixed(2)} min </span>`;
 		});
 	}
+}
+
+function setTankAlert(level){
+
+const box=document.querySelector(".danger");
+
+if(level > 90){
+box.querySelector(".badge").textContent="DANGER";
+box.querySelector("p").textContent="Overflow Risk";
+}
+
+else if(level > 70){
+box.className="alertItem warning";
+}
+
+else{
+box.className="alertItem success";
+}
+
+}
+
+
+
+const stack=document.getElementById("alertStack");
+const log=document.getElementById("eventLog");
+
+function createAlert(type,msg){
+
+/* TOAST */
+const toast=document.createElement("div");
+
+toast.className=`toast ${type}`;
+toast.textContent=msg;
+
+stack.prepend(toast);
+
+setTimeout(()=>{
+toast.remove();
+},4000);
+
+
+
+/* LOG QUEUE */
+const li=document.createElement("li");
+
+li.className=`logItem ${type}`;
+
+let time=new Date().toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
+
+li.innerHTML=`
+<span class="logTime">${time}</span>
+<span>${msg}</span>
+`;
+
+log.prepend(li);
+
+}
+
+
+/* demo */
+createAlert("success","Motor Started");
+
+setTimeout(()=>{
+createAlert("warning","Low Flow Detected");
+},3000);
+
+setTimeout(()=>{
+createAlert("danger","Tank Overflow Risk");
+},6000);
+
+
+
+document
+.getElementById("clearLogBtn")
+.addEventListener("click",()=>{
+log.innerHTML="";
+});
+
+
+// ESP32 sensor values से use:
+const level = 96; //testing value
+const flowRate =1; //testing value
+if(level > 95){
+createAlert(
+"danger",
+"Overflow risk detected"
+);
+}
+
+if(flowRate < 2){
+createAlert(
+"warning",
+"Flow rate too low"
+);
 }

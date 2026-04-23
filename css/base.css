@@ -9,30 +9,215 @@ html, body{
     /* border: 1px solid red; */
 }
 /* Default: Dark Theme */
-:root {
-	--bg-main: #f5f7fb;
-	--bg-card: #ffffff;
-	--bg-section: #eef1f7;
-	--bg-secondery: rgba(151, 206, 255, 0.1);
 
-	--text-primary: #1f2937;
-	--text-secondary: #6b7280;
+:root{
 
-	--border-color: #e5e7eb;
+	--surface-glass: rgba(255,255,255,.18);
+	--glass-border: rgba(255,255,255,.25);
 
-	--accent: #4facfe;
+	--bg-main:#f5f7fb96;
+	--bg-card:#ffffff78;
+
+	--border:rgba(255,255,255,.1);
+
+	--text-primary:#1f2937;
+	--text-secondary:#6b7280;
+
+	--btn-bg:rgba(255,255,255,.15);
+	--btn-hover:rgba(255,255,255,.25);
+
+	/* Theme button inverse colors */
+	--theme-btn-bg:rgba(30, 41, 59, 0.7);
+	--theme-btn-text:rgba(255, 255, 255, 0.8);
+
+	--accent:#007ffebb;
+
+	/* danger */
+	--danger-border: rgba(255,90,90,.30);
+	--danger-bg-primary : rgb(255, 107, 107);
+	--danger-bg: rgba(255,77,79,.10);
+	--danger-shadow: rgba(255,77,79,.40);
+	--danger-text:#ff4d4f;
+	--danger-shadow-hover: rgba(255,90,90,.85);
+	--danger-bg-hover: rgba(255,90,90,.28);
+
+	/* warning */
+	--warn-border: rgba(250,173,20,.30);
+	--warn-bg-primary: rgb(255, 179, 0);
+	--warn-bg: rgba(250,173,20,.10);
+	--warn-shadow: rgba(250,173,20,.40);
+	--warn-text:#faad14;
+	--warn-shadow-hover: rgba(250,173,20,.70);
+	--warn-bg-hover: rgba(250,173,20,.20);
+
+	/* success */
+	--success-border: rgba(82,196,26,.30);
+	--success-bg-primary: rgb(82,196,26);
+	--success-bg: rgba(82,196,26,.10);
+	--success-shadow: rgba(82,196,26,.40);
+	--success-text:#52c41a;
+	--success-shadow-hover: rgba(82,196,26,.70);
+	--success-bg-hover: rgba(82,196,26,.20);
+
+	--shadow-sm: 0 2px 8px rgba(0,0,0,.08);
+
+	--shadow-md: 0 6px 18px rgba(0,0,0,.12);
+
+	--shadow-lg: 0 10px 28px rgba(0,0,0,.18);
+
+
+	/* glass cards */
+	--glass-shadow: 0 8px 25px rgba(0,0,0,.15);
+
+
+	/* buttons */
+	--btn-shadow: 0 4px 12px rgba(0,0,0,.12);
 }
 
-/* Dark Theme Class */
-body.darkTheme {
-	--bg-main: #0f172a;
-	--bg-card: #1e293b;
-	--bg-section: #111827;
+body.darkTheme{
 
-	--text-primary: #e5e7eb;
-	--text-secondary: #9ca3af;
+	--surface-glass:rgba(18,25,40,.55);
+	--glass-border:rgba(255,255,255,.08);
 
-	--border-color: #374151;
+	--bg-main:#0f172a;
+	--bg-card:#1e293b;
 
-	--accent: #00f2fe;
+	--border:rgba(0, 0, 0, 0.1);
+
+	--text-primary:#e5e7eb;
+	--text-secondary:#9ca3af;
+
+	--btn-bg:rgba(255,255,255,.08);
+	--btn-hover:rgba(255,255,255,.14);
+
+	/* In dark show light button */
+	--theme-btn-bg:rgba(255, 255, 255, 0.93);
+	--theme-btn-text:rgba(17, 24, 39, 0.89);
+	--accent : rgba(0, 48, 97, 0.73);
+
+	/* danger */
+	--danger-border: rgba(255,120,120,.45);
+	--danger-bg-primary : rgb(255, 107, 107);
+	--danger-bg: rgba(255,90,90,.18);
+	--danger-shadow: rgba(255,90,90,.60);
+	--danger-text:#ff9d9d;
+	--danger-shadow-hover: rgba(255,90,90,.85);
+	--danger-bg-hover: rgba(255,90,90,.28);
+
+	/* warning */
+	--warn-border: rgba(255,200,70,.45);
+	--warn-bg-primary: rgb(250,173,20);
+	--warn-bg: rgba(250,173,20,.18);
+	--warn-shadow: rgba(250,173,20,.60);
+	--warn-text:#ffd666;
+	--warn-shadow-hover: rgba(250,173,20,.70);
+	--warn-bg-hover: rgba(250,173,20,.20);
+
+	/* success */
+	--success-border: rgba(120,230,120,.45);
+	--success-bg-primary: rgb(82,196,26);
+	--success-bg: rgba(82,196,26,.18);
+	--success-shadow: rgba(82,196,26,.60);
+	--success-text:#95de64;
+	--success-shadow-hover: rgba(82,196,26,.70);
+	--success-bg-hover: rgba(82,196,26,.20);
+
+	--shadow-sm: 0 2px 8px rgba(0,0,0,.35);
+
+	--shadow-md: 0 8px 22px rgba(0,0,0,.45);
+
+	--shadow-lg: 0 14px 35px rgba(0,0,0,.55);
+
+
+	/* glassmorphism depth */
+	--glass-shadow: 0 10px 30px rgba(0,0,0,.50);
+
+
+	/* subtle accent glow + depth */
+	--btn-shadow: 0 4px 14px rgba(0,0,0,.45), 0 0 10px rgba(0,127,254,.08);
+}
+body {
+	background-image: url('../img/background.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+/* effets */
+.inactive{
+	filter: grayscale(100%);
+}
+/* ✅ 1. 🔴 Danger (Critical / Alert) */
+
+.danger{
+	--border:var(--danger-border);
+	--bg-primary: var(--danger-bg-primary);
+	--bg-color:var(--danger-bg);
+	--box-shadow:var(--danger-shadow);
+	--text-color:var(--danger-text);
+}
+
+.danger:hover{
+	--box-shadow:var(--danger-shadow-hover);
+	--bg-color:var(--danger-bg-hover);
+}
+
+/* ⚠️ 2. Warning (Medium Alert) */
+.warning{
+	--border: var(--warn-border);
+	--bg-primary: var(--warn-bg-primary);
+	--bg-color: var(--warn-bg);
+	--box-shadow: var(--warn-shadow);
+	--text-color: var(--warn-text);
+}
+
+.warning:hover{
+	--box-shadow:var(--warn-shadow-hover);
+	--bg-color:var(--warn-bg-hover);
+}
+
+/* 🟢 3. Success (Safe / Full / Normal) */
+.success{
+	--border: var(--success-border);
+	--bg-primary: var(--success-bg-primary);
+	--bg-color: var(--success-bg);
+	--box-shadow: var(--success-shadow);
+	--text-color: var(--success-text);
+}
+
+.success:hover{
+	--box-shadow:var(--success-shadow-hover);
+	--bg-color:var(--success-bg-hover);
+}
+/* blink animaiton for denger  */
+@keyframes blinkDanger {
+	0% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
+	50% { box-shadow: 0 0 20px rgba(255,0,0,0.8); }
+	100% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
+}
+
+.danger.active {
+	animation: blinkDanger 1s infinite;
+}
+
+.alertBadge{
+
+border:2px solid var(--border);
+
+background:var(--bg-color);
+
+color:var(--text-color);
+
+box-shadow:0 0 10px var(--box-shadow);
+
+transition:.3s ease;
+
+padding:10px 14px;
+
+border-radius:14px;
+
+font-weight:600;
+
+}
+.alertBadge:hover{
+transform:scale(1.02);
 }

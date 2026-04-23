@@ -1,7 +1,11 @@
+import { headerNfooter } from "./headerNfooter.js";
 import {SVGChart} from "./svgChartFramework.js";
-
+import { navBar } from "./navBar.js";
 
 document.addEventListener("DOMContentLoaded", ()=>{
+	new headerNfooter();
+	new navBar();
+	
 	todayChart();
 	weekly();
 });

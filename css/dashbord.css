@@ -1,21 +1,15 @@
 @import "./base.css";
 
-@import url('./popupAreaStyling.css');
-@import url('./controlAreaStyling.css');
+@import url('./header.css');
+@import url("./navBar.css");
+/* @import url('./popupAreaStyling.css'); */
+/* @import url('./controlAreaStyling.css'); */
 @import url('./toggleSwitchStyling.css');
+@import url('footer.css');
 
 
 
-body {
-	height: 100vh;
-	/* background-color: var(--bg-main); */
-	background: url('../img/background.svg') no-repeat center / cover;
-	color: var(--text-primary); 
-	transition: background-color 0.4s, color 0.4s; /* Smooth switch ke liye */
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.waterBg {
+/* .waterBg {
 	background: linear-gradient(270deg, #8ee6ff, #c0dcff, #87f9ff);
 	background-size: 400% 400%;
 	animation: waterFlow 24s ease infinite;
@@ -25,117 +19,9 @@ body {
 	0% { background-position: 0% 50%; }
 	50% { background-position: 100% 50%; }
 	100% { background-position: 0% 50%; }
-}
-
-body header{
-	background-color: var(--bg-card);
-	border-bottom: 1px solid var(--border-color);
-}
-
-body header{
-	padding:1.3rem 3rem;
-}
-
-body header .titleNicon .appIcon{
-	font-size: 3rem;
-}
-body header .titleNicon .appIcon img{
-	width: 60px;
-	object-fit: contain;
-}
-body header .titleNicon .appTitle{
-	font-size: 2rem;
-}
-body header .controls{
-	padding: 5px 2px;
-}
-body header .controls a{
-	text-decoration: none;
-}
-body header .controls .userProfile{
-	padding: 3px 5px;
-	border-radius: 5px;
-	color: var(--text-primary);
-	background-color: var(--bg-secondery);
-	box-shadow: 0px 0px 12px -5px rgba(0, 0, 0, 0.6);
-}
-
-body header .controls .userProfile .profileIcon{
-	font-size: 1.5rem;
-}
-
-body header .controls .userProfile .profileTitle{
-	font-size: .9rem;
-	text-transform: capitalize;
-}
-
-body header .controls .roundBtn{
-	border-radius: 50%;
-	width: 2rem;
-	aspect-ratio: 1;
-	text-align: center;
-	margin: auto 1rem;
-}
-
-/* navigation area styling  */
-body nav{
-	padding: 5px 10px;
-	background-color: var(--bg-secondery);
-	width:98%;
-	margin: 5px auto;
-}
-body nav ul{
-	list-style: none;
-}
-
-body nav ul li a{
-	text-decoration: none;
-	color: var(--text-primary);
-}
-body main #tankScale{
-	padding: 2rem 1rem;
-}
-body main #tankScale{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-body main{
-	width: 98%;
-	margin: 0 auto 0 auto;
-	padding: 1rem;
-}
+} */
 
 
-body main .upperPart{}
-
-body main #tankScale{
-	/* background-color: var(--bg-card); */
-	background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.1));
-	border-radius: 15px;
-	box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
-}
-
-.dashboardCard {
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.dashboardCard:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-body main .downPart{
-	margin: 1rem auto;
-	box-shadow: inset 0 5px 20px rgba(0,0,0,0.2);
-	position: relative;
-	overflow: hidden;
-	border-radius: 10px;
-}
-
-body main .downPart .statusBar{
-	border: 1px solid red;
-	padding: 1rem;
-}
 
 body main .downPart .chartBox{
 	width: 50rem;
@@ -151,159 +37,27 @@ body main .downPart{
 	gap: 10px;
 }
 
-body main .downPart .statusBar{
-	border-radius: 10px;
-	flex-basis: 30%;	
-}
-body main .downPart .chartBox{
-	/* flex-basis: 70%; */
-}
-body footer{
-	text-align: center;
-	padding: 5px 10px;
-	margin-bottom: 1rem;
-}
+body main .downPart .chartBox{} 
+
 
 /* flex setting start */
 body{
 	display: flex;
 	flex-direction: column;
 }
-body main{
-	flex: 1;
-}
-body header{
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	justify-content: space-between;
-}
-body header .titleNicon{
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	gap: 2rem;
-}
-body header .controls{
-	display: flex;
-	flex-direction: row;
-	/* align-items: stretch; */
-	justify-content: space-evenly;
-	gap: 5px;
-}
-body header .controls .userProfile{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 2px;
-}
 
-body nav ul{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 5rem;
-}
-body main .upperPart{
-	display: flex;
-	flex-direction: row;
-	/* flex-wrap: wrap; */
-	/* align-items: */
-	justify-content: space-evenly;
-	gap: 10px;
-}
-
-body main #tankScale{
-	flex-basis: 30%;
-}
-
-body main #controlArea{
-	flex-basis: 70%;
-}
 
 /* flex setting end */
 
 
 
 @media screen and (max-width: 768px), (orientation: portrait)  {
-	header{
-		flex-direction: column !important;
-		padding: 1rem !important;
-	}
-	header .titleNicon{
-		gap: 5px !important;
-	}
-	header .titleNicon .appTitle{
-		font-size: 1.2rem !important;
-	}
-	body main .upperPart{
-		flex-direction: column;
-	}
+
 }
 @media screen and (max-width: 360px){
-	header{
-		padding: 1rem !important;
-		flex-direction: column !important;
-	}
+
 }
 
-/* effets */
-.inactive{
-	filter: grayscale(100%);
-}
-/* ✅ 1. 🔴 Danger (Critical / Alert) */
-.danger {
-	border: 2px solid #ff4d4f;
-	background-color: rgba(255, 77, 79, 0.1);
-	color: #ff4d4f;
-	box-shadow: 0 0 10px rgba(255, 77, 79, 0.4);
-	transition: 0.3s ease;
-}
-
-.danger:hover {
-	box-shadow: 0 0 20px rgba(255, 77, 79, 0.7);
-	background-color: rgba(255, 77, 79, 0.2);
-}
-
-/* ⚠️ 2. Warning (Medium Alert) */
-.warning {
-	border: 2px solid #faad14;
-	background-color: rgba(250, 173, 20, 0.1);
-	color: #faad14;
-	box-shadow: 0 0 10px rgba(250, 173, 20, 0.4);
-	transition: 0.3s ease;
-}
-
-.warning:hover {
-	box-shadow: 0 0 20px rgba(250, 173, 20, 0.7);
-	background-color: rgba(250, 173, 20, 0.2);
-}
-
-/* 🟢 3. Success (Safe / Full / Normal) */
-.success {
-	border: 2px solid #52c41a;
-	background-color: rgba(82, 196, 26, 0.1);
-	color: #52c41a;
-	box-shadow: 0 0 10px rgba(82, 196, 26, 0.4);
-	transition: 0.3s ease;
-}
-
-.success:hover {
-	box-shadow: 0 0 20px rgba(82, 196, 26, 0.7);
-	background-color: rgba(82, 196, 26, 0.2);
-}
-/* blink animaiton for denger  */
-@keyframes blinkDanger {
-	0% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
-	50% { box-shadow: 0 0 20px rgba(255,0,0,0.8); }
-	100% { box-shadow: 0 0 5px rgba(255,0,0,0.3); }
-}
-
-.danger.active {
-	animation: blinkDanger 1s infinite;
-}
 
 /* testing elimnets styling start */
 #testingArea .controls {
@@ -320,19 +74,3 @@ body main #controlArea{
 	cursor: pointer;
 }
 /* testing elimnets styling end */
-
-
-
-/*	  
-	body{}
-	body header{}
-	body main{}
-	body main section#dashbordContainer{}
-	body main section#dashbordContainer section#tankMonitor{}
-	body main #controlArea{}
-	body main #controlArea div.dashboardCard{}
-	body main #controlArea div.dashboardCard div.cardHeader{}
-	body main #controlArea div.dashboardCard div.cardBody{}
-	body #chartArea{}
-	body footer{} 
-*/

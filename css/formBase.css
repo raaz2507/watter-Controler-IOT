@@ -1,0 +1,152 @@
+@import url("base.css");
+
+body{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+/* form container stying start */
+.formContainer {
+	background: var(--bg-card);
+	width: 90%;
+	max-width: 400px;
+	padding: 20px;
+	border-radius: 15px;
+	box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+	color: #333;
+	animation: slideIn 0.3s ease-out; /* Pop-up ka animation */
+	position: relative;
+}
+
+@keyframes slideIn {
+	from { transform: translateY(-50px); opacity: 0; }
+	to { transform: translateY(0); opacity: 1; }
+}
+.formContainer h3 {
+	margin-top: 0;
+	margin-bottom: 5px;
+	font-size: 22px;
+	color: var(--text-primary);
+}
+
+.formContainer p {
+	color: var(--text-primary);
+	font-size: 14px;
+	margin-bottom: 20px;
+}
+
+/* form container stying end */
+
+
+
+/* --- Form Fieldset & Legend --- */
+form fieldset {
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	padding: 20px;
+	margin-bottom: 20px;
+	background-color: var(--bg-card);
+	backdrop-filter: blur(10px);
+}
+
+form legend {
+	font-weight: bold;
+	color: var(--text-primary);
+	background: var(--bg-main);
+	padding: 0 10px;
+	border: 1px solid var(--border-color);
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+/* --- Input Labels & Structure --- */
+form label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 600;
+	font-size: 13px;
+	color: var(--text-primary); /*#333;*/
+}
+
+form fieldset > div {
+	margin-bottom: 15px;
+}
+
+/* Value Area spacing */
+#valueArea > div {
+	margin-bottom: 12px;
+}
+
+/* --- Inputs & Select Styling --- */
+form input[type="number"],
+form input[type="text"],
+form input[type="password"],
+form select {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid  var(--border);
+	border-radius: 6px;
+	font-size: 14px;
+	box-sizing: border-box; /* Ensures padding doesn't stretch width */
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input[type="number"]:focus,
+form input[type="text"]:focus,
+form input[type="password"]:focus,
+form select:focus {
+	border-color: var(--border);
+	box-shadow: 0 0 5px var(--theme-btn-bg);
+	outline: none;
+}
+
+/* --- Action Buttons (Submit & Reset) --- */
+form input[type="submit"],
+form input[type="reset"], .submitBtn {
+	width: 48%; /* Adhi-adhi jagah lenge */
+	padding: 12px;
+	border: none;
+	border-radius: 6px;
+	font-weight: bold;
+	font-size: 14px;
+	cursor: pointer;
+	transition: transform 0.1s, opacity 0.3s;
+}
+
+/* Submit Button Style */
+form input[type="submit"], .submitBtn {
+	background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+	color: white;
+	float: right; /* Right side shift */
+}
+
+/* Reset Button Style */
+form input[type="reset"] {
+	background: #e0e0e0;
+	color: #555;
+	float: left; /* Left side shift */
+}
+
+form input[type="submit"]:hover,
+form input[type="reset"]:hover {
+	opacity: 0.9;
+	transform: translateY(-1px);
+}
+
+form input[type="submit"]:active,
+form input[type="reset"]:active {
+	transform: translateY(1px);
+}
+
+/* --- Hide Utility Class --- */
+/* (Agar aap JS se fields hide/show kar rahe hain) */
+.hide {
+	display: none !important;
+}
+
+/* Clearfix for floating buttons */
+form::after {
+	content: "";
+	display: table;
+	clear: both;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TankSetup</title>
+	<link rel="stylesheet" href="./css/formBase.css">
+</head>
+<body>
+	<div class="formContainer">
+		<h3>Update Tank Details</h3>
+		<p>for setup tank dimantion Details.</p>
+	
+	<form action="" name="tankSetup" class="card">
+		<fieldset>
+			<legend>Update Tank Details</legend>
+			<div>
+				<label for="tankType">Tank Type</label>
+				<select name="tankType" id="tankType">
+					<option value="Cylindrical" selected>Cylindrical</option>
+					<option value="Rectangular">Rectangular</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="measuringUnit">Measuring Unit</label>
+				<select name="measuringUnit" id="measuringUnit">
+					<option value="m">Meter</option>
+					<option value="ft">Feet</option>
+					<option value="in">Inch</option>
+					<option value="cm" selected>Centimeter</option>
+				</select>
+			</div>
+			<div id="valueArea">
+				<div id="heightFild">
+					<label for="height">Height</label>
+					<input type="number" name="height" id="height" value="950">
+				</div>
+				<div id="widthFild" class="hide">
+					<label for="width">Width</label>
+					<input type="number" name="width" id="width">
+				</div>
+				<div id="lengthFild" class="hide">
+					<label for="length">Length</label>
+					<input type="number" name="length" id="length">
+				</div>
+				<div id="dimeaterFild">
+					<label for="dimeater">Dimeater</label>
+					<input type="number" name="dimeater" id="dimeater" value="880">
+				</div>
+			</div>
+		</fieldset>
+		<input type="reset" value="Reset">
+		<input type="button" value="Update Tank Value" class="submitBtn">
+	</form>
+	</div>
+</body>
+</html>

@@ -8,6 +8,9 @@
 	<link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
+	<header></header>
+	<nav></nav>
+	<script src="./js/navBar.js"></script>
 	<div class="container">
 		<section class="siteLogo">
 			<img src="./img/logo.png" alt="">
@@ -19,9 +22,9 @@
 					<label for="username">User Name:</label>
 					<input type="text" name="username" id="username" placeholder="Enter User Name">
 				</div>
-				<div class="passwordField">
+				<div >
 					<label for="pwd">password</label>
-					<div>
+					<div class="passwordField">
 						<input type="password" name="pwd" id="pwd" placeholder="Enter Password">
 						<!-- Eye Icon -->
 						<span id="toggleEye">
@@ -38,28 +41,12 @@
 			</fieldset>
 			<div class="buttonSection">
 				<input type="button" value="Login">
-				<input type="button" value="Singup">
+				<input type="button" value="Singup" onclick="window.location.href = './profileSetup.html'">
 			</div>
 		</form>
 	</div>
 <footer></footer>
-<script src="./js/headerNfooter.js"></script>
-<script>
-const password = document.getElementById("pwd");
-const eyeOpen = document.getElementById("eyeOpen");
-const eyeClose = document.getElementById("eyeClose");
 
-document.getElementById("toggleEye").addEventListener("click", () => {
-	if (password.type === "password") {
-		password.type = "text";
-		eyeOpen.style.display = "none";
-		eyeClose.style.display = "block";
-	} else {
-		password.type = "password";
-		eyeOpen.style.display = "block";
-		eyeClose.style.display = "none";
-	}
-});
-</script>
+<script type="module" src="./js/index.js"></script>
 </body>
 </html>

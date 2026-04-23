@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Profile setting</title>
+	<link rel="stylesheet" href="./css/formBase.css">
+</head>
+<body>
+	<div class="formContainer" >
+		<h3>Update Profile Details</h3>
+		<p>Update User Profiles Details.</p>
+		<form action="" name="profileSetup" class="card">
+			<fieldset>
+				<legend>User Profine Setting</legend>
+				<div>
+					<label for="name">Your Name</label>
+					<input type="text" name="name" id="name">
+				</div>
+				<div>
+					<label for="userName">User Name</label>
+					<input type="text" name="usrName" id="userName">
+				</div>
+				<div>
+					<label for="pwd">Password</label>
+					<input type="password" name="pwd" id="pwd">
+				</div>
+				<div>
+					<label for="rpwd">ReEnter Password</label>
+					<input type="password" name="rpwd" id="rpwd">
+				</div>
+			</fieldset>
+			<input type="reset" value="Reset">
+			<input type="button" value="Update Profile" class="submitBtn">
+		</form>
+	</div>
+	<script src="./js/profileSetup.js"></script>
+</body>
+</html>
