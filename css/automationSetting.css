@@ -1,0 +1,71 @@
+@import url("./base.css");
+@import url("formBase.css");
+@import url("./toggleSwitchStyling.css");
+
+
+.weekday-selector{
+ display:flex;
+ flex-wrap:wrap;
+ align-items: center;
+ justify-content: center;
+ gap:10px;
+ margin-top:10px;
+}
+
+.weekday-selector button.selected{
+
+ background: var(--text-primary);
+
+ color: var(--accent);
+
+ border-color: var(--text-primary);
+ font-weight:600;
+ box-shadow: var(--shadow-md);
+
+ transform: translateY(-2px);
+
+}
+
+
+.weekday-selector button{
+ padding:10px 14px;
+ border:1px solid var(--text-secondary);
+ border-radius:12px;
+ background:var(--bg-card);
+ cursor:pointer;
+
+ transition:.2s;
+}
+
+.weekday-selector button:hover{
+ transform:translateY(-2px);
+}
+
+.resetBtn{
+    background-color: rgba(255, 255, 47, 0.8) !important;
+}
+.submitBtn{
+    background-color: rgba(172, 255, 47, 0.8) !important;
+}
+
+.range-wrap{
+ width:300px;
+ position:relative;
+ height:50px;
+}
+
+.range-wrap input[type=range]{
+ position:absolute;
+ left:0;
+ top:0;
+ width:100%;
+ background:none;
+}
+.range-wrap output{
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+}
+#minRange{ z-index:3; }
+#maxRange{ z-index:2; }

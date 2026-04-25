@@ -1,15 +1,39 @@
 import {headerNfooter} from "./headerNfooter.js";
 import { navBar } from "./navBar.js";
+
+const loginForm =  document.forms["loginForm"];
+
+const username = loginForm["username"];
+const password = loginForm["pwd"];
+
+const eyeOpen = document.getElementById("eyeOpen");
+const eyeClose = document.getElementById("eyeClose");
+
+const loginBtn = loginForm["login"];
+const singup = loginForm["singup"];
+
 document.addEventListener('DOMContentLoaded', ()=>{
 	// Header load
 	new headerNfooter();
 	new navBar();
+	toglePasswordShow();
+	
+} );
 
-	// Password toggle (only if elements exist)
-	const password = document.getElementById("pwd");
-	const eyeOpen = document.getElementById("eyeOpen");
-	const eyeClose = document.getElementById("eyeClose");
+loginForm.addEventListener("submit", (e)=>{
+	checkLogin(e);
+});
+// loginBtn.addEventListener("click", (e)=>{
+// 	checkLogin(e);
+// });
 
+function checkLogin(e){
+	e.preventDefault();
+	console.log(username.value);
+	console.log(password.value);
+}
+function toglePasswordShow(){
+	
 	document.getElementById("toggleEye").addEventListener("click", () => {
 		if (password.type === "password") {
 			password.type = "text";
@@ -21,7 +45,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			eyeClose.style.display = "none";
 		}
 	});
-} );
+}
 
 
 

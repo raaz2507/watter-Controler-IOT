@@ -7,24 +7,39 @@ body{
 }
 /* form container stying start */
 .formContainer {
-	background: var(--bg-card);
-	width: 90%;
-	max-width: 400px;
-	padding: 20px;
-	border-radius: 15px;
-	box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-	color: #333;
-	animation: slideIn 0.3s ease-out; /* Pop-up ka animation */
-	position: relative;
+	background:var(--surface-glass);
+	width:90%;
+	max-width:400px;
+	padding:20px;
+
+	border:1px solid var(--glass-border);
+	border-radius:15px;
+
+	backdrop-filter:blur(14px);
+
+	box-shadow:var(--glass-shadow);
+
+	color:var(--text-primary);
+
+	animation:slideIn .3s ease-out;
+
+	position:relative;
 }
 
 @keyframes slideIn {
-	from { transform: translateY(-50px); opacity: 0; }
-	to { transform: translateY(0); opacity: 1; }
+	from{
+		transform:translateY(-50px);
+		opacity:0;
+	}
+	to{
+		transform:translateY(0);
+		opacity:1;
+	}
 }
 .formContainer h3 {
 	margin-top: 0;
 	margin-bottom: 5px;
+	
 	font-size: 22px;
 	color: var(--text-primary);
 }
@@ -40,36 +55,54 @@ body{
 
 
 /* --- Form Fieldset & Legend --- */
-form fieldset {
-	border: 1px solid var(--border-color);
-	border-radius: 8px;
-	padding: 20px;
-	margin-bottom: 20px;
-	background-color: var(--bg-card);
-	backdrop-filter: blur(10px);
+/* ===== Fieldset ===== */
+
+form fieldset{
+	border:1px solid var(--border);
+	border-radius:12px;
+
+	padding:20px;
+	margin-bottom:20px;
+
+	background:var(--bg-card);
+
+	backdrop-filter:blur(10px);
+
+	box-shadow:var(--shadow-sm);
 }
 
-form legend {
-	font-weight: bold;
-	color: var(--text-primary);
-	background: var(--bg-main);
-	padding: 0 10px;
-	border: 1px solid var(--border-color);
-	border-radius: 5px;
-	font-size: 14px;
+
+form legend{
+	font-weight:600;
+	color:var(--text-primary);
+
+	background:var(--bg-main);
+
+	padding:6px 12px;
+
+	border:1px solid var(--border);
+	border-radius:8px;
+
+	font-size:14px;
 }
 
-/* --- Input Labels & Structure --- */
-form label {
-	display: block;
-	margin-bottom: 5px;
-	font-weight: 600;
-	font-size: 13px;
-	color: var(--text-primary); /*#333;*/
+
+/* ===== Labels ===== */
+
+form label{
+	display:block;
+
+	margin-bottom:6px;
+
+	font-weight:600;
+	font-size:13px;
+
+	color:var(--text-primary);
 }
 
-form fieldset > div {
-	margin-bottom: 15px;
+
+form fieldset > div{
+	margin-bottom:15px;
 }
 
 /* Value Area spacing */
@@ -77,35 +110,48 @@ form fieldset > div {
 	margin-bottom: 12px;
 }
 
-/* --- Inputs & Select Styling --- */
+/* ===== Inputs ===== */
+
 form input[type="number"],
 form input[type="text"],
 form input[type="password"],
-form select {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid  var(--border);
-	border-radius: 6px;
-	font-size: 14px;
-	box-sizing: border-box; /* Ensures padding doesn't stretch width */
-	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+form input[type="date"],
+form input[type="time"],
+form input[type="datetime-local"],
+form select{
+	width:100%;
+	padding:10px 12px;
+	border:1px solid var(--border);
+	border-radius:8px;
+	background:var(--btn-bg);
+	color:var(--text-primary);
+	font-size:14px;
+	box-sizing:border-box;
+	transition:.3s;
 }
+
 
 form input[type="number"]:focus,
 form input[type="text"]:focus,
 form input[type="password"]:focus,
+form input[type="date"]:focus,
+form input[type="time"]:focus,
+form input[type="datetime-local"]:focus,
 form select:focus {
-	border-color: var(--border);
-	box-shadow: 0 0 5px var(--theme-btn-bg);
-	outline: none;
+	border-color:var(--accent);
+
+	box-shadow:var(--shadow-vsm);
+
+	background:var(--btn-hover);
+
+	outline:none;
 }
 
 /* --- Action Buttons (Submit & Reset) --- */
 form input[type="submit"],
-form input[type="reset"], .submitBtn {
-	width: 48%; /* Adhi-adhi jagah lenge */
+form input[type="reset"], 
+.submitBtn, .resetBtn {
 	padding: 12px;
-	border: none;
 	border-radius: 6px;
 	font-weight: bold;
 	font-size: 14px;
@@ -114,39 +160,77 @@ form input[type="reset"], .submitBtn {
 }
 
 /* Submit Button Style */
-form input[type="submit"], .submitBtn {
+form input[type="submit"], 
+.submitBtn {
 	background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-	color: white;
-	float: right; /* Right side shift */
+	color: var(--text-primary);
 }
 
 /* Reset Button Style */
-form input[type="reset"] {
-	background: #e0e0e0;
-	color: #555;
-	float: left; /* Left side shift */
+form input[type="reset"],
+.resetBtn {
+	background:var(--btn-bg);
+	color:var(--text-primary);
+	border:1px solid var(--border);
 }
 
 form input[type="submit"]:hover,
-form input[type="reset"]:hover {
-	opacity: 0.9;
-	transform: translateY(-1px);
+form input[type="reset"]:hover,
+.resetBtn:hover, .submitBtn:hover{
+	background:var(--btn-hover);
+	transform: translateY(-2px);
 }
 
 form input[type="submit"]:active,
-form input[type="reset"]:active {
+form input[type="reset"]:active,
+.resetBtn:active, .submitBtn:active {
 	transform: translateY(1px);
 }
 
+form input[type="button"],
+.btn{
+	background:var(--btn-bg);
+	border:1px solid var(--border);
+	color:var(--text-primary);
+	border-radius:10px;
+	padding:10px 14px;
+}
+
+form input[type="button"]:focus,
+.btn:focus{
+	border-color:var(--accent);
+	box-shadow: var(--shadow-vsm);
+}
 /* --- Hide Utility Class --- */
 /* (Agar aap JS se fields hide/show kar rahe hain) */
 .hide {
 	display: none !important;
 }
 
-/* Clearfix for floating buttons */
-form::after {
-	content: "";
-	display: table;
-	clear: both;
+/* ================= BUTTONS ================= */
+.buttonSection {
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.buttonSection input {
+	flex: 1;
+	padding: 10px;
+
+	border: none;
+	border-radius: 8px;
+
+	font-size: 14px;
+	cursor: pointer;
+
+	background: var(--bg-card);
+	color: var(--text-primary);
+
+	transition: 0.2s;
+}
+
+/* hover */
+.buttonSection input:hover {
+	background: var(--bg-main);
 }

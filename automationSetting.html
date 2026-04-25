@@ -3,19 +3,60 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>AutoMation Setting</title>
+	<title>Automation Setting</title>
+	<link rel="stylesheet" href="./css/automationSetting.css">
 </head>
 <body>
-	<form action="" method="post">
-		<fieldset>
-			<legend>Automation Settings</legend>
-			min tank value
-			max tank value
-			Sadule spesific time to start motor
-			spesific date and tiem for start motor
-			motor start on spesific festival like holi , 
-			 
-		</fieldset>
-	</form>
+	<div class="formContainer ">
+		<form action="" method="post" name="AutomationSettingForm">
+			<fieldset>
+				<legend>Automation Settings</legend>
+				<div>
+					<label for="">Set Tank Value</label>
+					<div class="range-wrap,">
+						<input type="range" name="minRange" id="minRange" min="0" max="100" value="20">
+						<input type="range" name="maxRange" id="maxRange" min="0" max="100" value="80">
+						<output name="rangeOutput">00</output>
+					</div>
+				</div>
+				
+				<div>
+					<label for="">Schedule specific time to start motor</label>
+					<input type="time" name="" id="">
+				</div>
+				<div>
+					<label for="">Schedule specific time and date to start motor</label>
+					<input type="datetime-local" name="" id="">
+				</div>
+				<div>
+					<label for="">week dayes</label>
+					<div class="weekday-selector"></div>
+				</div>
+				<div>
+					<label>Low water safety cutoff</label>
+					<label class="switch">
+						<input type="checkbox" id="MotorSwitchBtn">
+						<span class="slider">
+							<span class="text off">MAN</span>
+							<span class="text on">AUTO</span>
+						</span>
+					</label>
+				</div>
+				<!-- min tank value
+				max tank value
+				Sadule spesific time to start motor
+				spesific date and tiem for start motor
+				motor start on spesific festival like holi ,  -->
+				
+			</fieldset>
+			<div class="buttonSection">
+				<input type="button" value="Defult" class="resetBtn btn">
+				<input type="button" value="Save" class="submitBtn btn">
+			</div>
+			
+		</form>
+	</div>
+	
+	<script type="module" src="./js/automationSetting.js"></script>
 </body>
 </html>
