@@ -34,7 +34,7 @@ function checkLogin(e){
 }
 function toglePasswordShow(){
 	
-	document.getElementById("toggleEye").addEventListener("click", () => {
+	document.getElementsByClassName("toggleEye")[0].addEventListener("click", () => {
 		if (password.type === "password") {
 			password.type = "text";
 			eyeOpen.style.display = "none";

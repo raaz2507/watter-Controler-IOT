@@ -1,0 +1,38 @@
+#include "main.h"
+// #include "wificonfig.h"
+
+enum { trigPin = 18, echoPin = 19, relayPin = 5};
+
+void setup(){
+	Serial.begin(115200);
+
+	pinMode(trigPin, OUTPUT);
+	pinMode(echoPin, INPUT);
+	pinMode(relayPin, OUTPUT);
+
+	initLittleFS();		// Initialize LittleFS
+
+	WiFi.softAPConfig(local_IP, gateway, subnet);		// Apply the static network configuration for the ESP32 SoftAP
+	WiFi.softAP(AP_SSID, AP_PASS, AP_CHANNEL, AP_HIDDEN, AP_MAX_CON);		// Launch the SoftAP with specified credentials and settings
+	Serial.println("IP address for network "+ String(AP_SSID)+ " : "+ WiFi.softAPIP().toString() );
+	initWebSocket();
+	sayHello();
+	initServer();
+
+	
+}
+
+
+
+unsigned long previousMillis = 0;
+const long interval = 1000;  // 1 second
+void loop(){
+	unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    notifyClients(String(Read_Distence()));
+  }
+
+  ws.cleanupClients();
+	yield();	 // 🔥 stability booster
+}

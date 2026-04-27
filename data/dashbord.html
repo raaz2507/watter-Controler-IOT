@@ -153,6 +153,9 @@
 		align-items: center;
 		justify-content: center;
 	}
+	.switchContainer{
+		width: 5rem;
+	}
 </style>
 	<section class="statusPanel" aria-label="System Alerts">
 		<section id="tankScale"><!-- Tank SVG here --></section>
@@ -253,13 +256,12 @@
 	<main class="dashboardMain">
 
 		<section class="upperPart">
-				<section id="controlArea">
-					<!-- CONTROL GROUP -->
-					<section class="cardGroup">
-						<h2 class="groupTitle">⚙ Control</h2>
-
-						<div class="cardGrid">
-							<article class="dashboardCard">
+			<section id="controlArea">
+				<!-- CONTROL GROUP -->
+				<section class="cardGroup">
+					<h2 class="groupTitle">⚙ Control</h2>
+					<div class="cardGrid">
+						<article class="dashboardCard">
 							<div class="cardHeader">
 								<span class="title">Motor</span>
 								<div class="iconBox">
@@ -268,65 +270,49 @@
 							</div>
 
 							<div class="cardBody">
-							<label class="switch">
-								<input type="checkbox" id="MotorSwitchBtn">
-								<span class="slider">
-									<span class="text on">ON</span>
-									<span class="text off">OFF</span>
-								</span>
-								
-							</label>
-						</div>
-
-					</article>
-
-					<article class="dashboardCard">
-						<div class="cardHeader">
-							<span class="title">Auto Mode</span>
-							<div class="iconBox">
-								<span class="cardIcon">🧠</span>
+								<div class="switchContainer" id="MotorSwitchBtn"></div>
 							</div>
-						</div>
+						</article>
 
-						<div class="cardBody">
-							<label class="switch">
-								<input type="checkbox" id="MotorSwitchBtn">
-								<span class="slider">
-									<span class="text on">ON</span>
-									<span class="text off">OFF</span>
-								</span>
-							</label>
-							
-						</div>
-
-					</article>
-					<article id="tanksetup" class="dashboardCard">
-						<div class="cardHeader">
-							<span class="title">Automation Settings</span>
-							<div class="iconBox">
-								<span class="cardIcon">🛠️</span>
+						<article class="dashboardCard">
+							<div class="cardHeader">
+								<span class="title">Auto Mode</span>
+								<div class="iconBox">
+									<span class="cardIcon">🧠</span>
+								</div>
 							</div>
-						</div>
 
-						<div class="cardBody">
-							<button class="miniBtn" onclick="window.location.href='./automationSetting.html'">Setup</button>
-						</div>
-
-					</article>
-					<article id="tanksetup" class="dashboardCard">
-						<div class="cardHeader">
-							<span class="title">Tank Setup</span>
-							<div class="iconBox">
-								<span class="cardIcon">🛠️</span>
+							<div class="cardBody">
+								<div class="switchContainer" id="AutomaionSwitchBtn"></div>
 							</div>
-						</div>
 
-						<div class="cardBody">
-							<button class="miniBtn" onclick="window.location.href='./tankSetup.html'">Setup</button>
-						</div>
+						</article>
+						<article id="tanksetup" class="dashboardCard">
+							<div class="cardHeader">
+								<span class="title">Automation Settings</span>
+								<div class="iconBox">
+									<span class="cardIcon">🛠️</span>
+								</div>
+							</div>
 
-					</article>
+							<div class="cardBody">
+								<button class="miniBtn" onclick="window.location.href='./automationSetting.html'">Setup</button>
+							</div>
 
+						</article>
+						<article id="tanksetup" class="dashboardCard">
+							<div class="cardHeader">
+								<span class="title">Tank Setup</span>
+								<div class="iconBox">
+									<span class="cardIcon">🛠️</span>
+								</div>
+							</div>
+
+							<div class="cardBody">
+								<button class="miniBtn" onclick="window.location.href='./tanksetup.html'">Setup</button>
+							</div>
+
+						</article>
 					</div>
 				</section>
 			</section>

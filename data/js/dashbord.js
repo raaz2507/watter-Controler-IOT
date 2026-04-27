@@ -4,6 +4,9 @@ import { SVGChart } from "./svgChartFramework.js";
 import { headerNfooter } from "./headerNfooter.js";
 import { navBar } from './navBar.js';
 
+import { toggleSwitch } from './toggleSwitch.js';
+
+
 document.addEventListener("DOMContentLoaded", ()=>{
 	const myDashbord = new Dashbord();   
 });
@@ -19,6 +22,9 @@ class Dashbord{
 		new headerNfooter();
 		new navBar();
 		this.#watterTankScale = new WatterTankScale("tankScale");
+		const AutomaionSwitchBtn = new toggleSwitch("#AutomaionSwitchBtn");
+		const MotorSwitchBtn = new toggleSwitch('#MotorSwitchBtn');
+
 		this.#getElemts();
 		this.#setEvents();
 		this.#setEventsOnControls();
@@ -109,9 +115,6 @@ class Dashbord{
 
 	#motorSwitch(){
 		const motorSwitchBtn = document.getElementById("MotorSwitchBtn");
-
-	
-
 		motorSwitchBtn.addEventListener("change", (e) => {
 			if (e.target.checked) {
 				console.log("ON");

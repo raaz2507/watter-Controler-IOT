@@ -1,6 +1,6 @@
 @import url("./base.css");
 @import url("formBase.css");
-@import url("./toggleSwitchStyling.css");
+/* @import url("./toggleSwitchStyling.css"); */
 
 
 .weekday-selector{
@@ -47,7 +47,9 @@
 .submitBtn{
     background-color: rgba(172, 255, 47, 0.8) !important;
 }
-
+.switchContainer{
+    width: 4rem;
+}
 .range-wrap{
  width:300px;
  position:relative;

@@ -1,5 +1,8 @@
+import { toggleSwitch } from "./toggleSwitch.js";
+
 document.addEventListener("DOMContentLoaded", ()=>{
     new AutomationSetting();
+    new toggleSwitch("#lowFlowRateAutoCutOffSwitch");
 });
 
 class AutomationSetting{

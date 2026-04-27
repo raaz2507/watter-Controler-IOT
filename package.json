@@ -1,0 +1,24 @@
+{
+  "name": "watter-controler-iot",
+  "version": "1.0.0",
+  "description": "https://raaz2507.github.io/watter-Controler-IOT/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raaz2507/watter-Controler-IOT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/raaz2507/watter-Controler-IOT/issues"
+  },
+  "homepage": "https://github.com/raaz2507/watter-Controler-IOT#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
