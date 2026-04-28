@@ -4,28 +4,28 @@ const strucher = `
 		<ul class="navList">
 
 			<li>
-				<a href="./index.html" class="navLink ">
+				<a href="/" class="navLink ">
 					<span class="navIcon">🏠</span>
 					<span>Home</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="./dashbord.html" class="navLink">
+				<a href="/dashboard" class="navLink">
 					<span class="navIcon">📊</span>
 					<span>Dashboard</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="./chars.html" class="navLink">
+				<a href="/chars" class="navLink">
 					<span class="navIcon">📈</span>
 					<span>Charts</span>
 				</a>
 			</li>
 
 			<li>
-				<a href="./about.html" class="navLink">
+				<a href="/about" class="navLink">
 					<span class="navIcon">ℹ️</span>
 					<span>About</span>
 				</a>

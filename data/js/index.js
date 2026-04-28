@@ -1,29 +1,18 @@
-import {headerNfooter} from "./headerNfooter.js";
+import { headerNfooter } from "./headerNfooter.js";
 import { navBar } from "./navBar.js";
 
-const loginForm =  document.forms["loginForm"];
-
-const username = loginForm["username"];
-const password = loginForm["pwd"];
+document.addEventListener("DOMContentLoaded", () => {
+	// Header load
+	new headerNfooter();
+	new navBar();
+});
 
 const eyeOpen = document.getElementById("eyeOpen");
 const eyeClose = document.getElementById("eyeClose");
 
-const loginBtn = loginForm["login"];
-const singup = loginForm["singup"];
-
-document.addEventListener('DOMContentLoaded', ()=>{
-	// Header load
-	new headerNfooter();
-	new navBar();
-	toglePasswordShow();
-	
-} );
-
-
-function toglePasswordShow(){
-	
-	document.getElementsByClassName("toggleEye")[0].addEventListener("click", () => {
+document
+	.getElementsByClassName("toggleEye")[0]
+	.addEventListener("click", () => {
 		if (password.type === "password") {
 			password.type = "text";
 			eyeOpen.style.display = "none";
@@ -34,42 +23,56 @@ function toglePasswordShow(){
 			eyeClose.style.display = "none";
 		}
 	});
-}
+
+const loginForm = document.forms["loginForm"];
+
+const username = loginForm["username"];
+const password = loginForm["password"];
+
+const loginBtn = loginForm["login"];
+const singup = loginForm["singup"];
 
 
-function validateLogin() {
-  const username = document.forms["loginForm"]["username"].value;
-  const password = document.forms["loginForm"]["password"].value;
+// loginForm.addEventListener("submit", async function (e) {
+// 	e.preventDefault();
 
-  if (!username || !password) {
-    alert("Username or Password is missing");
-    return false;
-  }
+// 	const formData = new FormData(this);
 
-  if (password.length < 4) {
-    alert("Password require minimum 4 characters ");
-    return false;
-  }
+// 	const res = await fetch("/login", {
+// 		method: "POST",
+// 		body: formData,
+// 	});
 
-  return true;
-}
+// 	const data = await res.json();
 
-document.loginForm.addEventListener("submit", async function (e) {
-  e.preventDefault();
+// 	if (data.success) {
+// 		window.location.href = data.redirect;
+// 	} else {
+// 		alert(data.error || data.message);
+// 	}
+// });
+loginForm.addEventListener("submit", async function (e) {
+	e.preventDefault();
 
-  const formData = new FormData(this);
+	const res = await fetch("/login", {
+		method: "POST",
 
-  const res = await fetch("/login", {
-    method: "POST",
-    body: formData
-  });
+		headers: {
+			"Content-Type": "application/json",
+		},
 
-  const data = await res.json();
+		body: JSON.stringify({
+			username: loginForm.username.value,
 
-  if (data.success) {
-    window.location.href = data.redirect;
-  } else {
-    alert(data.message);
-  }
+			password: loginForm.password.value,
+		}),
+	});
+
+	const data = await res.json();
+
+	if (data.success) {
+		window.location.href = data.redirect;
+	} else {
+		alert(data.error || data.message);
+	}
 });
-

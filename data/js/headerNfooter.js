@@ -24,9 +24,7 @@ const headerHtml =
 				<span class="profileName">Raj</span>
 			</div>
 
-			<button class="logoutBtn">
-				Logout
-			</button>
+			<a href="/logout" class="logoutBtn">Logout</a>
 
 		</div>
 
