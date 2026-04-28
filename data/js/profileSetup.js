@@ -65,3 +65,15 @@ class unnamed{
 		});
 	}
 }
+
+app.post("/signup", async (req, res) => {
+
+	const { username, password } = req.body;
+
+	const hash = await bcrypt.hash(password, 10);
+
+	users.push({username, password: hash });
+
+	res.json({ message: "Signup success" });
+
+});

@@ -20,18 +20,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	
 } );
 
-loginForm.addEventListener("submit", (e)=>{
-	checkLogin(e);
-});
-// loginBtn.addEventListener("click", (e)=>{
-// 	checkLogin(e);
-// });
 
-function checkLogin(e){
-	e.preventDefault();
-	console.log(username.value);
-	console.log(password.value);
-}
 function toglePasswordShow(){
 	
 	document.getElementsByClassName("toggleEye")[0].addEventListener("click", () => {
@@ -48,4 +37,39 @@ function toglePasswordShow(){
 }
 
 
+function validateLogin() {
+  const username = document.forms["loginForm"]["username"].value;
+  const password = document.forms["loginForm"]["password"].value;
+
+  if (!username || !password) {
+    alert("Username or Password is missing");
+    return false;
+  }
+
+  if (password.length < 4) {
+    alert("Password require minimum 4 characters ");
+    return false;
+  }
+
+  return true;
+}
+
+document.loginForm.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  const res = await fetch("/login", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    window.location.href = data.redirect;
+  } else {
+    alert(data.message);
+  }
+});
 
