@@ -6,6 +6,8 @@ const path = require("path");
 
 const authRoutes = require("./routes/authRoutes");
 const deviceRoutes = require("./routes/deviceRoutes");
+const appRoutes= require("./routes/appRoutes");
+
 
 const app = express();
 
@@ -31,6 +33,7 @@ app.use(express.static(path.join(__dirname, "data")));
 // routes load
 app.use("/",authRoutes);
 app.use("/", deviceRoutes );
+app.use( "/", appRoutes );
 
 app.listen(port, () => {
 	console.log(`Running \nhttp://localhost:${port}/`);

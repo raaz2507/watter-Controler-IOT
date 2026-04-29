@@ -231,6 +231,10 @@ form input[type="button"]:focus,
 }
 
 /* hover */
-.buttonSection input:hover {
+.buttonSection input:hover, .btn:hover {
 	background: var(--bg-main);
+}
+a.btn{
+	text-decoration: none;
+	display: inline-block;
 }

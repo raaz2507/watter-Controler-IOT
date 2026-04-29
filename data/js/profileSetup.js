@@ -20,11 +20,19 @@ profileSetupForm.querySelector(".submitBtn").addEventListener("click", (e) => {
 
 profileSetupForm.addEventListener("submit", async (e) => {
 	e.preventDefault();
-
+	
+	const pwd = profileSetupForm["password"].value;
+	const rpwd = profileSetupForm["rpwd"].value;
+	if (pwd !== rpwd){
+		alert("password is not same");
+		return;
+	}
 	const data = {
-		username: profileSetupForm.usrName.value,
+		name: profileSetupForm["name"].value,
 
-		password: profileSetupForm.pwd.value,
+		username: profileSetupForm["usrName"].value,
+
+		password: profileSetupForm["password"].value,
 	};
 
 	const res = await fetch("/signup", {
@@ -38,6 +46,15 @@ profileSetupForm.addEventListener("submit", async (e) => {
 	});
 
 	const json = await res.json();
-
 	console.log(json);
+	if(json.success){
+
+		window.location.href=
+		json.redirect;
+
+	} else {
+		alert( json.error || json.message );
+	}
+
+	
 });

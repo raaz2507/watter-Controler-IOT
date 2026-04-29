@@ -1,9 +1,16 @@
-function isAuth(req,res,next){
+function isAuth(req, res, next) {
+	if (!req.session.user) {
+		if (req.path.startsWith("/api")) {
+			return res.json({success: false, message: "Not logged in",});
+		}
 
-	if(!req.session.user){
-		return res.json({ message:"Not logged in" });
+		return res.redirect("/");
 	}
+
 	next();
 }
 
 module.exports=isAuth;
+
+
+

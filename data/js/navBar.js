@@ -18,7 +18,7 @@ const strucher = `
 			</li>
 
 			<li>
-				<a href="/chars" class="navLink">
+				<a href="/charts" class="navLink">
 					<span class="navIcon">📈</span>
 					<span>Charts</span>
 				</a>

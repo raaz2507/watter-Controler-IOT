@@ -1,0 +1,13 @@
+const sqlite3 = require("sqlite3").verbose();
+
+const db = new sqlite3.Database("./users.db", (err) => {
+	if (err) {
+		console.error(err);
+	} else {
+		console.log("DB connected");
+	}
+});
+
+
+
+module.exports = db;
