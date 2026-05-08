@@ -8,6 +8,7 @@ const db = new sqlite3.Database("./users.db", (err) => {
 	}
 });
 
+db.run("PRAGMA foreign_keys = ON");
 
 
 module.exports = db;

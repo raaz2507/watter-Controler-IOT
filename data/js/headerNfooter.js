@@ -37,16 +37,17 @@ export class headerNfooter {
 	#elemts = {};
 	constructor() {
 		this.#getElements();
-		this.#setEvent();
+		this.#addHeaderNfooter();
 		this.#themeSetup();
 		this.#loadUser();
 		this.#bindLogout();
+		this.#profileSetup();
 	}
 	#getElements() {
 		this.#elemts.headerTag = document.getElementsByTagName("header")[0];
 		this.#elemts.footerTag = document.getElementsByTagName("footer")[0];
 	}
-	#setEvent() {
+	#addHeaderNfooter() {
 		const { headerTag, footerTag } = this.#elemts;
 
 		if (headerTag && !headerTag.classList.contains("dov")) {
@@ -58,26 +59,20 @@ export class headerNfooter {
 			if (footerTag) footerTag.innerHTML = footerHtml;
 		}
 	}
-	// #profileSetup() {
-	// 	const userProfile = document.getElementById("userProfile");
+	#profileSetup() {
 
-	// 	userProfile.addEventListener("click", async () => {
-	// 		const res = await fetch("/userProfileUpdate", {
-	// 			method: "POST",
-	// 			headers: {
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 			body: JSON.stringify({
-	// 				name: "Raj",
-	// 				username: "raj",
-	// 			}),
-	// 		});
+		const userProfile = document.getElementById("userProfile");
 
-	// 		const data = await res.json();
+		userProfile.addEventListener("click", async (e) => {
 
-	// 		console.log(data);
-	// 	});
-	// }
+			if (e.target.classList.contains("logoutBtn")){
+				return;
+			}
+
+			window.location.href = "/profileSetup.html";
+
+		});
+	}
 	#themeSetup() {
 		const themeBtn = document.getElementById("ThemeBtn");
 
@@ -135,19 +130,19 @@ export class headerNfooter {
 		}
 	}
 	async #logout() {
-		try {
-			const res = await fetch("/logout");
-			const data = await res.json();
+		// try {
+		// 	const res = await fetch("/logout");
+		// 	const data = await res.json();
 
-			if (data.success) {
-				window.location.href = data.redirect;
-			} else {
-				alert(data.message || "Logout failed");
-			}
-		} catch (err) {
-			console.log(err);
-			alert("Server error");
-		}
+		// 	if (data.success) {
+		// 		window.location.href = data.redirect;
+		// 	} else {
+		// 		alert(data.message || "Logout failed");
+		// 	}
+		// } catch (err) {
+		// 	console.log(err);
+		// 	alert("Server error");
+		// }
 	}
 	#bindLogout() {
 		const btn = document.querySelector(".logoutBtn");

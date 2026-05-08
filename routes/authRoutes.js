@@ -16,5 +16,10 @@ router.get("/logout", auth.logout);
 
 router.get("/user", auth.user);
 
+// current user data
+router.get("/profile-data", isAuth, auth.profileData);
+
+// update profile
+router.post("/update-profile", isAuth, auth.updateProfile);
 
 module.exports = router;

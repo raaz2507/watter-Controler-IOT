@@ -1,1 +1,64 @@
 @import url("base.css");
+
+/* event queue */
+.notificationQueue {
+	padding: 1rem;
+
+	border-radius: 20px;
+
+	background: var(--surface-glass);
+	border: 1px solid var(--glass-border);
+	flex-basis: 40rem;
+}
+
+.queueHead {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+#clearLogBtn {
+	border: none;
+	padding: 8px 14px;
+	border-radius: 30px;
+	cursor: pointer;
+	background: var(--btn-bg);
+}
+
+#eventLog {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	overflow: scroll;
+	height: 20rem;
+}
+
+.logItem {
+	display: flex;
+	gap: 12px;
+
+	padding: 12px 14px;
+	border-radius: 14px;
+}
+
+.logItem.success {
+	background: rgba(50, 213, 131, 0.08);
+}
+
+.logItem.warning {
+	background: rgba(255, 180, 0, 0.08);
+}
+
+.logItem.danger {
+	background: rgba(255, 90, 90, 0.08);
+}
+
+.logTime {
+	font-weight: 700;
+	min-width: 60px;
+}

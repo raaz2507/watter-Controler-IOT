@@ -71,6 +71,8 @@ loginForm.addEventListener("submit", async function (e) {
 	const data = await res.json();
 
 	if (data.success) {
+		// localStorage.setItem("token", data.token);
+
 		window.location.href = data.redirect;
 	} else {
 		alert(data.error || data.message);

@@ -1,5 +1,6 @@
 const db = require("../models/userModel");
 // const db= require("../models/db");
+const jwt = require("jsonwebtoken");
 
 const fs = require("fs");
 const bcrypt = require("bcryptjs");
@@ -89,10 +90,25 @@ exports.login = async (req, res) => {
 				return res.json({ error: "Wrong password" });
 			}
 
-			req.session.user = user.username;
+			// 👉 JWT token बनाओ
+			const token = jwt.sign(
+				{ userId: user.id, username: user.username },
+				process.env.JWT_SECRET,
+				{ expiresIn: "1d" }
+			);
+			console.log("LOGIN SUCCESS, TOKEN:", token);
+			
+			// 👉 cookie में set
+			res.cookie("token", token, {
+				httpOnly: true,
+				secure: false, // production में true
+				maxAge: 1000 * 60 * 60 * 24
+			});
+
 
 			res.json({
 				success: true,
+				token: token,
 				redirect: "/dashboard",
 				message: "Login success",
 			});
@@ -115,23 +131,154 @@ exports.login = async (req, res) => {
 };
 
 exports.user = (req, res) => {
-	if (!req.session.user) {
+	const token = req.cookies.token;
+	console.log(token);
+
+	if (!token) {
 		return res.json({ loggedIn: false });
 	}
 
-	res.json({
-		loggedIn: true,
-		name: req.session.name,
-		username: req.session.user,
-	});
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+		res.json({
+			loggedIn: true,
+			userId: decoded.userId,
+			username: decoded.username
+		});
+
+	} catch (err) {
+		return res.json({ loggedIn: false });
+	}
 };
 
 // logout
 exports.logout = (req, res) => {
-	req.session.destroy((err) => {
-		if (err) {
-			return res.json({ success: false, message: "Logout failed", });
-		}
-		res.json({ success: true, redirect: "/", message: "Logged out", });
+	res.clearCookie("token");
+
+	res.json({
+		success: true,
+		redirect: "/"
 	});
+};
+
+
+
+
+
+
+
+// current user data
+exports.profileData = (req, res) => {
+
+	db.get(
+		`SELECT id,name,username FROM users WHERE id=?`,
+		[req.userId],
+
+		(err, user) => {
+
+			if (err) {
+				return res.json({
+					success:false,
+					message:"DB Error"
+				});
+			}
+
+			if (!user){
+				return res.json({
+					success:false,
+					message:"User not found"
+				});
+			}
+
+			res.json({
+				success:true,
+				user
+			});
+		}
+	);
+};
+
+
+// update profile
+exports.updateProfile = async (req,res) => {
+
+	const name = req.body.name.trim();
+	const username = req.body.username.trim();
+	const password = req.body.password.trim();
+
+	if (!name || !username){
+		return res.json({
+			success:false,
+			message:"Empty fields"
+		});
+	}
+
+	try {
+
+		// password change nahi kiya
+		if (!password){
+
+			db.run(
+				`UPDATE users
+				 SET name=?, username=?
+				 WHERE id=?`,
+
+				[name, username, req.userId],
+
+				function(err){
+
+					if (err){
+						return res.json({
+							success:false,
+							message:"Username already exists"
+						});
+					}
+
+					res.json({
+						success:true,
+						message:"Profile Updated"
+					});
+				}
+			);
+
+		} else {
+
+			// password bhi update
+			const hash = await bcrypt.hash(password,10);
+
+			db.run(
+				`UPDATE users
+				 SET name=?, username=?, password=?
+				 WHERE id=?`,
+
+				[name, username, hash, req.userId],
+
+				function(err){
+
+					if (err){
+						return res.json({
+							success:false,
+							message:"Username already exists"
+						});
+					}
+
+					res.json({
+						success:true,
+						message:"Profile Updated"
+					});
+				}
+			);
+
+		}
+
+	} catch(err){
+
+		console.log(err);
+
+		res.json({
+			success:false,
+			message:"Server Error"
+		});
+	}
 };

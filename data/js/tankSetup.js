@@ -1,58 +1,190 @@
-class unnamed{
+class TankSetup {
 
-	method(){
-		const userProfileSettingPopup = document.getElementById("userProfileSettingPopup");
-		document.querySelector(".userProfile").addEventListener("click", ()=>{
-			userProfileSettingPopup.classList.remove('hide');
-			tenkSetupPopUp.classList.add("hide");
-			openModal();
-		});
+	constructor(){
 
-		
-		/* Tank Setup */
-		/* Water Tank setup*/ 
-		const tankSetupForm = document.forms["tankSetup"];
-		const tankType = tankSetupForm.querySelector("#tankType");
-		const widthFild = tankSetupForm.querySelector("#widthFild");
-		const lengthFild = tankSetupForm.querySelector("#lengthFild");
-		const dimeaterFild = tankSetupForm.querySelector("#dimeaterFild");
-		const heightFild = tankSetupForm.querySelector("#heightFild");
+		this.form =
+		document.forms["tankSetup"];
 
-		tankType.addEventListener('change', (event)=>{
-			const value = event.target.value;
-			if (value === "Cylindrical"){
-				widthFild.classList.add('hide');
-				lengthFild.classList.add('hide');
-				dimeaterFild.classList.remove('hide');
-			}else if(value === "Rectangular"){
-				widthFild.classList.remove('hide');
-				lengthFild.classList.remove('hide');
-				dimeaterFild.classList.add('hide');
+		this.tankType =
+		this.form.querySelector("#tankType");
+
+		this.widthFild =
+		this.form.querySelector("#widthFild");
+
+		this.lengthFild =
+		this.form.querySelector("#lengthFild");
+
+		this.dimeaterFild =
+		this.form.querySelector("#dimeaterFild");
+
+		this.init();
+	}
+
+
+	init(){
+
+		this.toggleTankFields();
+
+		this.loadTankData();
+
+		this.tankType.addEventListener(
+			"change",
+			()=> this.toggleTankFields()
+		);
+
+		this.form.addEventListener(
+			"submit",
+			(e)=> this.submitForm(e)
+		);
+	}
+
+
+
+	toggleTankFields(){
+
+		const value = this.tankType.value;
+
+		if(value === "Cylindrical"){
+
+			this.widthFild.classList.add("hide");
+
+			this.lengthFild.classList.add("hide");
+
+			this.dimeaterFild.classList.remove("hide");
+
+		}else{
+
+			this.widthFild.classList.remove("hide");
+
+			this.lengthFild.classList.remove("hide");
+
+			this.dimeaterFild.classList.add("hide");
+		}
+	}
+
+
+
+	async loadTankData(){
+
+		try{
+
+			const res =
+			await fetch("/tank-data");
+
+			const json =
+			await res.json();
+
+			console.log(json);
+
+			if(!json.success || !json.tank){
+				return;
 			}
-		});
 
-		tankSetupForm.querySelector('.submitBtn').addEventListener('click', (e)=>{
-			// const  e.target.value;
-			const value = tankType.value;
-			const measuringUnit = tankSetupForm['measuringUnit'].value;
+			const tank = json.tank;
 
-			if (value === "Cylindrical"){
-				const height = tankSetupForm['height'].value;
-				const dimeater = tankSetupForm['dimeater'].value
-				this.#tankObj.setCylindricalTankValue(measuringUnit,  height, dimeater );
-				console.log( dimeater );
-				console.log( height );
-			}else if(value === "Rectangular"){
-				const width = tankSetupForm['width'].value;
-				const height = tankSetupForm['height'].value;
-				const length = tankSetupForm['length'].value;
-				console.log( width );
-				console.log( length );
-				console.log( height );
-				this.#tankObj.setRectangularTankValue(measuringUnit, height, length, width);
+			this.form["tankType"].value =
+			tank.tankType;
+
+			this.form["measuringUnit"].value =
+			tank.measuringUnit;
+
+			this.form["height"].value =
+			tank.height || "";
+
+			this.form["width"].value =
+			tank.width || "";
+
+			this.form["length"].value =
+			tank.length || "";
+
+			this.form["dimeater"].value =
+			tank.dimeater || "";
+
+			this.toggleTankFields();
+
+		}catch(err){
+
+			console.log(err);
+		}
+	}
+
+
+
+	async submitForm(e){
+
+		e.preventDefault();
+
+		const tankType =
+		this.form["tankType"].value;
+
+		const data = {
+
+			tankType,
+
+			measuringUnit:
+			this.form["measuringUnit"].value,
+
+			height:
+			this.form["height"].value,
+
+			width:
+			tankType === "Rectangular"
+			? this.form["width"].value
+			: null,
+
+			length:
+			tankType === "Rectangular"
+			? this.form["length"].value
+			: null,
+
+			dimeater:
+			tankType === "Cylindrical"
+			? this.form["dimeater"].value
+			: null
+		};
+
+		console.log(data);
+
+		try{
+
+			const res = await fetch(
+
+				"/update-tank",
+
+				{
+					method:"POST",
+
+					headers:{
+						"Content-Type":"application/json"
+					},
+
+					body: JSON.stringify(data)
+				}
+			);
+
+			const json =
+			await res.json();
+
+			console.log(json);
+
+			if(json.success){
+
+				alert(json.message);
+
+			}else{
+
+				alert(json.message);
 			}
-			this.#updateTankCapacity();
-		});
-	
+
+		}catch(err){
+
+			console.log(err);
+
+			alert("Server Error");
+		}
 	}
 }
+
+
+
+new TankSetup();

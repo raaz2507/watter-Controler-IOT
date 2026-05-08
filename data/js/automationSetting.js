@@ -1,73 +1,362 @@
-import { toggleSwitch } from "./toggleSwitch.js";
+import { toggleSwitch }
+from "./toggleSwitch.js";
 
-document.addEventListener("DOMContentLoaded", ()=>{
-    new AutomationSetting();
-    new toggleSwitch("#lowFlowRateAutoCutOffSwitch");
-});
+
+document.addEventListener(
+
+	"DOMContentLoaded",
+
+	()=>{
+
+		new AutomationSetting();
+	}
+);
+
+
+
 
 class AutomationSetting{
-    #Elemts={};
-    constructor(){
-        this.#getElemts();
-        this.#setEvents();
-    }
-    #getElemts(){
-        this.#Elemts.automationSettingForm =  document.forms["AutomationSettingForm"];
-        this.#Elemts.minRange = this.#Elemts.automationSettingForm["minRange"];
-        this.#Elemts.maxRange = this.#Elemts.automationSettingForm["maxRange"];
-        this.#Elemts.rangeOutput = this.#Elemts.automationSettingForm["rangeOutput"];
-    }
-    #setEvents(){
-        const {automationSettingForm, minRange, maxRange, rangeOutput} = this.#Elemts;
-        
-        updateRange(); //inital setup
 
-        minRange.addEventListener("input", updateRange);
-        maxRange.addEventListener("input", updateRange);
+	#Elemts={};
 
-        function updateRange(e){
+	#switchInstance;
 
-        if(e?.target === minRange &&
-            +minRange.value > +maxRange.value){
+	constructor(){
 
-            minRange.value = maxRange.value;
-        }
+		this.#getElemts();
 
-        if(e?.target === maxRange &&
-            +maxRange.value < +minRange.value){
+		this.#createWeekButtons();
 
-            maxRange.value = minRange.value;
-        }
+		this.#switchInstance =
+		new toggleSwitch(
+			"#lowFlowRateAutoCutOffSwitch"
+		);
 
- rangeOutput.textContent =
-   `${minRange.value} - ${maxRange.value}`;
+		this.#setEvents();
+
+		this.loadAutomationData();
+	}
+
+
+
+	#getElemts(){
+
+		this.#Elemts.form =
+		document.forms["AutomationSettingForm"];
+
+		this.#Elemts.minRange =
+		this.#Elemts.form["minRange"];
+
+		this.#Elemts.maxRange =
+		this.#Elemts.form["maxRange"];
+
+		this.#Elemts.rangeOutput =
+		this.#Elemts.form["rangeOutput"];
+
+		this.#Elemts.weekdaySelector =
+		document.querySelector(
+			".weekday-selector"
+		);
+	}
+
+
+
+	#setEvents(){
+
+		const {
+			form,
+			minRange,
+			maxRange
+		} = this.#Elemts;
+
+		this.updateRange();
+
+		minRange.addEventListener(
+			"input",
+			(e)=> this.updateRange(e)
+		);
+
+		maxRange.addEventListener(
+			"input",
+			(e)=> this.updateRange(e)
+		);
+
+		this.#Elemts.weekdaySelector
+		.addEventListener(
+
+			"click",
+
+			(e)=>{
+
+				if(
+					e.target.type === "button"
+				){
+
+					e.target.classList.toggle(
+						"selected"
+					);
+				}
+			}
+		);
+
+		form.addEventListener(
+
+			"submit",
+
+			(e)=> this.submitForm(e)
+		);
+	}
+
+
+
+	updateRange(e){
+
+		const {
+			minRange,
+			maxRange,
+			rangeOutput
+		} = this.#Elemts;
+
+
+		if(
+			e?.target === minRange &&
+			+minRange.value > +maxRange.value
+		){
+
+			minRange.value =
+			maxRange.value;
+		}
+
+
+		if(
+			e?.target === maxRange &&
+			+maxRange.value < +minRange.value
+		){
+
+			maxRange.value =
+			minRange.value;
+		}
+
+
+		rangeOutput.textContent =
+
+		`${minRange.value}
+		 -
+		 ${maxRange.value}`;
+	}
+
+
+
+	#createWeekButtons(){
+
+		const selector =
+		document.querySelector(
+			".weekday-selector"
+		);
+
+		const fragment =
+		document.createDocumentFragment();
+
+		const days = [
+			"Sun",
+			"Mon",
+			"Tue",
+			"Wed",
+			"Thu",
+			"Fri",
+			"Sat"
+		];
+
+		days.forEach(day=>{
+
+			const btn =
+			document.createElement("button");
+
+			btn.type = "button";
+
+			btn.value = day;
+
+			btn.textContent = day;
+
+			fragment.append(btn);
+		});
+
+		selector.append(fragment);
+	}
+
+
+
+	getSelectedDays(){
+
+		return [
+
+			...document.querySelectorAll(
+
+				".weekday-selector .selected"
+
+			)
+
+		].map(btn=> btn.value);
+	}
+
+
+
+	async loadAutomationData(){
+
+		try{
+
+			const res =
+			await fetch("/automation-data");
+
+			const json =
+			await res.json();
+
+			console.log(json);
+
+			if(
+				!json.success ||
+				!json.data
+			){
+				return;
+			}
+
+			const data =
+			json.data;
+
+			this.#Elemts.minRange.value =
+			data.minRange;
+
+			this.#Elemts.maxRange.value =
+			data.maxRange;
+
+			this.updateRange();
+
+
+			this.#Elemts.form[
+				"startTime"
+			].value =
+
+			data.startTime || "";
+
+
+			this.#Elemts.form[
+				"startDateTime"
+			].value =
+
+			data.startDateTime || "";
+
+
+			// weekdays
+			const days =
+			JSON.parse(
+				data.weekdays || "[]"
+			);
+
+			document
+			.querySelectorAll(
+				".weekday-selector button"
+			)
+
+			.forEach(btn=>{
+
+				if(
+					days.includes(btn.value)
+				){
+
+					btn.classList.add(
+						"selected"
+					);
+				}
+			});
+
+
+			// switch
+			if(data.lowWaterCutoff){
+
+				this.#switchInstance.enable?.();
+			}
+
+		}catch(err){
+
+			console.log(err);
+		}
+	}
+
+
+
+	async submitForm(e){
+
+		e.preventDefault();
+
+		const form =
+		this.#Elemts.form;
+
+		const data = {
+
+			minRange:
+			form["minRange"].value,
+
+			maxRange:
+			form["maxRange"].value,
+
+			startTime:
+			form["startTime"].value,
+
+			startDateTime:
+			form["startDateTime"].value,
+
+			weekdays:
+			JSON.stringify(
+				this.getSelectedDays()
+			),
+
+			lowWaterCutoff:
+
+			document
+			.querySelector(
+				"#lowFlowRateAutoCutOffSwitch"
+			)
+
+			.classList.contains("active")
+
+			? 1 : 0
+		};
+
+		console.log(data);
+
+
+		try{
+
+			const res =
+			await fetch(
+
+				"/update-automation",
+
+				{
+					method:"POST",
+
+					headers:{
+						"Content-Type":
+						"application/json"
+					},
+
+					body:
+					JSON.stringify(data)
+				}
+			);
+
+			const json =
+			await res.json();
+
+			console.log(json);
+
+			alert(json.message);
+
+		}catch(err){
+
+			console.log(err);
+
+			alert("Server Error");
+		}
+	}
 }
-
-    }
-}
-
-const weekdaySelector = document.querySelector(".weekday-selector");
-
-(function buttonCreate(){
-    const btnFregment =  document.createDocumentFragment();
-    const dayList = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "sat"];
-    dayList.forEach( item=>{
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.value = item;
-        btn.innerText = item;
-        btnFregment.append(btn);
-    });
-    weekdaySelector.append(btnFregment);
-})();
-weekdaySelector.addEventListener('click', (e)=>{
-    const isBtn = e.target.type=== "button";
-    if (isBtn){
-        e.target.classList.toggle("selected");
-        console.log(e.target.value);
-    }
-    
-});
-
-
-

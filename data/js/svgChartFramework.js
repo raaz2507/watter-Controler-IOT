@@ -127,7 +127,7 @@ class CoreSVGChart{
 }
 
 class LineChart extends CoreSVGChart{
-	
+	#hasValidData = false;
 	#chartStruct =null;
 	#chartElements =
 	{
@@ -317,6 +317,7 @@ class LineChart extends CoreSVGChart{
 	}
 
 	#draw() {
+		this.#chartElements.chartDataSetsElemnts = [];
 		this.#chartElements.chartSVG = this.createSVGElement({
 			viewBox:{minX :0, minY:0, width :this.#svgDimention.svgWidth, height: this.#svgDimention.svgHeight},
 			width : '100%', height: '100%', preserveAspectRatio : 'none',
@@ -345,6 +346,10 @@ class LineChart extends CoreSVGChart{
 
 		/* Aniamiton on Elements */ 
 		requestAnimationFrame(() => {
+			if (!this.#hasValidData) {
+				console.warn("⛔ No valid data → skip animations");
+				return;
+			}
 			//this.#addAnimationsInCSS(); //this will add animation code in CSS
 			this.#addDataLineAnimation(); // Line Drawing Animation setup
 			this.#addDataLineFillAnimation();
@@ -620,6 +625,23 @@ class LineChart extends CoreSVGChart{
 			
 			const datasetGroup = this.createGroupElement({id: 'dataset' + index});
 			
+			// ✅ SAFE DATA
+			let safeData;
+
+			if (Array.isArray(dataset.data)) {
+				safeData = dataset.data;
+			} else {
+				console.warn("⚠️ Invalid dataset.data:", dataset.data);
+				safeData = [];
+			}
+
+			// ❗ अगर empty है तो skip भी कर सकते हो
+			if (safeData.length === 0) {
+				console.warn("No data for dataset", index);
+				return; // 👈 optional (skip drawing)
+			}
+
+			this.#hasValidData = true;
 			
 			// 2. Convert Data to X,Y Points object (Label के साथ)
 			const points = dataset.data.map((value, index) => {
@@ -981,6 +1003,26 @@ class LineChart extends CoreSVGChart{
 											<stop offset="100%" stop-color="${color}" stop-opacity=".1"/>`;
 		
 		return linearGradientElemnt;
+	}
+	destroy() {
+
+		// 🧹 animations cancel
+		this.#chartElements?.chartDataSetsElemnts?.forEach(e => {
+			e?.clipRect?.getAnimations()?.forEach(a => a.cancel());
+		});
+
+		// 🧹 SVG deep remove
+		if (this.#chartElements?.chartSVG) {
+			this.#chartElements.chartSVG.replaceWith(); // 💥 force detach
+		}
+
+		// 🧹 container साफ
+		if (this.#chartElements?.chartContainer) {
+			this.#chartElements.chartContainer.innerHTML = "";
+		}
+
+		// 🧹 references clear
+		this.#chartElements = null;
 	}
 }
 

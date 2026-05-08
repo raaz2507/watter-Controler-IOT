@@ -18,7 +18,19 @@
 		<div class="cardBody">
 			<button class="miniBtn" onclick="window.location.href = 'wifisetup.html'">Setup</button>
 		</div>
+		<section class="notificationQueue">
+			<div class="queueHead">
+				<h3>Event Log</h3>
+				<button id="clearLogBtn">Clear</button>
+			</div>
 
+			<ul id="eventLog">
+				<li class="logItem success">
+					<span class="logTime">12:20</span>
+					<span>Motor started successfully</span>
+				</li>
+			</ul>
+		</section>
 	</article>
 	<script type="module" src="./js/admin.js"></script>
 </body>

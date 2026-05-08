@@ -17,148 +17,10 @@
 		<link rel="stylesheet" href="../css/dashboard_main.css" />
 	</head>
 	<body class="waterBg">
+		
 		<header></header>
 		<nav></nav>
-		<style>
-			.statusPanel {
-				width: 95%;
-				margin-left: auto;
-				margin-right: auto;
-				padding: 1.2rem;
-				margin-top: 1rem;
 
-				border-radius: 22px;
-				background: var(--surface-glass);
-				backdrop-filter: blur(14px);
-
-				border: 1px solid var(--glass-border);
-				box-shadow: var(--shadow-lg);
-
-				display: flex;
-				justify-content: space-evenly;
-				gap: 10px;
-				flex-wrap: wrap;
-			}
-			/* event queue */
-			.notificationQueue {
-				padding: 1rem;
-
-				border-radius: 20px;
-
-				background: var(--surface-glass);
-				border: 1px solid var(--glass-border);
-				flex-basis: 40rem;
-			}
-
-			.queueHead {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-bottom: 12px;
-			}
-
-			#clearLogBtn {
-				border: none;
-				padding: 8px 14px;
-				border-radius: 30px;
-				cursor: pointer;
-				background: var(--btn-bg);
-			}
-
-			#eventLog {
-				list-style: none;
-				padding: 0;
-				margin: 0;
-
-				display: flex;
-				flex-direction: column;
-				gap: 10px;
-				overflow: scroll;
-				height: 20rem;
-			}
-
-			.logItem {
-				display: flex;
-				gap: 12px;
-
-				padding: 12px 14px;
-				border-radius: 14px;
-			}
-
-			.logItem.success {
-				background: rgba(50, 213, 131, 0.08);
-			}
-
-			.logItem.warning {
-				background: rgba(255, 180, 0, 0.08);
-			}
-
-			.logItem.danger {
-				background: rgba(255, 90, 90, 0.08);
-			}
-
-			.logTime {
-				font-weight: 700;
-				min-width: 60px;
-			}
-			.statusCard {
-				background: var(--surface-glass);
-				color: var(--text-primary);
-				border: 3px solid var(--glass-border);
-				box-shadow: var(--glass-shadow);
-
-				border-radius: 10px;
-				padding: 1rem;
-				flex-basis: 30rem;
-				flex-grow: 0;
-				flex-shrink: 0;
-				display: flex;
-				flex-direction: column;
-				gap: 5px;
-			}
-			.metric {
-				background-color: var(--bg-color);
-				border-radius: 5px;
-				padding: 3px 5px;
-				border: 2px solid var(--border);
-				box-shadow: var(--shadow-md);
-			}
-			.badge {
-				background-color: var(--bg-primary);
-				border: 2px solid var(--border);
-				border-radius: 5px;
-				padding: 3px 5px;
-				flex-basis: 70%;
-				flex-grow: 0;
-				flex-shrink: 1;
-
-				font-weight: 700;
-				letter-spacing: 0.08em;
-				text-align: center;
-				color: var(--text-primary);
-			}
-
-			.statusCard div {
-				display: flex;
-				justify-content: space-between;
-			}
-
-			#tankScale {
-				background: var(--surface-glass);
-
-				border: 1px solid var(--glass-border);
-
-				border-radius: 20px;
-
-				padding: 20px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-			.switchContainer {
-				width: 5rem;
-			}
-		</style>
 		<section class="statusPanel" aria-label="System Alerts">
 			<section id="tankScale"><!-- Tank SVG here --></section>
 			<!-- SYSTEM GROUP -->
@@ -226,26 +88,12 @@
 				</div>
 
 				<div class="metric fillTime danger">
-					<span class="badge">Fill Time</span> <span class="value">15 min</span>
+					<span class="badge">Aprox Fill Time</span> <span class="value">15 min</span>
 				</div>
-			</section>
-
-			<!-- foating aleart panal -->
-			<div class="alertStack" id="alertStack"></div>
-
-			<section class="notificationQueue">
-				<div class="queueHead">
-					<h3>Event Log</h3>
-					<button id="clearLogBtn">Clear</button>
+				<div class="metric fillTime danger">
+					<span class="badge">Last Fill Time</span> <span class="value">15 min</span>
 				</div>
-
-				<ul id="eventLog">
-					<li class="logItem success">
-						<span class="logTime">12:20</span>
-						<span>Motor started successfully</span>
-					</li>
-				</ul>
-			</section>
+			</section>		
 		</section>
 
 		<main class="dashboardMain">
@@ -316,9 +164,20 @@
 					</section>
 				</section>
 			</section>
+			<style>
 
+			</style>
 			<section class="downPart">
-				<section class="chartBox" id="todysGraph"></section>
+				<!-- <section class="chartBox" id="todysGraph"></section> -->
+				<div class="chart-container">
+					<label class="toggle-switch">
+						<input type="checkbox" id="chartToggle">
+						<span class="slider"></span>
+					</label>
+					<span class="modeText">Daily Chart</span>
+
+					<canvas id="myChart"></canvas>
+				</div>
 			</section>
 		</main>
 
@@ -326,9 +185,7 @@
 			<div class="controls">
 				<div style="margin-bottom: 10px; font-size: 1.2rem">Control Level</div>
 				<input type="range" id="levelSlider" min="0" max="100" value="0" />
-				<div id="status" style="margin-top: 10px; color: #4facfe">
-					Status: Charging
-				</div>
+				<div id="status" style="margin-top: 10px; color: #4facfe">Status: Charging</div>
 			</div>
 		</section>
 
@@ -345,6 +202,7 @@
 		</div>
 		<!-- <script src="./js/chart.umd.js"></script> -->
 		<!-- <script src="./js/headerNfooter.js"></script> -->
+		 <script src="../js/chart.umd.js"></script>
 		<script type="module" src="../js/dashboard.js"></script>
 	</body>
 </html>

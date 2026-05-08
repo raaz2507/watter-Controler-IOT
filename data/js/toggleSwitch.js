@@ -17,7 +17,6 @@ export class toggleSwitch{
 	#elemts = {};
 	#labels = {onLabel : "ON", offLabel : "OFF"};
 	constructor(selector){
-		
 		this.#getElemts(selector); 
 		this.#setCSS(); 
 	}
@@ -25,24 +24,27 @@ export class toggleSwitch{
 	#getElemts(selector){
 		const container = document.querySelector(selector);
 		container.innerHTML = this.#innerHtml();
-		
+		this.#elemts.container = container;
+
 		this.#elemts.swt = container.querySelector('input[type="checkbox"]');
 		
 		this.#elemts.onLabel = container.querySelector('.on').textContent = this.#labels.onLabel;
 		this.#elemts.offLabel = container.querySelector('.off').textContent = this.#labels.offLabel;
-
-			this.#elemts.container = container;
 	}
+
 	get value(){
 		return this.#elemts.swt.checked;
 	}
 
 	onChange(callback){
-		const {swt} =this.#elemts;
-		swt.addEventListener('change', e=>{
-			callback?.(e.target.checked);
+		this.#elemts.swt.addEventListener("change", e=>{
+			callback?.({
+				value : e.target.checked,
+				target : this
+			});
 		});
 	}
+	
 	set label({ on = "ON", off = "OFF" } = {}){
 		const {container, onLabel , offLabel} = this.#elemts;
 
@@ -56,8 +58,23 @@ export class toggleSwitch{
 		offLabel.innerText = offText;
 	}
 
+	set value(state){
+		this.#elemts.swt.checked = state;
+	}
+	
 	#innerHtml(){
 		const {onLabel, offLabel} = this.#labels;
+		// const checkBox = document.createElement("input");
+		// checkBox.setAttribute("type", "checkbox");
+
+		// const onLabelEle = document.createElement("span");
+		// onLabelEle.classList.add("on");
+		// onLabelEle.innerText = onLabel;
+
+		// const offLabelEle = document.createElement("span");
+		// offLabelEle.classList.add("off");
+		// offLabelEle.innerText = offLabel;
+
 		return `<label class="switch">
 					<input type="checkbox">
 					<span class="on swtLabel" >${onLabel}</span>

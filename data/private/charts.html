@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Chart</title>
-	<link rel="stylesheet" href="./css/charsPage.css">
+	<link rel="stylesheet" href="../css/charsPage.css">
 	<style>
 		.chartContailner{
 			/* border: 2px solid red; */
@@ -16,7 +16,21 @@
 			width: 100%;
 			height: 100%;
 		}
+		.chart-container {
+			width: 90%;
+			/* max-width: 900px; */
+			height: 400px;
+			margin: 1rem auto;
+			padding: 1rem;
 
+			border-radius: 10px;
+			background: rgba(245, 245, 245, 0.27);
+			box-shadow: 0px 0 13px -3px rgba(0, 0, 0, 0.389);
+		}
+		.chart-container canvas{
+			width: 100%;
+			height: 100%;
+		}
 
 		/*  */
 	</style>
@@ -24,10 +38,13 @@
 <body>
 	<header></header>
 	<nav></nav>
+	<div class="chart-container">
+		<canvas id="myChart"></canvas>
+	</div>
 	<div class="chartContailner" id="dailyChart"></div>
     <div class="chartContailner" id="weeklyChart"></div>
 	<footer></footer>
-
-<script type="module" src="./js/chart.js"></script>
+<script src="../js/chart.umd.js"></script>
+<script type="module" src="../js/chart.js"></script>
 </body>
 </html>
