@@ -1,7 +1,7 @@
 const db = require("../models/userModel");
 
-exports.dayChart = (req, res) => {
-	console.log("get Chart data");
+exports.todayChart = (req, res) => {
+	console.log("get day chart data");
 	const userId = req.userId;
 
 	db.all(
@@ -24,3 +24,15 @@ exports.dayChart = (req, res) => {
 		}
 	);
 };
+
+// let data =  Array(60).fill(0);
+// exports.liveChart = (req, res)=>{
+// 	console.log("get live Chart Data");
+// 	const userId = req.userId;
+
+// 	// new random value
+// 	const newValue = Math.floor(Math.random() * 100);
+// 	data.shift(); //left shift
+// 	data.push(newValue);
+// 	res.json({ tank1: data})
+// }

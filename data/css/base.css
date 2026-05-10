@@ -8,6 +8,12 @@ html, body{
     box-sizing: border-box;
     /* border: 1px solid red; */
 }
+*{
+	transition:
+		background-color .2s ease,
+		border-color .2s ease,
+		color .2s ease;
+}
 /* Default: Dark Theme */
 
 :root{
@@ -73,6 +79,24 @@ html, body{
 	--btn-shadow: 0 4px 12px rgba(0,0,0,.12);
 }
 
+:root{
+	--space-xs:4px;
+	--space-sm:8px;
+	--space-md:16px;
+	--space-lg:24px;
+	--space-xl:32px;
+}
+:root{
+	--radius-sm:8px;
+	--radius-md:14px;
+	--radius-lg:20px;
+}
+
+:root{
+	--transition-fast:.2s ease;
+	--transition-normal:.3s ease;
+}
+
 body.darkTheme{
 
 	--surface-glass:rgba(18,25,40,.55);
@@ -136,10 +160,15 @@ body.darkTheme{
 	/* subtle accent glow + depth */
 	--btn-shadow: 0 4px 14px rgba(0,0,0,.45), 0 0 10px rgba(0,127,254,.08);
 }
-body {
-	background-image: url('../img/background.svg');
-	background-repeat: no-repeat;
-	background-size: cover;
+body{
+	background-image:url('../img/background.svg');
+
+	background-repeat:repeat-y;
+
+	background-size:cover;
+	background-position:center;
+	/* background-attachment:fixed; */
+	min-height:100vh;
 }
 
 /* effets */

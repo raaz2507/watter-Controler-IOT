@@ -6,10 +6,11 @@ import { navBar } from "./navBar.js";
 
 import { toggleSwitch } from "./toggleSwitch.js";
 
-import {createTodayChart, createLiveChart} from "./getChartData.js";
+import {charts} from "./getChartData.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 	const myDashbord = new Dashbord();
+	await myDashbord.init();
 });
 
 class Dashbord {
@@ -18,6 +19,7 @@ class Dashbord {
 	#popupElemts = {};
 	#tankObj = null;
 	#watterTankScale = null;
+	#motorSwitchBtn = null;
 	constructor() {
 		this.#tankObj = new waterTank();
 		new headerNfooter();
@@ -26,16 +28,24 @@ class Dashbord {
 		
 		this.#getElemts();
 		this.#setEvents();
-		this.#setEventsOnControls();
-		this.#setEventsOnPopUp();
+		// this.#setEventsOnControls();
+		// this.#setEventsOnPopUp();
 		// this.#themeSetup();
-		// this.#showChart();
 
-		this.#chartMode();
 		//setup constols
-		this.#motorSwitch();
+		this.#motorSwitchBtn = new toggleSwitch("#MotorSwitchBtn");
+	}
+
+	async init(){
+
+		await this.#motorSwitch();
+
 		this.#autoMationSwitch();
+
+		await this.#chartMode();
+
 		this.#tester();
+
 	}
 
 	#getElemts() {
@@ -62,9 +72,7 @@ class Dashbord {
 	}
 
 	#setEvents() {}
-	#setEventsOnControls() {
-		const { tankCapacity, remainingWater, tanksetupBtn } = this.#controlElemts;
-	}
+
 	#updateTankCapacity() {
 		const { tankCapacity } = this.#controlElemts;
 		tankCapacity.querySelector(".value").innerText =
@@ -78,51 +86,40 @@ class Dashbord {
 			this.#tankObj.getTankState().remaining.percentage +
 			"percentage";
 	}
-	#setEventsOnPopUp() {
-		// const {modalOverlay, } =this.#popupElemts;
-		const modalOverlay = document.getElementById("modalOverlay");
-		// const {tanksetupBtn} = this.#controlElemts;
+	// #setEventsOnPopUp() {
+	// 	// const {modalOverlay, } =this.#popupElemts;
+	// 	const modalOverlay = document.getElementById("modalOverlay");
+	// 	// const {tanksetupBtn} = this.#controlElemts;
 
-		// /* pop launch and close Events */
-		// tanksetupBtn.addEventListener('click', ()=>{
-		// 	userProfileSettingPopup.classList.add('hide');
-		// 	tenkSetupPopUp.classList.remove("hide");
-		// 	openModal();
-		// });
+	// 	// /* pop launch and close Events */
+	// 	// tanksetupBtn.addEventListener('click', ()=>{
+	// 	// 	userProfileSettingPopup.classList.add('hide');
+	// 	// 	tenkSetupPopUp.classList.remove("hide");
+	// 	// 	openModal();
+	// 	// });
 
-		function openModal() {
-			// Overlay ko display block (ya flex) karein
-			modalOverlay.style.display = "flex";
-		}
+	// 	function openModal() {
+	// 		// Overlay ko display block (ya flex) karein
+	// 		modalOverlay.style.display = "flex";
+	// 	}
 
-		const closePopUp = document.getElementById("closePopUp");
-		closePopUp.addEventListener("click", closeModal);
-		function closeModal() {
-			// Overlay ko wapas chhupa dein
-			modalOverlay.style.display = "none";
-		}
+	// 	const closePopUp = document.getElementById("closePopUp");
+	// 	closePopUp.addEventListener("click", closeModal);
+	// 	function closeModal() {
+	// 		// Overlay ko wapas chhupa dein
+	// 		modalOverlay.style.display = "none";
+	// 	}
 
-		// Agar user modal ke bahar (kali layer par) click kare toh bhi band ho jaye
+	// 	// Agar user modal ke bahar (kali layer par) click kare toh bhi band ho jaye
 
-		modalOverlay.addEventListener("click", (e) => {
-			if (e.target.id === "modalOverlay") {
-				closeModal();
-			}
-		});
-	}
+	// 	modalOverlay.addEventListener("click", (e) => {
+	// 		if (e.target.id === "modalOverlay") {
+	// 			closeModal();
+	// 		}
+	// 	});
+	// }
 
-	async  #motorSwitch() {
-		const motorSwitchBtn = new toggleSwitch("#MotorSwitchBtn");
-		await fetch("/motorSwitch")
-		.then( res=> {return res.json()})
-		.then(data=> motorSwitchBtn.value =  data.state); 
-		
-		motorSwitchBtn.onChange(async (e) => {
-			console.log(e.value);
-			await fetch(`/motorSwitch?state=${e.value}`);
-		});
-
-	}
+	
 	async #autoMationSwitch(){
 		const automaionSwitchBtn = new toggleSwitch("#AutomaionSwitchBtn");
 		await fetch("/autoMationSwitch")
@@ -134,6 +131,59 @@ class Dashbord {
 			await fetch(`/autoMationSwitch?state=${e.value}`);
 		});
 	}
+
+	async #motorSwitch() {
+		
+		await fetch("/motorSwitch")
+		.then( res=> {return res.json()})
+		.then(data=> this.#motorSwitchBtn.value =  data.state); 
+		
+		this.#motorSwitchBtn.onChange(async (e) => {
+			console.log(e.value);
+			await fetch(`/motorSwitch?state=${e.value}`);
+		});
+
+	}
+	
+	async #chartMode(){
+		const canvas = document.getElementById("myChart");
+		const toggleChart = document.getElementById("chartToggle");
+		const modeText = document.querySelector(".modeText");
+
+		const chartObj = new charts(canvas);
+		await chartObj.init();
+
+		console.log(this.#motorSwitchBtn.value);
+		toggleChart.checked = this.#motorSwitchBtn.value;
+		const updateChartMode = async ()=>{
+
+			if(toggleChart.checked ){
+				modeText.textContent = "Live Chart";
+
+				await chartObj.createLiveChart();
+
+			}
+			else{
+
+				modeText.textContent = "Daily Chart";
+
+				await chartObj.createTodayChart();
+
+			}
+
+		};
+
+		// initial load
+		await updateChartMode();
+
+		// chart toggle change
+		toggleChart.addEventListener("change", updateChartMode);
+
+		// motor switch change
+		// this.#motorSwitchBtn.onChange(updateChartMode);
+
+	}
+	
 
 	#tester() {
 		document.getElementById("levelSlider").addEventListener("input", (e) => {
@@ -149,21 +199,6 @@ class Dashbord {
 			Flow Liter: ${stats.flowLiterPerMin.toFixed(2)} L/min</br>,
 			Remaining: ${stats.remainingWater.toFixed(2)} L</br>,
 			Time to Fill: ${stats.timeToFill.toFixed(2)} min </span>`;
-		});
-	}
-	#chartMode(){
-		const canvas = document.getElementById("myChart");
-		const toggle = document.getElementById("chartToggle");
-		const modeText = document.querySelector(".modeText");
-
-		toggle.addEventListener("change", async () => {
-			if (toggle.checked) {
-				modeText.textContent = "Live Chart";
-				await createLiveChart(canvas);
-			} else {
-				modeText.textContent = "Daily Chart";
-				await createTodayChart(canvas);
-			}
 		});
 	}
 }

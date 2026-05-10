@@ -15,7 +15,7 @@ router.get ("/profileSetup", appPages.profileSetup);
 // router.get( "/test", (req,res)=>{
 // 	res.send("route working");
 // });
-router.get("/chart", isAuth, charts.dayChart);
+router.get("/todayChart", isAuth, charts.todayChart);
 
 
 const tankController = require("../controllers/tankController");

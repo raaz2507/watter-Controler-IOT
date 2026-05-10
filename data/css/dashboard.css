@@ -2,193 +2,321 @@
 
 @import url('./header.css');
 @import url("./navBar.css");
-/* @import url('./popupAreaStyling.css'); */
-/* @import url('./controlAreaStyling.css'); */
-/* @import url('./toggleSwitchStyling.css'); */
+
+
+@import url("./toggleSwitch2.css");
+
 @import url('footer.css');
 
-
-
-/* .waterBg {
-	background: linear-gradient(270deg, #8ee6ff, #c0dcff, #87f9ff);
-	background-size: 400% 400%;
-	animation: waterFlow 24s ease infinite;
-}
-
-@keyframes waterFlow {
-	0% { background-position: 0% 50%; }
-	50% { background-position: 100% 50%; }
-	100% { background-position: 0% 50%; }
-} */
-
-section.statusPanel {
-	width: 95%;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 1.2rem;
-	margin-top: 1rem;
-
-	border-radius: 22px;
-	background: var(--surface-glass);
-	backdrop-filter: blur(14px);
-
-	border: 1px solid var(--glass-border);
-	box-shadow: var(--shadow-lg);
-
-	display: flex;
-	justify-content: space-evenly;
-	gap: 10px;
-	flex-wrap: wrap;
-}
-
-section.statusPanel #tankScale {
-	background: var(--surface-glass);
-
-	border: 1px solid var(--glass-border);
-
-	border-radius: 20px;
-
+main.dashboardMain {
+	width: 96%;
+	margin: auto;
 	padding: 20px;
+}
+.groupTitle {
+	margin: 0 0 15px;
+	font-size: 1rem;
+	color: var(--text-primary);
+}
+main #tankScale{
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	background: var(--bg-card);
+	border-radius: var(--radius-md);
+	padding: 1rem ;
 }
 
-section.statusCard {
-				background: var(--surface-glass);
-				color: var(--text-primary);
-				border: 3px solid var(--glass-border);
-				box-shadow: var(--glass-shadow);
-
-				border-radius: 10px;
-				padding: 1rem;
-				flex-basis: 30rem;
-				flex-grow: 0;
-				flex-shrink: 0;
-				display: flex;
-				flex-direction: column;
-				gap: 5px;
-			}
-			section.statusCard .metric {
-				background-color: var(--bg-color);
-				border-radius: 5px;
-				padding: 3px 5px;
-				border: 2px solid var(--border);
-				box-shadow: var(--shadow-md);
-			}
-			section.statusCard .metric .badge {
-				background-color: var(--bg-primary);
-				border: 2px solid var(--border);
-				border-radius: 5px;
-				padding: 3px 5px;
-				flex-basis: 70%;
-				flex-grow: 0;
-				flex-shrink: 1;
-
-				font-weight: 700;
-				letter-spacing: 0.08em;
-				text-align: center;
-				color: var(--text-primary);
-			}
-
-			section.statusCard div {
-				display: flex;
-				justify-content: space-between;
-			}
-
-
-
-body main .downPart .chartBox{
-	width: 50rem;
-	margin : 1rem auto;
-	background-color: var(--bg-card);
-	
+main .upperPart .tankStatus{
+	padding: var(--space-sm);
+	border-radius: var(--radius-sm);
+	background-color: var(--surface-glass);
 }
-body main .downPart{
+
+/* statusCard styling start */
+section.statusCard{
+	/* width: min(100%, 26rem); */
+	width: 28rem;
+
+	background: var(--surface-glass);
+	color: var(--text-primary);
+	border: 3px solid var(--glass-border);
+	box-shadow: var(--glass-shadow);
+
+	border-radius: 10px;
+	padding: var(--space-sm);
+}
+/* heading */
+section.statusCard .panelHead {
 	display: flex;
-	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+section.statusCard .panelHead h3 {
+	margin: 0;
+	font-size: 1.15rem;
+	color: var(--text-primary);
+}
+section.statusCard .metric {
+	background-color: var(--bg-color);
+	border-radius: 5px;
+	padding: 3px 5px;
+	border: 2px solid var(--border);
+	box-shadow: var(--shadow-md);
+
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:10px;
+}
+section.statusCard .metric .badge {
+	background-color: var(--bg-primary);
+	border: 2px solid var(--border);
+	border-radius: 5px;
+	padding: 3px 5px;
+	flex-basis: 70%;
+	flex-grow: 0;
+	flex-shrink: 1;
+
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-align: center;
+	color: var(--text-primary);
+}
+
+section.statusCard > * {
+	flex: 1;
+}
+/* statusCard styling end */
+
+/* cardGroup styling start */
+.cardGroup {
+	background: var(--surface-glass);
+	border: 1px solid var(--glass-border);
+	border-radius: 18px;
+	padding: 18px;
+	backdrop-filter: blur(3px);
+}
+.cardGroup .cardGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 14px;
+}
+
+.cardGroup .dashboardCard {
+	background: var(--bg-card);
+	border-radius: 16px;
+	padding: 16px;
+	box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+	transition: 0.3s;
+}
+
+.cardGroup .dashboardCard:hover {
+	transform: translateY(-4px);
+}
+.cardGroup .dashboardCard:hover .iconBox {
+	transform: scale(1.08);
+	transition: 0.25s;
+}
+.cardGroup .cardHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	margin-bottom: 12px;
+}
+
+.cardGroup .cardHeader img {
+	width: 34px;
+}
+
+.cardGroup .dashboardCard .title {
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.cardGroup .dashboardCard .value {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--text-secondary);
+}
+
+.cardGroup .dashboardCard .iconBox {
+	width: 44px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	font-size: 22px;
+	line-height: 1;
+}
+.dashboardCard .switchContainer {
+	width: 5rem;
+}
+
+.btnConrainer{
+	display: flex;
 	align-items: center;
 	justify-content: space-evenly;
-	gap: 10px;
+	gap: 1.5rem;
+}
+.dashboardCard .miniBtn{
+	padding: var(--space-sm);
+	border-radius: var(--radius-sm);
+	color : var(--text-secondary);
+	white-space: nowrap;
+}
+/* cardGroup styling end */
+
+
+
+/* chart stylin start */
+.chart-container{
+	height: 20rem;
+}
+.chart-container canvas {
+	width: 100%;
+	height: 100%;
 }
 
-body main .downPart .chartBox{} 
-body main .downPart .chart-container {
-			width: 90%;
-			/* max-width: 900px; */
-			height: 400px;
-			margin: 1rem auto;
-			padding: 1rem;
+.chart-container {
+	width: 100%;
+	/* max-width: 900px; */
+	height: 400px;
+	margin: 1rem auto;
+	padding: 2rem 1rem;
 
-			border-radius: 10px;
-			background: rgba(245, 245, 245, 0.27);
-			box-shadow: 0px 0 13px -3px rgba(0, 0, 0, 0.389);
-		}
-body main .downPart .chart-container canvas{
-			width: 100%;
-			height: 100%;
-		}
+	border-radius: 10px;
+	background: var(--surface-glass);
+	box-shadow: 0px 0 13px -3px rgba(0, 0, 0, 0.389);
+}
+.chart-container .toogleBtnContainer{
+	display:flex;
+	align-items:center;
+	gap:var(--space-sm);
 
+	width:fit-content;
 
-				.chart-container .toggle-switch {
-					position: relative;
-					display: inline-block;
-					width: 50px;
-					height: 26px;
-				}
+	border-radius: var(--space-xl);
+	padding: var(--space-sm);
+	background-color: var(--bg-card);
+	box-shadow:var(--shadow-sm);
+	backdrop-filter:blur(5px);
 
-				.chart-container .toggle-switch input {
-					opacity: 0;
-					width: 0;
-					height: 0;
-				}
+	color: var(--text-primary);
+}
+/* chart stylin end */
 
-				.chart-container .slider {
-					position: absolute;
-					cursor: pointer;
-					top: 0;
-					left: 0;
-					right: 0;
-					bottom: 0;
-					background-color: #ccc;
-					transition: 0.4s;
-					border-radius: 26px;
-				}
-
-				.chart-container .slider:before {
-					position: absolute;
-					content: "";
-					height: 20px;
-					width: 20px;
-					left: 3px;
-					bottom: 3px;
-					background-color: white;
-					transition: 0.4s;
-					border-radius: 50%;
-				}
-
-				.chart-container input:checked + .slider {
-					background-color: #2196F3;
-				}
-
-				.chart-container input:checked + .slider:before {
-					transform: translateX(24px);
-				}
-main section.upperPart section#controlArea section.cardGroup .cardGrid .dashboardCard .switchContainer {
-				width: 5rem;
-			}
 
 /* flex setting start */
-body{
+main .upperPart{
+	/* display: flex; */
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+	gap:1rem;
+	align-items:start;
+}
+main .upperPart .tankStatus{
+	display: flex;
+	align-items: stretch;
+	justify-content: space-evenly;
+	gap: 1rem;
+	flex-basis: 40%;
+}
+main .upperPart .tankStatus #tankScale{
+	width:min(100%,20rem);
+	flex-shrink: 0;
+}
+main .upperPart .panel{
+	display: flex;
+	flex: 1;
+	gap: 1rem;
+	/* align-items: flex-start; */
+}
+main .upperPart .panel .statusCard{
 	display: flex;
 	flex-direction: column;
+	gap: 5px;
+	flex-shrink: 0;
 }
-
+main .upperPart .panel .controls{
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	min-width: 0;
+}
+main .controls .cardGroup{
+	width: max(100%, 40rem);
+}
 
 /* flex setting end */
 
 
+@media screen and (max-width:768px){
 
+	main.dashboardMain{
+		width:100%;
+		padding:10px;
+	}
+	main .upperPart .tankStatus{
+		/* align-items: center; */
+		justify-content: stretch;
+		flex-direction: column;
+	}
+	main .upperPart{
+		/* flex-direction:column; */
+		grid-template-columns:1fr;
+		justify-items:center;
+	}
+
+	main .upperPart #tankScale{
+		width:100%;
+	}
+
+	main .upperPart .panel{
+		flex-direction:column;
+	}
+
+	main .upperPart .panel .statusCard{
+		width:100%;
+	}
+
+	.chart-container{
+		height:280px;
+		padding:1rem .5rem;
+	}
+
+	.cardGroup .cardGrid{
+		/* grid-template-columns:1fr; */
+	}
+
+}
+
+@media screen and (min-width:769px) and (max-width:1024px){
+
+	main .upperPart{
+		/* flex-direction:column; */
+		grid-template-columns:1fr;
+		justify-items:center;
+	}
+
+
+	main .upperPart .panel{
+		flex-direction:column;
+	}
+
+	.cardGroup .cardGrid{
+		/* grid-template-columns:repeat(2,1fr); */
+	}
+
+}
 @media screen and (max-width: 768px), (orientation: portrait)  {
 
 }

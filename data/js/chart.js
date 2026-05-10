@@ -2,18 +2,31 @@ import { headerNfooter } from "./headerNfooter.js";
 import { SVGChart } from "./svgChartFramework.js";
 import { navBar } from "./navBar.js";
 
-import {createTodayChart} from "./getChartData.js";
+import { charts } from "./getChartData.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 	new headerNfooter();
 	new navBar();
 
-	// todayChart();
-	weekly();
+	const dayChartCanvas = document.querySelector("#charts");
+	const chartObj =  new charts(dayChartCanvas);
+	await chartObj.init();
+	chartObj.createTodayChart();
+
+
+
+	const buttonContoner =  document.querySelector(".buttonContoner");
+
+	const chartmap={
+		today = ()=>{chartObj.createTodayChart()};
+	}
+	buttonContoner.addEventListener("click", e=>{
+		if(e.target.type === "button"){
+			chartmap[e.target.dataset.chart];
+			console.log();
+		}
+	});
 });
-
-function weekly() {}
-
 // 	function monthly(data) {
 // 		this.draw(data, "month");
 // 	}
@@ -142,7 +155,3 @@ function weekly() {}
 
 // }
 // import {Chart} from "../js/chart.umd.js";
-
-
-const canvas = document.getElementById("myChart");
-await createTodayChart(canvas);

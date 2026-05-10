@@ -1,145 +1,305 @@
-function Lablesfor24Hours(){
-	const lables= [];
-	const now = new Date();
-	for (let i = 0; i < 24; i++) {
-		// 🕒 Current time based shift
-		
-		let hour = (now.getHours() - (24 - i) + 24) % 24;
-		let label = "";
+function loadSocketIO(){
 
-		if (hour === 0) label = "12 am";
-		else if (hour < 12) label = hour.toString().padStart(2, '0') + " am";
-		else if (hour === 12) label = "12 pm";
-		else label = (hour - 12).toString().padStart(2, '0') + " pm";
-		
-		lables.push(label);
-	}
-	
-	return lables;
+	return new Promise((resolve, reject)=>{
+
+		const script =
+			document.createElement("script");
+
+		script.src =
+			"/socket.io/socket.io.js";
+
+		script.onload = ()=>{
+
+			resolve();
+
+		};
+
+		script.onerror = ()=>{
+
+			reject("Socket.IO load failed");
+
+		};
+
+		document.head.appendChild(script);
+
+	});
+
 }
+async function initSocket(){
 
-async function getTodayChartData() {
-	console.log("todayChart called");
-	try {
-		const res = await fetch("/chart", {
-			credentials: "include" // for send cookie
-		});
+	await loadSocketIO();
 
-		// ❌ अगर response OK नहीं
-		if (!res.ok) {
-			console.log("API ERROR:", res.status);
+	const socket = window.io();
+
+	socket.on("connect", ()=>{
+
+		console.log("Socket Connected");
+
+	});
+
+	return socket;
+}
+export class charts{
+	#chartInstance = null;
+	#canvas =null;
+	#liveInterval = null;
+
+	#socket = null;
+
+	constructor(canvas){
+		this.canvas = canvas;
+	}
+
+	async init(){
+		this.#socket = await initSocket();
+	}
+
+	set canvas(canvas){
+		if(!canvas){
+			console.error("Canvas element not found");
 			return;
 		}
 
-		const result = await res.json();
-
-		console.log("DATA:", result);
-		return result;
-	} catch (err) {
-		console.log("FETCH ERROR:", err);
+		this.#canvas = canvas;
 	}
 
-}
+	set refreshInterval(intervalTime){
+		this.#liveInterval = intervalTime;
+	}
 
-let TodayChartInstance = null;
+	#labelsfor24Hours(){
+		const lables= [];
+		const now = new Date();
+		for (let i = 0; i < 24; i++) {
+			// 🕒 Current time based shift
+			
+			let hour = (now.getHours() - (24 - i) + 24) % 24;
+			let label = "";
 
-export async function createTodayChart(canvas){
-	getTodayChartData().then(data => {
-		const labels = Lablesfor24Hours();
-		if (TodayChartInstance){
-			TodayChartInstance.destroy(); // 🔥 OLD CHART DESTROY
+			if (hour === 0) label = "12 am";
+			else if (hour < 12) label = hour.toString().padStart(2, '0') + " am";
+			else if (hour === 12) label = "12 pm";
+			else label = (hour - 12).toString().padStart(2, '0') + " pm";
+			
+			lables.push(label);
 		}
-		TodayChartInstance = createChart(canvas, labels, data);
-	});
-}
+		
+		return lables;
+	}
+	#labelsfor1hour(){
+		return Array.from({length: 60}, (_, i)=>i);
+	}
 
-let liveInterval = null;
-export function createLiveChart(canvas){
-	clearInterval(liveInterval);
+	#labelsForWeek(){
+		const labels = [];
+		const now = new Date();
+		
+		for (let i = 6; i >= 0; i--) {
+			const date = new Date(now);
 
-	// 🔥 chart create once
-	if (!TodayChartInstance) {
-		getTodayChartData().then(data => {
-			const labels = Lablesfor24Hours();
-			TodayChartInstance = createChart(canvas, labels, data);
+			// pichhle days minus karo
+			date.setDate(now.getDate() - i);
+
+			// Day name
+			const dayName = date.toLocaleDateString("en-US", {
+				weekday: "short"
+			});
+
+			labels.push(dayName);
+		}
+
+		return labels;
+	}
+	#labelsForMonthDay(day=30, subLabel="Day", recent =false){
+		if(!recent){
+			return Array.from({ length: day }, (_, i) => `${subLabel} ${i + 1}`);
+		}
+
+		// Recent labels
+		const labels = [];
+		const now = new Date();
+
+		for(let i = day - 1; i >= 0; i--){
+
+			const date = new Date();
+
+			date.setDate(now.getDate() - i);
+
+			labels.push(
+				`${date.getDate()} ${date.toLocaleString("default", {
+					month : "short"
+				})}`
+			);
+		}
+
+		return labels;
+	}
+	#labelsForYear(recent =false){
+		if(!recent){
+			return  [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		}
+
+		// Recent 12 months
+		const labels = [];
+		const now = new Date();
+
+		for(let i = 11; i >= 0; i--){
+
+			const date = new Date(
+				now.getFullYear(),
+				now.getMonth() - i
+			);
+
+			labels.push(
+				date.toLocaleString("default", {
+					month : "short"
+				})
+			);
+		}
+
+		return labels;
+	}
+	async  #getTodayChartData() {
+		console.log("todayChart called");
+		try {
+			const res = await fetch("/todayChart", {
+				credentials: "include" // for send cookie
+			});
+
+			// ❌ अगर response OK नहीं
+			if (!res.ok) {
+				console.log("API ERROR:", res.status);
+				return;
+			}
+
+			const result = await res.json();
+
+			console.log("DATA:", result);
+			return result;
+		} catch (err) {
+			console.log("FETCH ERROR:", err);
+		}
+
+	}
+	async  #getLiveChartData(){
+		// console.log("liveChart called");
+
+		// try{
+		// 	const res = await fetch("/liveChart", {
+		// 		credentials: "include"
+		// 	});
+		// 	if (!res.ok){
+		// 		console.log("API ERROR:", res.status);
+		// 		return;
+		// 	}
+		// 	const data = await res.json();
+		// 	return data;
+		// }catch(err){
+		// 	console.log("FETCH ERROR:", err);
+		// }
+	}
+
+	#createChart(ChartLabels, data, chartTitle="Tank Level"){
+		const ctx = this.#canvas.getContext("2d");
+
+		const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+		gradient.addColorStop(0, "rgba(0, 123, 255, 0.81)");
+		gradient.addColorStop(1, "rgba(0, 123, 255, 0)");
+		
+		return new Chart(ctx, {
+			type: "line",
+
+			data: {
+				labels: ChartLabels, // X-axis
+				datasets: [
+					{
+						label: chartTitle,
+						data:  data.tank1, // Y-axis
+
+						// borderColor: "#00BFFF",
+						borderColor: gradient,
+						backgroundColor: gradient,
+						borderWidth: 2,
+
+						tension: 0.4, // 🔥 smooth line
+						fill: true,
+
+						pointRadius: 3,
+					},
+				],
+			},
+
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+
+				plugins: {
+					legend: {
+						display: true,
+					},
+				},
+
+				scales: {
+					x: {
+						title: {
+							display: true,
+							text: "Time (sec)",
+						},
+					},
+					y: {
+						min: 0,      // ✅ minimum
+						max: 120,    // ✅ maximum
+						
+						title: {
+							display: true,
+							text: "Level",
+						},
+					},
+				},
+			},
+		});
+	}
+	async createWeekChart(){
+		clearInterval(this.#liveInterval);
+	}
+	async createTodayChart(){
+		clearInterval(this.#liveInterval);
+
+		this.#getTodayChartData().then(data => {
+			if (!data) return;
+
+			const labels = this.#labelsfor24Hours();
+			if (this.#chartInstance){
+				this.#chartInstance.destroy(); // 🔥 OLD CHART DESTROY
+			}
+			this.#chartInstance = this.#createChart( labels, data, "Today's Chart");
 		});
 	}
 
-	// 🔥 only update data
-	liveInterval = setInterval(async () => {
+	async createLiveChart(){
 
-		const data = await getTodayChartData();
-		const labels = Lablesfor24Hours();
+		clearInterval(this.#liveInterval);
 
-		if (TodayChartInstance) {
-			TodayChartInstance.data.labels = labels;
-			TodayChartInstance.data.datasets[0].data = data.tank1;
-			TodayChartInstance.update(); // 🔥 important
+		const labels = this.#labelsfor1hour();
+
+		// old chart destroy
+		if(this.#chartInstance){
+			this.#chartInstance.destroy();
 		}
 
-	}, 2000);
-	
-}
+		// empty chart initially
+		this.#chartInstance = this.#createChart( labels, { tank1: Array(60).fill(0) }, "Live Chart");
 
+		// socket listener
+		this.#socket.on("liveChart", (data) => {
 
-function createChart(canvas, ChartLabels, data){
-	const ctx = canvas.getContext("2d");
+			if(!data || !this.#chartInstance) return;
 
-	const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-	gradient.addColorStop(0, "rgba(0, 123, 255, 0.81)");
-	gradient.addColorStop(1, "rgba(0, 123, 255, 0)");
-	
-	return new Chart(ctx, {
-		type: "line",
+			this.#chartInstance.data.datasets[0].data = data.tank1;
 
-		data: {
-			labels: ChartLabels, // X-axis
-			datasets: [
-				{
-					label: "Tank Level",
-					data:  data.tank1, // Y-axis
+			this.#chartInstance.update();
 
-					// borderColor: "#00BFFF",
-					borderColor: gradient,
-					backgroundColor: gradient,
-					borderWidth: 2,
+		});
 
-					tension: 0.4, // 🔥 smooth line
-					fill: true,
-
-					pointRadius: 3,
-				},
-			],
-		},
-
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-
-			plugins: {
-				legend: {
-					display: true,
-				},
-			},
-
-			scales: {
-				x: {
-					title: {
-						display: true,
-						text: "Time (sec)",
-					},
-				},
-				y: {
-					min: 0,      // ✅ minimum
-					max: 120,    // ✅ maximum
-					
-					title: {
-						display: true,
-						text: "Level",
-					},
-				},
-			},
-		},
-	});
-
+	}
 }

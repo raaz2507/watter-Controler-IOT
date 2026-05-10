@@ -80,7 +80,7 @@ export class toggleSwitch{
 					<span class="on swtLabel" >${onLabel}</span>
 					<span class="off swtLabel">${offLabel}</span>
 
-					<div class="slider"></div>
+					<div class="switchSlider"></div>
 
 				</label>`;
 	}
@@ -124,7 +124,7 @@ export class toggleSwitch{
 	
 	box-sizing: border-box; */
 }
-.switchContainer label .slider{
+.switchContainer label .switchSlider{
 	position: absolute;
 	top: 50%;
 	left: calc(var(--switchWidth) * 0.05);
@@ -186,7 +186,7 @@ export class toggleSwitch{
 	-webkit-text-fill-color:transparent;
 }
 
-.switchContainer input[type="checkbox"]:checked ~ .slider{
+.switchContainer input[type="checkbox"]:checked ~ .switchSlider{
 	/* left: calc(var(--switchWidth)* 0.05); */
 	transform: translate(-3%, -50%);
 	/* border-right-width: 2px ; */
@@ -194,7 +194,7 @@ export class toggleSwitch{
 				0 1px 4px rgba(0,0,0,.18);
 	background: linear-gradient(-90deg, #8e8e8e 0%, #f3f3f3 50%, #e6e6e6 100%);
 }
-.switchContainer input[type="checkbox"]:not(:checked) ~ .slider{
+.switchContainer input[type="checkbox"]:not(:checked) ~ .switchSlider{
 	/* right: calc(var(--switchWidth)* 0.05); */
 	transform: translate(3%, -50%);
 	border-left-width: 2px;       

@@ -1,5 +1,5 @@
 
-const mState =  true;
+const mState =  false;
 exports.toggleMotor = (req,res)=>{
 
 	const state= req.query.state; 
