@@ -11,19 +11,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const dayChartCanvas = document.querySelector("#charts");
 	const chartObj =  new charts(dayChartCanvas);
 	await chartObj.init();
-	chartObj.createTodayChart();
+	// chartObj.createTodayChart();
 
 
 
 	const buttonContoner =  document.querySelector(".buttonContoner");
 
-	const chartmap={
-		today = ()=>{chartObj.createTodayChart()};
+	const chartMap={
+		today : ()=>{ chartObj.createTodayChart(); },
+		live: () => { chartObj.createLiveChart(); },
+		week: ()=>{ chartObj.createWeekChart(); },
+		year: ()=>{ chartObj.createYearChart(); }
 	}
 	buttonContoner.addEventListener("click", e=>{
 		if(e.target.type === "button"){
-			chartmap[e.target.dataset.chart];
-			console.log();
+			const chartType = e.target.dataset.chart;
+			if(chartMap[chartType]){
+				chartMap[chartType]();
+			}
 		}
 	});
 });

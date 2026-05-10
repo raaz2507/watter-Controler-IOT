@@ -54,6 +54,10 @@ export class charts{
 		this.#socket = await initSocket();
 	}
 
+	#removeLiveListener(){
+		this.#socket.off("liveChart");
+	}
+
 	set canvas(canvas){
 		if(!canvas){
 			console.error("Canvas element not found");
@@ -261,9 +265,11 @@ export class charts{
 	}
 	async createWeekChart(){
 		clearInterval(this.#liveInterval);
+		this.#removeLiveListener();
 	}
 	async createTodayChart(){
 		clearInterval(this.#liveInterval);
+		this.#removeLiveListener();
 
 		this.#getTodayChartData().then(data => {
 			if (!data) return;
@@ -279,7 +285,8 @@ export class charts{
 	async createLiveChart(){
 
 		clearInterval(this.#liveInterval);
-
+		this.#socket.off("liveChart");
+		
 		const labels = this.#labelsfor1hour();
 
 		// old chart destroy
