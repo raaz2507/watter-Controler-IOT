@@ -24,40 +24,33 @@ exports.toggleAutoMode = (req, res)=>{
 };
 
 let systemStatus = {
-
 	battery: 0,
-
 	wifi: 0,
-
-	deviceStatus: "Offline",
-
+	deviceStatus: false,
 	lastUpdate: null
 };
 
-exports.updateSystemStatus = (req,res)=>{
-	const { battery, wifi, deviceStatus } = req.body;
+// exports.updateSystemStatus = (req,res)=>{
+// 	const { battery, wifi, deviceStatus } = req.body;
 
-	systemStatus = {battery, wifi, deviceStatus, lastUpdate: Date.now()};
+// 	systemStatus = {battery, wifi, deviceStatus, lastUpdate: Date.now()};
 
-	console.log(systemStatus);
+// 	console.log(systemStatus);
 
-	res.json({success:true});
-};
+// 	res.json({success:true});
+// };
 
 exports.getSystemStatus = (req,res)=>{
 
 	// auto offline check
 
-	const now = Date.now();
+	// const now = Date.now();
 
-	const diff = now - (systemStatus.lastUpdate || 0);
+	// const diff = now - (systemStatus.lastUpdate || 0);
 
-	// 15 sec no update
-	if(diff > 15000){
-		systemStatus.deviceStatus =
-		"Offline";
-	}
-
-
+	// // 15 sec no update
+	// if(diff > 15000){
+	// 	systemStatus.deviceStatus = false;
+	// }
 	res.json({ success:true, data: systemStatus });
 };

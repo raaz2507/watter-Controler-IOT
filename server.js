@@ -85,38 +85,38 @@ server.listen(port, () => {
 /* -----------------------------
    INSERT TEST DATA
 ------------------------------ */
-const db = require("./models/db");
+// const db = require("./models/db");
 
-db.get(
-	"SELECT COUNT(*) as count FROM tank_data WHERE user_id=? AND tank_name=?",
-	[1, "Tank 1"],
-	(err, row) => {
+// db.get(
+// 	"SELECT COUNT(*) as count FROM tank_data WHERE user_id=? AND tank_name=?",
+// 	[1, "Tank 1"],
+// 	(err, row) => {
 
-		if (err) {
-			console.log("DB Error:", err);
-			return;
-		}
+// 		if (err) {
+// 			console.log("DB Error:", err);
+// 			return;
+// 		}
 
-		// 👉 अगर data नहीं है तभी insert करो
-		if (row.count === 0) {
+// 		// 👉 अगर data नहीं है तभी insert करो
+// 		if (row.count === 0) {
 
-			console.log("Inserting test data...");
+// 			console.log("Inserting test data...");
 
-			for (let i = 0; i < 24; i++) {
-				db.run(
-					"INSERT INTO tank_data (user_id, tank_name, hour, value) VALUES (?, ?, ?, ?)",
-					[1, "Tank 1", i, Math.floor(Math.random() * 100)]
-				);
-			}
+// 			for (let i = 0; i < 24; i++) {
+// 				db.run(
+// 					"INSERT INTO tank_data (user_id, tank_name, hour, value) VALUES (?, ?, ?, ?)",
+// 					[1, "Tank 1", i, Math.floor(Math.random() * 100)]
+// 				);
+// 			}
 
-		} else {
-			console.log("Data already exists, skipping insert ✅");
-		}
-	}
-);
-for (let i = 0; i < 24; i++) {
-	db.run(
-		"INSERT INTO tank_data (user_id, tank_name, hour, value) VALUES (?, ?, ?, ?)",
-		[1, "Tank 1", i, Math.floor(Math.random() * 100)]
-	);
-}
+// 		} else {
+// 			console.log("Data already exists, skipping insert ✅");
+// 		}
+// 	}
+// );
+// for (let i = 0; i < 24; i++) {
+// 	db.run(
+// 		"INSERT INTO tank_data (user_id, tank_name, hour, value) VALUES (?, ?, ?, ?)",
+// 		[1, "Tank 1", i, Math.floor(Math.random() * 100)]
+// 	);
+// }

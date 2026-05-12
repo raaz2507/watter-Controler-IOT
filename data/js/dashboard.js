@@ -28,6 +28,8 @@ class Dashbord {
 		
 		this.#getElemts();
 		this.#setEvents();
+		this.#statusCards();
+		this.#deviceStatus();
 		// this.#setEventsOnControls();
 		// this.#setEventsOnPopUp();
 		// this.#themeSetup();
@@ -47,17 +49,73 @@ class Dashbord {
 		this.#tester();
 
 	}
+	#statusCards(){
+		const liveAlertElements = {
+			tankCapacity:document.querySelector("#tankCapacity .value"),
+			flowPercent:document.querySelector("#flowPercent .value"),
+			flowRate:document.querySelector("#flowRate .value"),
+			waterRemaining:document.querySelector("#waterRemaining .value"),
+			approxFillTime:document.querySelector("#approxFillTime .value"),
+			lastFillTime:document.querySelector("#lastFillTime .value")
+		};
+		for (const [key, value] of  Object.entries(liveAlertElements)){
+			console.log(key, value, liveAlertElements[key].textContent);
+		}
+	}
 
+	#deviceStatus(){
+		const systemCardValues = {
+			battery:document.querySelector("#batteryArea .value"),
+			wifi:document.querySelector("#wifiStrength .value"),
+			deviceStatus:document.querySelector("#deviceStatus .value")
+		};
+		loadData(); //initial load data
+
+		// realtime refresh
+		setInterval(() => {
+			loadData();
+		}, 2000);
+
+		async function loadData() {
+			try {
+				const res = await fetch("/system-status");
+
+				const json = await res.json();
+
+				if (!json.success) {
+					return;
+				}
+
+				const data = json.data;
+
+				systemCardValues.battery.textContent = `${data.battery}%`;
+				systemCardValues.wifi.textContent = `${data.wifi}%`;
+				systemCardValues.deviceStatus.textContent = data.deviceStatus ? "Online": "Offline";
+				
+				// console.log(data.deviceStatus);
+				// optional UI styles
+
+				if (data.deviceStatus) {
+					systemCardValues.deviceStatus.style.color = "lime";
+				} else {
+					systemCardValues.deviceStatus.style.color = "red";
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		}
+
+	}
 	#getElemts() {
 		const controlsElemtMap = {
-			batteryArea: { id: "batteryArea" },
-			wifiStrength: { id: "wifiStrength" },
-			deviceStatus: { id: "deviceStatus" },
-			motorStatus: { id: "motorStatus" },
-			tankCapacity: { id: "tankCapacity" },
-			remainingWater: { id: "remainingWater" },
-			flowRate: { id: "flowRate" },
-			tanksetupBtn: { id: "tanksetup" },
+			// batteryArea: { id: "batteryArea" },
+			// wifiStrength: { id: "wifiStrength" },
+			// deviceStatus: { id: "deviceStatus" },
+			// motorStatus: { id: "motorStatus" },
+			// tankCapacity: { id: "tankCapacity" },
+			remainingWater: { id: "remainingWater" }, //
+			flowRate: { id: "flowRate" }, //
+			// tanksetupBtn: { id: "tanksetup" },
 		};
 
 		for (const [key, value] of Object.entries(controlsElemtMap)) {
@@ -202,54 +260,3 @@ class Dashbord {
 		});
 	}
 }
-
-
-
-class SystemStatus {
-	constructor() {
-		this.batteryArea = document.querySelector("#batteryArea .value");
-
-		this.wifiStrength = document.querySelector("#wifiStrength .value");
-
-		this.deviceStatus = document.querySelector("#deviceStatus .value");
-
-		this.loadData();
-
-		// realtime refresh
-		setInterval(() => {
-			this.loadData();
-		}, 2000);
-	}
-
-	async loadData() {
-		try {
-			const res = await fetch("/system-status");
-
-			const json = await res.json();
-
-			if (!json.success) {
-				return;
-			}
-
-			const data = json.data;
-
-			this.batteryArea.textContent = `${data.battery}%`;
-
-			this.wifiStrength.textContent = `${data.wifi}%`;
-
-			this.deviceStatus.textContent = data.deviceStatus;
-
-			// optional UI styles
-
-			if (data.deviceStatus === "Offline") {
-				this.deviceStatus.style.color = "red";
-			} else {
-				this.deviceStatus.style.color = "lime";
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
-}
-
-new SystemStatus();

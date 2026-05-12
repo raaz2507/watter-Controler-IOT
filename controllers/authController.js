@@ -154,6 +154,7 @@ exports.user = (req, res) => {
 
 // logout
 exports.logout = (req, res) => {
+	console.log("logout");
 	res.clearCookie("token");
 
 	res.json({

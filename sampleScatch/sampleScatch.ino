@@ -2,6 +2,7 @@
 #include "WebServer.h"
 #include "UltrasonicSensor.h"
 
+AsyncWebServer server(80); // Object yahan create hoga
 
 enum { trigPin = 18, echoPin = 19, relayPin = 5};
 UltrasonicSensor sensor(trigPin, echoPin);

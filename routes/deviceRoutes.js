@@ -11,7 +11,7 @@ router.get("/autoMationSwitch", device.toggleAutomation);
 
 router.get("/system-status", device.getSystemStatus );
 
-router.post("/api/system-status", device.updateSystemStatus );
+// router.post("/api/system-status", device.updateSystemStatus );
 
 
 module.exports=router;

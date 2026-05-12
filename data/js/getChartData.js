@@ -163,10 +163,9 @@ export class charts{
 
 		return labels;
 	}
-	async  #getTodayChartData() {
-		console.log("todayChart called");
+	async #fetchData(route){
 		try {
-			const res = await fetch("/todayChart", {
+			const res = await fetch(route, {
 				credentials: "include" // for send cookie
 			});
 
@@ -183,7 +182,16 @@ export class charts{
 		} catch (err) {
 			console.log("FETCH ERROR:", err);
 		}
-
+	}
+	async #getTodayChartData() {
+		console.log("todayChart called");
+		return await this.#fetchData("/todayChart");
+	}
+	async #getWeekChartData(){
+		return await this.#fetchData("/weekChart");
+	}
+	async #getYearChartData(){
+		return await this.#fetchData("/yearChart");
 	}
 	async  #getLiveChartData(){
 		// console.log("liveChart called");
@@ -202,7 +210,7 @@ export class charts{
 		// 	console.log("FETCH ERROR:", err);
 		// }
 	}
-
+	
 	#createChart(ChartLabels, data, chartTitle="Tank Level"){
 		const ctx = this.#canvas.getContext("2d");
 
@@ -266,6 +274,30 @@ export class charts{
 	async createWeekChart(){
 		clearInterval(this.#liveInterval);
 		this.#removeLiveListener();
+
+		this.#getWeekChartData().then(data => {
+			if (!data) return;
+
+			const labels = this.#labelsForWeek();
+			if (this.#chartInstance){
+				this.#chartInstance.destroy(); // 🔥 OLD CHART DESTROY
+			}
+			this.#chartInstance = this.#createChart( labels, data, "Today's Chart");
+		});
+	}
+	async createYearChart(){
+		clearInterval(this.#liveInterval);
+		this.#removeLiveListener();
+
+		this.#getYearChartData().then(data => {
+			if (!data) return;
+
+			const labels = this.#labelsForYear();
+			if (this.#chartInstance){
+				this.#chartInstance.destroy(); // 🔥 OLD CHART DESTROY
+			}
+			this.#chartInstance = this.#createChart( labels, data, "Today's Chart");
+		});
 	}
 	async createTodayChart(){
 		clearInterval(this.#liveInterval);
