@@ -2,6 +2,12 @@
 @import url("formBase.css");
 
 
+
+.main_label{
+    font-size: 16px;
+    color:rgb(83, 120, 27);
+}
+/*  */
 .weekday-selector{
  display:flex;
  flex-wrap:wrap;
@@ -11,34 +17,39 @@
  margin-top:10px;
 }
 
-.weekday-selector button.selected{
-
- background: var(--text-primary);
-
- color: var(--accent);
-
- border-color: var(--text-primary);
- font-weight:600;
- box-shadow: var(--shadow-md);
-
- transform: translateY(-2px);
-
+.day-checkbox{
+	display: none;
 }
 
+.day-button{
+	padding: 10px 16px;
+	border-radius: 12px;
+	cursor: pointer;
+	user-select: none;
 
-.weekday-selector button{
- padding:10px 14px;
- border:1px solid var(--text-secondary);
- border-radius:12px;
- background:var(--bg-card);
- cursor:pointer;
+	background: #f1f1f1;
+	border: 2px solid transparent;
 
- transition:.2s;
+	font-weight: 600;
+    font-family: sans-serif;
+
+	transition: 0.25s;
 }
 
-.weekday-selector button:hover{
- transform:translateY(-2px);
+/* hover */
+.day-button:hover{
+	transform: translateY(-2px);
 }
+
+/* checked state */
+.day-checkbox:checked + .day-button{
+	background: #2563eb;
+	color: white;
+	border-color: #1d4ed8;
+
+	box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+}
+/*  */
 
 .resetBtn{
     background-color: rgba(255, 255, 47, 0.8) !important;
@@ -70,3 +81,5 @@
 }
 #minRange{ z-index:3; }
 #maxRange{ z-index:2; }
+
+

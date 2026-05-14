@@ -27,7 +27,9 @@ const headerHtml = `<div class="titleNicon">
 
 		</div>
 
-	</div>`;
+	</div>
+	<div class="toast-container" id="toastContainer"></div>
+	`;
 
 const footerHtml = `<span>&copy; Developed by 
 	<a href="./admin.html">Rajaanha</a>
@@ -42,6 +44,8 @@ export class headerNfooter {
 		this.#loadUser();
 		this.#bindLogout();
 		this.#profileSetup();
+
+		this.loadMessages();
 	}
 	#getElements() {
 		this.#elemts.headerTag = document.getElementsByTagName("header")[0];
@@ -128,21 +132,23 @@ export class headerNfooter {
 		} catch (err) {
 			console.log(err);
 		}
+		this.loadMessages();
 	}
 	async #logout() {
-		// try {
-		// 	const res = await fetch("/logout");
-		// 	const data = await res.json();
+		try {
+			const res = await fetch("/logout");
+			const data = await res.json();
 
-		// 	if (data.success) {
-		// 		window.location.href = data.redirect;
-		// 	} else {
-		// 		alert(data.message || "Logout failed");
-		// 	}
-		// } catch (err) {
-		// 	console.log(err);
-		// 	alert("Server error");
-		// }
+			if (data.success) {
+				window.location.href = data.redirect;
+			} else {
+				alert(data.message || "Logout failed");
+			}
+		} catch (err) {
+			console.log(err);
+			alert("Server error");
+		}
+		this.loadMessages();
 	}
 	#bindLogout() {
 		const btn = document.querySelector(".logoutBtn");
@@ -160,4 +166,55 @@ export class headerNfooter {
 			}
 		});
 	}
+
+	async loadMessages(){
+		try{
+			const res = await fetch("/messages", {
+				credentials:"include"
+			});
+
+			const data = await res.json();
+			console.log(data);
+
+
+			if(!data.success){
+				console.log(data.message);
+				return;
+			}
+
+			data.messages.forEach((msg,index) => {
+				setTimeout(()=>{
+					this.createToast(msg.tag, msg.message);
+				}, index * 300);
+			});
+
+		}catch(err){
+			console.log(err);
+		}
+	}
+
+	createToast(type, text){
+		const container = document.querySelector("#toastContainer");
+		// new toast
+		const toast = document.createElement("div");
+		toast.className = `toast ${type}`;
+		toast.innerText = text;
+		container.appendChild(toast);
+		
+		// show animation
+		setTimeout(()=>{
+			toast.classList.add("show");
+		},10);
+
+
+		// hide
+		setTimeout(()=>{
+			toast.classList.remove("show");
+			toast.classList.add("hide");
+			setTimeout(()=>{
+				toast.remove();
+			},400);
+		},3000);
+	}
+
 }

@@ -250,3 +250,9 @@ font-weight:600;
 .alertBadge:hover{
 transform:scale(1.02);
 }
+
+.flex-center{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

@@ -10,10 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const dayChartCanvas = document.querySelector("#charts");
 	const chartObj =  new charts(dayChartCanvas);
-	await chartObj.init();
 	// chartObj.createTodayChart();
-
-
 
 	const buttonContoner =  document.querySelector(".buttonContoner");
 

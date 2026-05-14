@@ -1,30 +1,30 @@
 @import url("base.css");
 
-body{
+/* body{
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
+} */
 /* form container stying start */
 .formContainer {
-	background:var(--surface-glass);
+
 	width:90%;
 	max-width:400px;
-	padding:20px;
-
-	border:1px solid var(--glass-border);
-	border-radius:15px;
-
-	backdrop-filter:blur(14px);
+	padding: var(--space-md);
 
 	box-shadow:var(--glass-shadow);
-
-	color:var(--text-primary);
-
-	animation:slideIn .3s ease-out;
-
+	animation:slideIn .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	position:relative;
+	background: var(--surface-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+
+    color: var(--text-primary);
 }
+
 
 @keyframes slideIn {
 	from{
@@ -60,14 +60,9 @@ body{
 form fieldset{
 	border:1px solid var(--border);
 	border-radius:12px;
-
 	padding:20px;
 	margin-bottom:20px;
-
 	background:var(--bg-card);
-
-	backdrop-filter:blur(10px);
-
 	box-shadow:var(--shadow-sm);
 }
 
@@ -111,14 +106,7 @@ form fieldset > div{
 }
 
 /* ===== Inputs ===== */
-
-form input[type="number"],
-form input[type="text"],
-form input[type="password"],
-form input[type="date"],
-form input[type="time"],
-form input[type="datetime-local"],
-form select{
+form :where(input[type="number"],input[type="text"],input[type="password"],input[type="date"],input[type="time"],input[type="datetime-local"], select){
 	width:100%;
 	padding:10px 12px;
 	border:1px solid var(--border);
@@ -126,6 +114,7 @@ form select{
 	background:var(--btn-bg);
 	color:var(--text-primary);
 	font-size:14px;
+	font-family: sans-serif;
 	box-sizing:border-box;
 	transition:.3s;
 }
@@ -153,21 +142,19 @@ form input[type="reset"],
 .submitBtn, .resetBtn {
 	padding: 12px;
 	border-radius: 6px;
-	font-weight: bold;
-	font-size: 14px;
-	cursor: pointer;
-	transition: transform 0.1s, opacity 0.3s;
+
+
 }
 
-/* Submit Button Style */
+/* Submit Button Style
 form input[type="submit"], 
 .submitBtn {
 	background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-	color: var(--text-primary);
-}
+	color: var(--bg-main);
+} */
 
 /* Reset Button Style */
-form input[type="reset"],
+/* form input[type="reset"],
 .resetBtn {
 	background:var(--btn-bg);
 	color:var(--text-primary);
@@ -176,8 +163,7 @@ form input[type="reset"],
 
 form input[type="submit"]:hover,
 form input[type="reset"]:hover,
-.resetBtn:hover, .submitBtn:hover{
-	background:var(--btn-hover);
+.resetBtn:hover, .btn:hover{
 	transform: translateY(-2px);
 }
 
@@ -185,17 +171,67 @@ form input[type="submit"]:active,
 form input[type="reset"]:active,
 .resetBtn:active, .submitBtn:active {
 	transform: translateY(1px);
+} */
+/* ======= */
+.submitBtn {
+    background: rgb(172, 255, 47);
+    color: #535353;
+    box-shadow: 0 0 14px -5px rgba(103, 103, 103, 0.3);
 }
-
-form input[type="button"],
-.btn{
+.submitBtn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 14px -5px rgba(103, 103, 103, 0.7);
+	background: #aaaaaa71;
+	color: rgb(172, 255, 47);
+    transform: translateY(-2px);
+}
+.submitBtn:active {
+    transform: translateY(0px) scale(0.97);
+}
+.resetBtn {
+    background: transparent;
+    border: 1.5px solid #ff4d4d;
+    color: #ff4d4d;
+}
+.resetBtn:hover {
+    background: #ff4d4d;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(255, 77, 77, 0.2);
+}
+.resetBtn:active {
+    transform: scale(0.97);
+}
+.cancelBtn {
+    background: #f1f3f5;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+.cancelBtn:hover {
+    background: #e9ecef;
+    color: #212529;
+}
+.cancelBtn:active {
+    background: #dee2e6;
+}
+/* ======= */
+form input[type="button"], .btn{
 	background:var(--btn-bg);
 	border:1px solid var(--border);
 	color:var(--text-primary);
 	border-radius:10px;
 	padding:10px 14px;
+	font-family: sans-serif;
+	letter-spacing: 1px;
+	font-weight: bold;
+	font-size: 14px;
+	cursor: pointer;
+	transition: transform 0.1s, opacity 0.3s;
 }
 
+a.btn{
+	text-decoration: none;
+	display: inline-block;
+}
 form input[type="button"]:focus,
 .btn:focus{
 	border-color:var(--accent);
@@ -213,28 +249,7 @@ form input[type="button"]:focus,
 	gap: 10px;
 	margin-top: 10px;
 }
-
-.buttonSection input {
-	flex: 1;
-	padding: 10px;
-
-	border: none;
-	border-radius: 8px;
-
-	font-size: 14px;
-	cursor: pointer;
-
-	background: var(--bg-card);
-	color: var(--text-primary);
-
-	transition: 0.2s;
+.buttonSection >*{
+	flex:1;
 }
 
-/* hover */
-.buttonSection input:hover, .btn:hover {
-	background: var(--bg-main);
-}
-a.btn{
-	text-decoration: none;
-	display: inline-block;
-}

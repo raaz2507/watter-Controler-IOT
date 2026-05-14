@@ -6,13 +6,13 @@
 	<title>Automation Setting</title>
 	<link rel="stylesheet" href="./css/automationSetting.css">
 </head>
-<body>
+<body class="flex-center">
 	<div class="formContainer ">
 		<form action="" method="post" name="AutomationSettingForm">
 			<fieldset>
 				<legend>Automation Settings</legend>
 				<div>
-					<label for="">Set Tank Value</label>
+					<label for="" class="main_label">Set Tank Value</label>
 					<div class="range-wrap,">
 						<input type="range" name="minRange" id="minRange" min="0" max="100" value="20">
 						<input type="range" name="maxRange" id="maxRange" min="0" max="100" value="80">
@@ -21,19 +21,19 @@
 				</div>
 				
 				<div>
-					<label for="">Schedule specific time to start motor</label>
+					<label for="" class="main_label">Schedule specific time to start motor</label>
 					<input type="time" name="startTime" id="startTime">
 				</div>
 				<div>
-					<label for="">Schedule specific time and date to start motor</label>
+					<label for="" class="main_label">Schedule specific time and date to start motor</label>
 					<input type="datetime-local" name="startDateTime" id="startDateTime">
 				</div>
 				<div>
-					<label for="">week dayes</label>
+					<label for="" class="main_label">Week Days</label>
 					<div class="weekday-selector"></div>
 				</div>
 				<div>
-					<label>Low water safety cutoff</label>
+					<label class="main_label">Low water Safety cutoff</label>
 					<div class="switchContainer" id="lowFlowRateAutoCutOffSwitch"></div>
 				</div>
 				<!-- min tank value
@@ -44,7 +44,7 @@
 				
 			</fieldset>
 			<div class="buttonSection">
-				<input type="button" value="cancle" class="btn">
+				<input type="button" value="Cancle" class="btn" onclick="history.back()">
 				<input type="button" value="Defult" class="resetBtn btn">
 				<input type="submit" value="Save" class="submitBtn btn">
 			</div>

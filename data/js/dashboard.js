@@ -209,7 +209,6 @@ class Dashbord {
 		const modeText = document.querySelector(".modeText");
 
 		const chartObj = new charts(canvas);
-		await chartObj.init();
 
 		console.log(this.#motorSwitchBtn.value);
 		toggleChart.checked = this.#motorSwitchBtn.value;

@@ -50,12 +50,27 @@ export class charts{
 		this.canvas = canvas;
 	}
 
-	async init(){
-		this.#socket = await initSocket();
-	}
+	// async init(){
+	// 	this.#socket = await initSocket();
+	// }
 
 	#removeLiveListener(){
+		if(!this.#socket) return;
 		this.#socket.off("liveChart");
+	}
+
+	async #connectSocket(){
+		if(this.#socket) return;
+		this.#socket = await initSocket();
+		console.log("Socket Initialized");
+	}
+
+	#destroySocket(){
+		if(!this.#socket) return;
+		this.#socket.off("liveChart");
+		this.#socket.disconnect();
+		this.#socket = null;
+		console.log("Socket Destroyed");
 	}
 
 	set canvas(canvas){
@@ -272,6 +287,7 @@ export class charts{
 		});
 	}
 	async createWeekChart(){
+		this.#destroySocket();
 		clearInterval(this.#liveInterval);
 		this.#removeLiveListener();
 
@@ -286,6 +302,7 @@ export class charts{
 		});
 	}
 	async createYearChart(){
+		this.#destroySocket();
 		clearInterval(this.#liveInterval);
 		this.#removeLiveListener();
 
@@ -300,6 +317,7 @@ export class charts{
 		});
 	}
 	async createTodayChart(){
+		this.#destroySocket();
 		clearInterval(this.#liveInterval);
 		this.#removeLiveListener();
 
@@ -317,8 +335,12 @@ export class charts{
 	async createLiveChart(){
 
 		clearInterval(this.#liveInterval);
-		this.#socket.off("liveChart");
-		
+
+		// socket create only now
+		await this.#connectSocket();
+
+		this.#removeLiveListener();
+
 		const labels = this.#labelsfor1hour();
 
 		// old chart destroy
@@ -326,19 +348,23 @@ export class charts{
 			this.#chartInstance.destroy();
 		}
 
-		// empty chart initially
-		this.#chartInstance = this.#createChart( labels, { tank1: Array(60).fill(0) }, "Live Chart");
+		this.#chartInstance = this.#createChart(
+			labels,
+			{ tank1: Array(60).fill(0) },
+			"Live Chart"
+		);
 
-		// socket listener
-		this.#socket.on("liveChart", (data) => {
+		this.#socket.on("liveChart", (data)=>{
 
 			if(!data || !this.#chartInstance) return;
 
-			this.#chartInstance.data.datasets[0].data = data.tank1;
+			this.#chartInstance
+				.data
+				.datasets[0]
+				.data = data.tank1;
 
 			this.#chartInstance.update();
 
 		});
-
 	}
 }

@@ -1,0 +1,121 @@
+/* --- 1. Base Reset & Layout --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-image: url('../img/background.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    transition: background-color var(--transition-normal);
+}
+
+/* --- 2. Color Variables (The "Logic" Fix) --- */
+:root {
+    /* Transitions & Spacing */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+
+    /* Light Theme (Default) */
+    --bg-main: #f0f2f5;
+    --surface-glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --bg-card: rgba(255, 255, 255, 0.8);
+    
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border: rgba(0, 0, 0, 0.1);
+    --accent: #007bff;
+
+    /* State Colors - Clean & Vibrant */
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+    --warn: #f59e0b;
+    --warn-bg: rgba(245, 158, 11, 0.1);
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* --- 3. Dark Theme Overrides --- */
+body.darkTheme {
+    --bg-main: #0f172a;
+    --surface-glass: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --bg-card: rgba(15, 23, 42, 0.8);
+
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #3b82f6;
+
+    /* Dark Mode State Adjustments */
+    --danger: #f87171;
+    --warn: #fbbf24;
+    --success: #34d399;
+
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* --- 4. Component Styles --- */
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/* Reusable Alert Badges */
+.alertBadge {
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    border: 1px solid transparent;
+    transition: var(--transition-normal);
+    background: var(--state-bg);
+    color: var(--state-color);
+    border-color: var(--state-border);
+}
+
+/* State Mapping */
+.danger  { --state-color: var(--danger);  --state-bg: var(--danger-bg); --state-border: var(--danger); }
+.warning { --state-color: var(--warn);    --state-bg: var(--warn-bg);   --state-border: var(--warn); }
+.success { --state-color: var(--success); --state-bg: var(--success-bg); --state-border: var(--success); }
+
+.alertBadge:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* --- 5. Animations --- */
+@keyframes blinkDanger {
+    0%, 100% { box-shadow: 0 0 5px var(--danger); opacity: 1; }
+    50% { box-shadow: 0 0 20px var(--danger); opacity: 0.8; }
+}
+
+.danger.active {
+    animation: blinkDanger 1.5s infinite ease-in-out;
+}
+
+.inactive {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    pointer-events: none;
+}

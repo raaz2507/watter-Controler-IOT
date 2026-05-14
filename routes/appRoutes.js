@@ -31,5 +31,6 @@ router.get("/automation-data", isAuth, automationController.getAutomationData);
 
 router.post( "/update-automation", isAuth, automationController.updateAutomation);
 
-
+const message = require("../controllers/messageController");
+router.get("/messages", message.getMessages);
 module.exports = router;
