@@ -28,7 +28,12 @@
 }
 
 /* chart Styling end */
-
+.buttonContoner{
+	--circle_size : 9px;
+	--circle_border : 5px;
+	--base_color : #4189e0;
+	--secondry_color : #ffffff;
+}
 .buttonContoner {
 	padding: 8px;
 	width: 80%;
@@ -42,9 +47,47 @@
 	justify-content: space-evenly;
 	gap: 1rem;
 }
-.buttonContoner .btn {
+/* .buttonContoner .btn {
 	padding: var(--space-sm);
 	text-transform: uppercase;
 	flex: 1 1 5rem;
 	white-space: nowrap;
+} */
+.buttonContoner input[type="radio"] {
+  display: none;
+}
+.buttonContoner label {
+	position: relative;
+	color: var(--base_color);
+	font-family: "Poppins", sans-serif;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	border: 3px solid var(--base_color);
+	padding: var(--space-sm);
+	border-radius: 0.5em;
+	flex: 1 1 5rem;
+	white-space: nowrap;
+	text-align: center;
+}
+.buttonContoner label:before {
+  content: "";
+  height: var(--circle_size);
+  width: var(--circle_size);
+  aspect-ratio: 1;
+  border: var(--circle_border) solid var(--base_color);
+  border-radius: 50%;
+}
+
+.buttonContoner input[type="radio"]:checked + label:before {
+  height: var(--circle_size);
+  width: var(--circle_size);
+  border: var(--circle_border) solid var(--secondry_color);
+  background-color: var(--base_color);
+}
+
+.buttonContoner input[type="radio"]:checked + label {
+  background-color: var(--base_color);
+  color: var(--secondry_color);
 }

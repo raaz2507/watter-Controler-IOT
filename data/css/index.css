@@ -9,34 +9,24 @@
 } */
 
 /* ================= BODY CENTER ================= */
-body {
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	font-family: 'Segoe UI', sans-serif;
-	background: url('../img/background.svg') no-repeat center/cover;
-}
-
 
 /* ================= CONTAINER ================= */
-.container {
+main.container {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	gap: 20px;
-	margin-top: auto;
-	padding: 20px;
+	/* margin-top: auto; */
 }
 
 /* ================= LOGO ================= */
-.siteLogo {
+main .siteLogo {
 	width: 180px;
 	margin-bottom: 10px;
 }
 
-.siteLogo img {
+main .siteLogo img {
 	width: 100%;
 }
 
@@ -45,66 +35,9 @@ form {
 	width: 300px;
 }
 
-/* glass look */
-
-
-/* legend */
-
-
 /* ================= INPUT GROUP ================= */
-
-
-/* label */
-
-
-/* inputs */
-
-
-/* focus effect */
-
-
-/* ================= PASSWORD FIELD ================= */
-.passwordField {
-	position: relative;
-}
-
-
-.passwordField input {
-	width: 100%;
-	padding-right: 40px; /* icon ke liye space */
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-/* eye icon */
-
-.toggleEye {
-	position: absolute;
-	right: 10px;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 25px;
-	
-	cursor: pointer;
-	color: var(--text-secondary);
-}
-
-.toggleEye:hover {
-	color: var(--text-primary);
-}
-
-.toggleEye svg {
-	width: 100%;
-	/* height: 16px; */
-}
-
-.singupBtn{
-
-}
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 400px) {
-	form {
-		width: 100%;
-	}
+	form { width: 100%;}
 }

@@ -1,28 +1,17 @@
 import { headerNfooter } from "./headerNfooter.js";
 import { navBar } from "./navBar.js";
+import { PasswordEye } from "./passwordEye.js"; 
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
 	// Header load
 	new headerNfooter();
 	new navBar();
+	PasswordEye.init();
 });
 
-const eyeOpen = document.getElementById("eyeOpen");
-const eyeClose = document.getElementById("eyeClose");
 
-document
-	.getElementsByClassName("toggleEye")[0]
-	.addEventListener("click", () => {
-		if (password.type === "password") {
-			password.type = "text";
-			eyeOpen.style.display = "none";
-			eyeClose.style.display = "block";
-		} else {
-			password.type = "password";
-			eyeOpen.style.display = "block";
-			eyeClose.style.display = "none";
-		}
-	});
 
 const loginForm = document.forms["loginForm"];
 

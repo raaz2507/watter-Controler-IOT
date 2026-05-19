@@ -8,7 +8,7 @@
 	<style>
 		
 
-		/*  */
+		
 	</style>
 </head>
 <body>
@@ -22,16 +22,24 @@
 			<canvas id="weeklyChart"></canvas>
 		</div> -->
 		<div class="buttonContoner">
-			<button class="btn" type="button" data-chart="live"> last haur</button>
+			<!-- <button class="btn" type="button" data-chart="live"> last haur</button>
 			<button class="btn" type="button" data-chart="today"> today</button>
 			<button class="btn" type="button" data-chart="week"> week</button>
-			<button class="btn" type="button" data-chart="year"> year</button>
+			<button class="btn" type="button" data-chart="year"> year</button> -->
+			<input type="radio" name="chartShow" id="live" />
+			<label for="live">Last Hour</label>
+			<input type="radio" name="chartShow" id="today" checked />
+			<label for="today">Today</label>
+			<input type="radio" name="chartShow" id="week" />
+			<label for="week">Week</label>
+			<input type="radio" name="chartShow" id="year" />
+			<label for="year">Year</label>
 		</div>
 		<!-- <div class="chartContailner" id="dailyChart"></div>
 		<div class="chartContailner" id="weeklyChart"></div> -->
 	</main>
 	<footer></footer>
-<script src="../js/chart.umd.js"></script>
+<!-- <script src="../js/chart.umd.js"></script> -->
 <script type="module" src="../js/chart.js"></script>
 </body>
 </html>

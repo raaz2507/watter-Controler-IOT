@@ -4,40 +4,31 @@ const Message = require("../utils/messageFramework");
 exports.getMessages = (req, res) => {
 
 	try {
-
 		console.log("========== MESSAGES ==========");
-
 		console.log("cookies:", req.cookies);
 
 		const token = req.cookies.token;
+		// console.log("token:", token);
 
-		console.log("token:", token);
+		let user = null;		
 
-		const decoded = jwt.verify(
-			token,
-			process.env.JWT_SECRET
-		);
+		// agar token hai tabhi verify karo
+		if (token) {
+			user = jwt.verify( token, process.env.JWT_SECRET);
+		}
 
-		console.log("decoded:", decoded);
+		// guest user
+		if (!user) {
+			return res.json({ success: true, user: null, messages: [ { type: "info", message: [] } ] });
+		}
 
-		const messages =
-			Message.getMessages(decoded.username);
-
-		console.log("messages:", messages);
-
-		res.json({
-			success: true,
-			messages
-		});
+		// logged in user
+		res.json({ success: true, user, messages: [ { type: "success", message: "Welcome Back" } ]});
 
 	} catch (err) {
-
 		console.log("MESSAGE ROUTE ERROR:");
 		console.log(err);
 
-		res.json({
-			success: false,
-			messages: []
-		});
+		res.status(500).json({ success: false, message: "Server Error" });
 	}
 };

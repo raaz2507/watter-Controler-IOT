@@ -1,3 +1,5 @@
+import {Chart} from "./chart.shake.esm.js";
+
 function loadSocketIO(){
 
 	return new Promise((resolve, reject)=>{
@@ -42,17 +44,31 @@ async function initSocket(){
 export class charts{
 	#chartInstance = null;
 	#canvas =null;
+	#resizeTimer = null;
+
 	#liveInterval = null;
 
 	#socket = null;
+	#colors;
 
 	constructor(canvas){
 		this.canvas = canvas;
+		window.addEventListener( "resize", this.#handleResize );
+		this.#colors = this.#getChartColors();
 	}
 
 	// async init(){
 	// 	this.#socket = await initSocket();
 	// }
+	
+	#handleResize = () => {
+		clearTimeout(this.#resizeTimer);
+		this.#resizeTimer = setTimeout(() => {
+			if(this.#chartInstance){
+				this.#chartInstance.resize();
+			}
+		}, 100);
+	}
 
 	#removeLiveListener(){
 		if(!this.#socket) return;
@@ -225,14 +241,23 @@ export class charts{
 		// 	console.log("FETCH ERROR:", err);
 		// }
 	}
+
+	#getChartColors(){
+		const styles = getComputedStyle(document.body);
+		return {
+			textColor: styles.getPropertyValue('--text-primary').trim(),
+			gridColor: styles.getPropertyValue('--text-secondary').trim()
+		};
+	}
 	
 	#createChart(ChartLabels, data, chartTitle="Tank Level"){
 		const ctx = this.#canvas.getContext("2d");
-
-		const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+		// console.log(this.#canvas.getBoundingClientRect().height);
+		const gradient = ctx.createLinearGradient(0, 0, 0, this.#canvas.getBoundingClientRect().height);
 		gradient.addColorStop(0, "rgba(0, 123, 255, 0.81)");
 		gradient.addColorStop(1, "rgba(0, 123, 255, 0)");
 		
+
 		return new Chart(ctx, {
 			type: "line",
 
@@ -263,6 +288,9 @@ export class charts{
 				plugins: {
 					legend: {
 						display: true,
+						labels:{
+							color: this.#colors.textColor
+						}
 					},
 				},
 
@@ -271,7 +299,11 @@ export class charts{
 						title: {
 							display: true,
 							text: "Time (sec)",
+							color: this.#colors.textColor,
 						},
+						ticks: {
+                            color: this.#colors.textColor,
+                        },
 					},
 					y: {
 						min: 0,      // ✅ minimum
@@ -280,12 +312,17 @@ export class charts{
 						title: {
 							display: true,
 							text: "Level",
+							color: this.#colors.textColor,
+						},
+						ticks:{
+                    		color: this.#colors.textColor,
 						},
 					},
 				},
 			},
 		});
 	}
+
 	async createWeekChart(){
 		this.#destroySocket();
 		clearInterval(this.#liveInterval);
@@ -297,8 +334,9 @@ export class charts{
 			const labels = this.#labelsForWeek();
 			if (this.#chartInstance){
 				this.#chartInstance.destroy(); // 🔥 OLD CHART DESTROY
+				this.#chartInstance = null;
 			}
-			this.#chartInstance = this.#createChart( labels, data, "Today's Chart");
+			this.#chartInstance = this.#createChart( labels, data, "Week's Chart");
 		});
 	}
 	async createYearChart(){
@@ -312,8 +350,9 @@ export class charts{
 			const labels = this.#labelsForYear();
 			if (this.#chartInstance){
 				this.#chartInstance.destroy(); // 🔥 OLD CHART DESTROY
+				this.#chartInstance = null;
 			}
-			this.#chartInstance = this.#createChart( labels, data, "Today's Chart");
+			this.#chartInstance = this.#createChart( labels, data, "Year's Chart");
 		});
 	}
 	async createTodayChart(){
@@ -327,6 +366,7 @@ export class charts{
 			const labels = this.#labelsfor24Hours();
 			if (this.#chartInstance){
 				this.#chartInstance.destroy(); // 🔥 OLD CHART DESTROY
+				this.#chartInstance = null;
 			}
 			this.#chartInstance = this.#createChart( labels, data, "Today's Chart");
 		});
@@ -346,23 +386,14 @@ export class charts{
 		// old chart destroy
 		if(this.#chartInstance){
 			this.#chartInstance.destroy();
+			this.#chartInstance = null;
 		}
 
-		this.#chartInstance = this.#createChart(
-			labels,
-			{ tank1: Array(60).fill(0) },
-			"Live Chart"
-		);
+		this.#chartInstance = this.#createChart( labels, { tank1: Array(60).fill(0) }, "Live Chart");
 
 		this.#socket.on("liveChart", (data)=>{
-
 			if(!data || !this.#chartInstance) return;
-
-			this.#chartInstance
-				.data
-				.datasets[0]
-				.data = data.tank1;
-
+			this.#chartInstance.data.datasets[0].data = data.tank1;
 			this.#chartInstance.update();
 
 		});

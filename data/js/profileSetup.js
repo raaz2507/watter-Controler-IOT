@@ -1,4 +1,5 @@
-/* profile setup*/
+import { PasswordEye } from "./passwordEye.js"; 
+PasswordEye.init();
 
 const profileSetupForm = document.forms["profileSetup"];
 // profileSetupForm.querySelector(".submitBtn").addEventListener("click", (e) => {

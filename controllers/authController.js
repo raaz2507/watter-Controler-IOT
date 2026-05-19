@@ -131,10 +131,11 @@ exports.login = async (req, res) => {
 
 exports.user = function (req, res){
 	const token = req.cookies.token;
-	console.log(token);
+	// console.log(token);
 
+	// guest user
 	if (!token) {
-		Message.warning( username, "Logout Sussesfuly");
+		// Message.warning("guest", "User not logged in");
 		return res.json({ loggedIn: false });
 	}
 

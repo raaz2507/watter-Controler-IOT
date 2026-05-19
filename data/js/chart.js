@@ -1,5 +1,5 @@
 import { headerNfooter } from "./headerNfooter.js";
-import { SVGChart } from "./svgChartFramework.js";
+// import { SVGChart } from "./svgChartFramework.js";
 import { navBar } from "./navBar.js";
 
 import { charts } from "./getChartData.js";
@@ -10,24 +10,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const dayChartCanvas = document.querySelector("#charts");
 	const chartObj =  new charts(dayChartCanvas);
-	// chartObj.createTodayChart();
+	
+	document.querySelector(".buttonContoner").addEventListener("change", e=>{
 
-	const buttonContoner =  document.querySelector(".buttonContoner");
+		const radio = e.target.closest( 'input[name="chartShow"]' );
+		if(!radio) return;
 
-	const chartMap={
-		today : ()=>{ chartObj.createTodayChart(); },
-		live: () => { chartObj.createLiveChart(); },
-		week: ()=>{ chartObj.createWeekChart(); },
-		year: ()=>{ chartObj.createYearChart(); }
-	}
-	buttonContoner.addEventListener("click", e=>{
-		if(e.target.type === "button"){
-			const chartType = e.target.dataset.chart;
-			if(chartMap[chartType]){
-				chartMap[chartType]();
-			}
-		}
+		const chartType = radio.id;
+		createChart(chartType);
 	});
+	
+	createChart(document.querySelector("input[type='radio'][name='chartShow']:checked").id);
+	
+	function createChart(chartType){
+		const chartMap={
+			today : ()=>{ chartObj.createTodayChart(); },
+			live: () => { chartObj.createLiveChart(); },
+			week: ()=>{ chartObj.createWeekChart(); },
+			year: ()=>{ chartObj.createYearChart(); }
+		}
+		chartMap[chartType]?.();
+	}
 });
 // 	function monthly(data) {
 // 		this.draw(data, "month");

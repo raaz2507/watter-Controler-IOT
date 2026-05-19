@@ -11,7 +11,7 @@ router.get("/dashboard", isAuth ,appPages.dashboard);
 router.get("/charts", isAuth, appPages.charts);
 router.get("/about", appPages.about);
 
-router.get ("/profileSetup", appPages.profileSetup);
+router.get ("/profileSetup", isAuth ,appPages.profileSetup);
 // router.get( "/test", (req,res)=>{
 // 	res.send("route working");
 // });

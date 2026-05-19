@@ -25,49 +25,50 @@
 		<main class="dashboardMain">
 			<div class="upperPart">
 				
-				<div class="tankStatus">
-					<section id="tankScale"><!-- Tank SVG here --></section>
-					<!-- Live Aleart Panal -->
-					<section class="statusCard">
+				<!-- <div class="tankStatus">
+				</div> -->
+				<section class="tank-visuals">
+					<div id="tank-meter"><!-- Tank SVG here --></div>
+					<div id="level-controller"><!-- Tank Laval Selector is here --></div>
+				</section>
+				<!-- Live Aleart Panal -->
+				<section class="statusCard">
 
-						<div class="panelHead">
-							<h3 class="groupTitle">Live Alerts</h3>
-							<span class="pulseDot"></span>
-						</div>
+					<div class="panelHead">
+						<h3 class="groupTitle">Live Alerts</h3>
+					</div>
 
-						<div id="tankCapacity" class="metric flowPercent success">
-							<span class="badge">Tank Total Capacity</span>
-							<span class="value">500 L</span>
-						</div>
+					<div id="tankCapacity" class="metric flowPercent success">
+						<span class="badge">Tank Total Capacity</span>
+						<span class="value">500 L</span>
+					</div>
 
-						<div id="flowPercent" class="metric flowPercent success">
-							<span class="badge">Flow %</span>
-							<span class="value">00%</span>
-						</div>
+					<div id="flowPercent" class="metric flowPercent success">
+						<span class="badge">Flow %</span>
+						<span class="value">00%</span>
+					</div>
 
-						<div id="flowRate" class="metric flowRate danger">
-							<span class="badge">Flow</span>
-							<span class="value">00 L/min</span>
-						</div>
+					<div id="flowRate" class="metric flowRate danger">
+						<span class="badge">Flow</span>
+						<span class="value">00 L/min</span>
+					</div>
 
-						<div id="waterRemaining" class="metric waterRemaining warning">
-							<span class="badge">Remaining</span>
-							<span class="value">00 L</span>
-						</div>
+					<div id="waterRemaining" class="metric waterRemaining warning">
+						<span class="badge">Remaining</span>
+						<span class="value">00 L</span>
+					</div>
 
-						<div id="approxFillTime" class="metric fillTime danger">
-							<span class="badge">Approx Fill Time</span>
-							<span class="value">00 min</span>
-						</div>
+					<div id="approxFillTime" class="metric fillTime danger">
+						<span class="badge">Approx Fill Time</span>
+						<span class="value">00 min</span>
+					</div>
 
-						<div id="lastFillTime" class="metric fillTime danger">
-							<span class="badge">Last Fill Time</span>
-							<span class="value">00 min</span>
-						</div>
+					<div id="lastFillTime" class="metric fillTime danger">
+						<span class="badge">Last Fill Time</span>
+						<span class="value">00 min</span>
+					</div>
 
-					</section>
-
-				</div>
+				</section>
 				<div class="panel">
 					
 					<div class="controls">
@@ -143,7 +144,7 @@
 									<div class="cardBody ">
 										<div class="btnConrainer">
 											<div class="switchContainer" id="AutomaionSwitchBtn"></div>
-											<button class="miniBtn" onclick="window.location.href = './automationSetting.html'"> Setup 🛠️</button>
+											<button class="btn" onclick="window.location.href = './automationSetting.html'"> Setup 🛠️</button>
 										</div>
 									</div>
 								</article>
@@ -172,7 +173,7 @@
 									</div>
 
 									<div class="cardBody">
-										<button class="miniBtn" onclick="window.location.href = './tanksetup.html'"> Setup ⚙️</button>
+										<button class="btn" onclick="window.location.href = './tanksetup.html'"> Setup ⚙️</button>
 									</div>
 								</article>
 							</div>
@@ -217,7 +218,8 @@
 		</div> -->
 
 		<!-- <script src="/socket.io/socket.io.js"></script> -->
-		<script src="../js/chart.umd.js"></script>
+		<!-- <script src="../js/chart.umd.js"></script> -->
+		 <script src="./js/nouislider.js"></script>
 		<script type="module" src="../js/dashboard.js"></script>
 	</body>
 </html>

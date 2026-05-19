@@ -1,5 +1,5 @@
 import { waterTank, WatterTankScale } from "./watterTank.js";
-import { SVGChart } from "./svgChartFramework.js";
+// import { SVGChart } from "./svgChartFramework.js";
 
 import { headerNfooter } from "./headerNfooter.js";
 import { navBar } from "./navBar.js";
@@ -7,6 +7,7 @@ import { navBar } from "./navBar.js";
 import { toggleSwitch } from "./toggleSwitch.js";
 
 import {charts} from "./getChartData.js";
+
 
 document.addEventListener("DOMContentLoaded", async () => {
 	const myDashbord = new Dashbord();
@@ -24,12 +25,13 @@ class Dashbord {
 		this.#tankObj = new waterTank();
 		new headerNfooter();
 		new navBar();
-		this.#watterTankScale = new WatterTankScale("tankScale");
+		this.#watterTankScale = new WatterTankScale("tank-meter");
 		
 		this.#getElemts();
 		this.#setEvents();
 		this.#statusCards();
 		this.#deviceStatus();
+		this.#tankLavelSeletor();
 		// this.#setEventsOnControls();
 		// this.#setEventsOnPopUp();
 		// this.#themeSetup();
@@ -241,7 +243,36 @@ class Dashbord {
 
 	}
 	
+	#tankLavelSeletor(){
+		var skipSlider = document.getElementById('level-controller');
+		noUiSlider.create(skipSlider, {
+			range: {
+				'min':0,
+		//  '10%':10, '20%':20, '30%':30, '50%':50, '60%':60, '70%':70, '90%':90,
+				'max':100
+			},
 
+			// snap:true,
+			step: 5,
+			start:[20,90],
+			tooltips:true,
+
+			orientation: 'vertical',
+			direction: 'rtl', //'ltr',
+
+			//connect:true,   // बीच में color fill
+			connect: [true,true,true],
+			pips:{
+				// mode:'steps',
+				mode: "values",
+				values:[0,10,20,30,40,50,60,70,80,90,100],
+				density:5,
+			}
+
+			});
+
+
+	}
 	#tester() {
 		document.getElementById("levelSlider").addEventListener("input", (e) => {
 			const { remainingWater, flowRate } = this.#controlElemts;
